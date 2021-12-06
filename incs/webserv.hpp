@@ -26,7 +26,7 @@
 #include <poll.h>			// poll /
 #include <sys/event.h>		// kqueu / kevent /
 #include <sys/socket.h>		// socket / accept / listen / send / recv / bind / setsockopt / getsockname /
-#include <fcntl.h>			// fcntl, SEUL UTILISATION POSSIBLE = fcntl(fd, F_SETFL,O_NONBLOCK);
+#include <fcntl.h>			// fcntl, SEUL UTILISATION POSSIBLE = fcntl(fd, F_SETFL, O_NONBLOCK);
 
 // *UTILS* //
 
