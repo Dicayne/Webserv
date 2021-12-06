@@ -1,4 +1,4 @@
-#include "../incs/color.hpp"
+#include "../incs/webserv.hpp"
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
@@ -78,7 +78,11 @@ int main()
 
 		char buffer[30000] = {0};
 		recv(newSocket, buffer, 30000, 0);
-    	std::cout << buffer << std::endl;
+    	std::cout << RED << buffer << NC << std::endl;
+
+		std::string	buf = buffer;
+		Request	firstRequest(buf);
+
 		send(newSocket, hello.c_str(), hello.size(), 0);
         std::cout << "---> 'Hi' message sent in response\n";
         close(newSocket);
