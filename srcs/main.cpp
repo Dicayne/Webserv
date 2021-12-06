@@ -1,18 +1,20 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   tmp.hpp                                            :+:      :+:    :+:   */
+/*   main.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: vmoreau <vmoreau@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2021/11/29 16:53:05 by vmoreau           #+#    #+#             */
-/*   Updated: 2021/11/29 17:03:50 by vmoreau          ###   ########.fr       */
+/*   Created: 2021/11/29 16:52:54 by vmoreau           #+#    #+#             */
+/*   Updated: 2021/12/04 18:59:38 by vmoreau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef TMP_HPP
-#define TMP_HPP
+#include "../incs/webserv.hpp"
 
-#include <iostream>
+int main()
+{
+	std::cout << "Hello World\n";
 
-#endif
+	return (0);
+}
