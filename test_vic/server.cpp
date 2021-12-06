@@ -6,7 +6,7 @@
 /*   By: vmoreau <vmoreau@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/06 14:08:02 by vmoreau           #+#    #+#             */
-/*   Updated: 2021/12/06 17:47:37 by vmoreau          ###   ########.fr       */
+/*   Updated: 2021/12/06 20:28:44 by vmoreau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,8 @@
 #include <sys/socket.h>
 #include <sys/types.h>
 #include <arpa/inet.h>
+#include <fstream>
+#include <unistd.h>
 
 void clear_buf(char buff[1024])
 {
@@ -36,6 +38,7 @@ int main()
 	int addr_size = sizeof(address);
 	char buffer[10024] = {0};
 	std::string msg, recep;
+	std::ifstream ms;
 
 	if ((server_fd = socket(AF_INET, SOCK_STREAM, 0)) < 0)
 	{
@@ -68,20 +71,42 @@ int main()
 		exit(EXIT_FAILURE);
 	}
 	std::cout << "Server setup on port 8080 and wating for client connect:\n\n";
-	if ((new_sock = accept(server_fd, (struct sockaddr *)&address,(socklen_t*)&addr_size)) < 0)
-	{
-		std::cerr << RED << "Error=> " << NC << "accepte\n";
-		exit(EXIT_FAILURE);
-	}
-	// msg = "GET ./HTTP/index.html HTTP/1.1 200 ok\n";
-	msg = "HTTP/1.1 200 OK\r\nConnection: keep-alive\r\nContent-type: text/html\r\n\r\n<html>\r\n<head>\r\n<title>Hello, world!</title>\r\n</head>\r\n<body>\r\n<h1>TOTO!</h1>\r\n</body>\r\n</html>\r\n\r\n";
-	// msg = "GET HTTP/1.1 200 OK\r\nConnection: keep-alive\r\nContent-type: text/html\r\n\r\n<html>\r\n<head>\r\n<title>Hello, world!</title>\r\n</head>\r\n<body>\r\n<h1>Hello, world!</h1>\r\n</body>\r\n</html>\r\n\r\n";
 	while (1)
 	{
+		// *****************RECEIVED*****************
+		if ((new_sock = accept(server_fd, (struct sockaddr *)&address,(socklen_t*)&addr_size)) < 0)
+		{
+			std::cerr << RED << "Error=> " << NC << "accepte\n";
+			exit(EXIT_FAILURE);
+		}
+		std::cout << GREEN << "CONNECTED\n" << NC;
 		clear_buf(buffer);
 		recv(new_sock, buffer, 10024, 0);
+		usleep(1000);
 		recep = buffer;
-		std::cout << YELLOW << "Client:		" << NC << recep << '\n';
+		std::cout << YELLOW << "Client:		" << NC << recep;
+
+
+		// *******************SEND*******************
+		msg = "HTTP/1.1 200 OK\r\nConnection: keep-alive\r\nContent-type: text/html\r\n\r\n";
+		std::string root(recep.begin() + 3, recep.begin() + (recep.find_first_of('\n') - 10));
+		root[0] = '.';
+		recep.clear();
+		ms.close();
+		ms.open(root.c_str());
+		if (ms.is_open() == false)
+		{
+			std::cout << root << ": Not Found\n";
+			ms.open("./HTTP/e404.html");
+		}
+		else
+			std::cout << "File Found\n";
+		while(std::getline(ms, recep))
+		{
+			msg += recep;
+			msg += '\n';
+		}
+		ms.close();
 		if (send(new_sock, msg.c_str(), msg.size() , 0) < 0)
 		{
 			std::cerr << RED << "Error=> " << NC << "Message not send\n";
