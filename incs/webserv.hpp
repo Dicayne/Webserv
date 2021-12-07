@@ -6,7 +6,7 @@
 /*   By: mabriand <mabriand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/29 16:53:05 by vmoreau           #+#    #+#             */
-/*   Updated: 2021/12/07 13:32:30 by mabriand         ###   ########.fr       */
+/*   Updated: 2021/12/07 16:29:05 by mabriand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,7 @@
 
 // #include <string_view>
 #include <map>
+#include <bitset>
 
 #include "./Request.hpp"
 

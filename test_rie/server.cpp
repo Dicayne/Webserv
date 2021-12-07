@@ -54,10 +54,11 @@ int main()
 	if (bind(server_fd, (struct sockaddr *)&addr, addrLen) == -1)
 	{
 		std::cerr << RED << "Server error: " << NC << "Socket binding failed.\n";
+		std::cerr << std::strerror(errno);
 		return (-1);
 	}
 
-	int	backlog = 1;
+	int	backlog = 3;
 
 	if (listen(server_fd, backlog) == -1)
 	{	
@@ -65,9 +66,10 @@ int main()
 		exit(EXIT_FAILURE);
 	}
 	
-	while(1)
-    {
-        std::cout << "\n+++++++ Waiting for new connection ++++++++\n\n";
+	// while(1)
+    // {
+    //     
+	std::cout << "\n+++++++ Waiting for new connection ++++++++\n\n";
         
 		int	newSocket = accept(server_fd, (struct sockaddr *)&addr, &addrLen);
 		if (newSocket == -1)
@@ -78,7 +80,7 @@ int main()
 
 		char buffer[30000] = {0};
 		recv(newSocket, buffer, 30000, 0);
-    	//std::cout << RED << buffer << NC << std::endl;
+    	std::cout << RED << buffer << NC << std::endl;
 
 		std::string	buf = buffer;
 		Request	firstRequest(buf);
@@ -86,7 +88,8 @@ int main()
 		send(newSocket, hello.c_str(), hello.size(), 0);
         std::cout << "---> 'Hi' message sent in response\n";
         close(newSocket);
-	}
-	// close(server_fd)
+	// }
+	close(server_fd);
+	std::cout << firstRequest;
     return 0;
 }
