@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   server.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mabriand <mabriand@student.42.fr>          +#+  +:+       +#+        */
+/*   By: vmoreau <vmoreau@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/06 14:08:02 by vmoreau           #+#    #+#             */
-/*   Updated: 2021/12/07 19:15:50 by mabriand         ###   ########.fr       */
+/*   Updated: 2021/12/08 18:46:36 by vmoreau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,7 @@
 #include <fstream>
 #include <unistd.h>
 
+#define PORT 80
 void clear_buf(char buff[1024])
 {
 	int i = 0;
@@ -58,7 +59,7 @@ int main()
 
 	address.sin_family = AF_INET;
 	address.sin_addr.s_addr = INADDR_ANY;
-	address.sin_port = htons(8080);
+	address.sin_port = htons(PORT);
 
 	if (bind(server_fd, (struct sockaddr *)&address, sizeof(address)) < 0)
 	{
@@ -70,7 +71,7 @@ int main()
 		std::cerr << RED << "Error=> " << NC << "listen\n";
 		exit(EXIT_FAILURE);
 	}
-	std::cout << "Server setup on port 8080 and wating for client connect:\n\n";
+	std::cout << "Server setup on port " << PORT << " and wating for client connect:\n\n";
 	while (1)
 	{
 		// *****************RECEIVED*****************
@@ -82,13 +83,12 @@ int main()
 		std::cout << GREEN << "CONNECTED\n" << NC;
 		clear_buf(buffer);
 		recv(new_sock, buffer, 10024, 0);
-		usleep(1000);
 		recep = buffer;
-		std::cout << YELLOW << "Client:		" << NC << recep;
+		std::cout << YELLOW << "Client:\n" << NC << recep;
 
 
 		// *******************SEND*******************
-		msg = "HTTP/1.1 200 OK\r\nConnection: keep-alive\r\nContent-type: text/html\r\n\r\n";
+		msg = "HTTP/1.1 200 OK\r\nConnection: keep_alive\r\nContent-type: text/html\r\n\r\n";
 		std::string root(recep.begin() + 3, recep.begin() + (recep.find_first_of('\n') - 10));
 		root[0] = '.';
 		recep.clear();
@@ -97,7 +97,7 @@ int main()
 		if (ms.is_open() == false)
 		{
 			std::cout << root << ": Not Found\n";
-			ms.open("./HTTP/e404.html");
+			ms.open("./html/error/404.html");
 		}
 		else
 			std::cout << "File Found\n";
@@ -112,6 +112,7 @@ int main()
 			std::cerr << RED << "Error=> " << NC << "Message not send\n";
 			exit(EXIT_FAILURE);
 		}
+		close(new_sock)
 	}
 	return (0);
 }
