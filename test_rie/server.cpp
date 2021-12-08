@@ -90,6 +90,5 @@ int main()
         close(newSocket);
 	// }
 	close(server_fd);
-	std::cout << firstRequest;
     return 0;
 }
