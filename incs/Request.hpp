@@ -6,7 +6,7 @@
 /*   By: mabriand <mabriand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/06 19:46:24 by mabriand          #+#    #+#             */
-/*   Updated: 2021/12/07 19:12:29 by mabriand         ###   ########.fr       */
+/*   Updated: 2021/12/08 12:53:23 by mabriand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,11 +43,16 @@ class   Request
         Request(std::string& buf);
         ~Request();
 
-		std::string	getInfo(std::string& buf) const;
-        std::string	getKey(std::string& buf) const;
-        std::string	getMapped(std::string& buf) const;
+        std::string     getInfo(std::string& line) const;
+		std::string     getEndLine(std::string& line) const;
+		void			buildMap(std::string& buf);
+
+
+
+        // std::string	getKey(std::string& buf) const;
+        // std::string	getMapped(std::string& buf) const;
 	
-        //std::string getHeader(std::string& buf, std::string key) const;
+        // //std::string getHeader(std::string& buf, std::string key) const;
 
         const std::string&	getMethod() const;
         const std::string&	getUrl() const;
@@ -58,10 +63,9 @@ class   Request
         const std::string&	getAcceptLanguage() const;
         const std::string&	getAcceptEncoding() const;
         const std::string&	getConnection() const;
-        const std::string&	getBody() const;
-
-        void			buildMap(std::string& buf);
+        // const std::string&	getBody() const;
         
+		void            setCmdLine(std::string& line);
         void		    setMethod(std::string& buf);
 		void		    setUrl(std::string& buf);
 		void			setProtocolVersion(std::string& buf);
@@ -71,7 +75,7 @@ class   Request
         void			setAcceptLanguage();
         void			setAcceptEncoding();
         void			setConnection();
-        void			setBody();
+        // void			setBody();
 
 
 };
