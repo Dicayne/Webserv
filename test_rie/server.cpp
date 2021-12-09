@@ -95,19 +95,19 @@ int main()
 
 	if (ms.is_open() == false)
 	{
-		std::cout << YELLOW << "FALSE\n" << NC;
+		std::cout << GREEN << "yolo 1\n" << NC;
 		Resp2	success("HTTP 1.1", "400", "NOPE", "OH SHIT");
-
+		std::cout << PURPLE << "yolo 2\n" << NC;
 		std::cout << success.getProtocolVersion() << std::endl;
 		std::cout << success.getStatus() << std::endl;
 		std::cout << success.getStatusMessage() << std::endl;
 		std::cout << success.getBody() << std::endl;
 
 
-
-		std::string fuck("HTTP/1.1 200 OK\nContent-Type: text/plain\nContent-Length: 8\n\nFUCK IT!");
+		std::cout << PURPLE << success << NC;
+		// std::string fuck("HTTP/1.1 200 OK\nContent-Type: text/plain\nContent-Length: 8\n\nFUCK IT!");
 		
-		int ret = send(newSocket, success.buildResponse(), 8, 0);
+		int ret = send(newSocket, success.respond(), 26 , 0);
 		// int ret = send(newSocket, fuck.c_str(), fuck.size(), 0);
 		std::cout << "RET OF SEND() = " << ret << std::endl;
 		// send(newSocket, success.buildResponse(), 8, 0);
