@@ -95,14 +95,7 @@ int main()
 
 	if (ms.is_open() == false)
 	{
-		std::cout << GREEN << "yolo 1\n" << NC;
 		Resp2	success("HTTP 1.1", "400", "NOPE", "OH SHIT");
-		std::cout << PURPLE << "yolo 2\n" << NC;
-		std::cout << success.getProtocolVersion() << std::endl;
-		std::cout << success.getStatus() << std::endl;
-		std::cout << success.getStatusMessage() << std::endl;
-		std::cout << success.getBody() << std::endl;
-
 
 		std::cout << PURPLE << success << NC;
 		// std::string fuck("HTTP/1.1 200 OK\nContent-Type: text/plain\nContent-Length: 8\n\nFUCK IT!");
