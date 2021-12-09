@@ -6,7 +6,7 @@
 /*   By: vmoreau <vmoreau@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/08 14:44:09 by vmoreau           #+#    #+#             */
-/*   Updated: 2021/12/08 16:34:56 by vmoreau          ###   ########.fr       */
+/*   Updated: 2021/12/09 19:19:23 by vmoreau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,16 +17,28 @@
 
 #include <vector>
 #include <map>
+
 #include "loc_block.hpp"
 // #include "confpars.hpp"
 
 class serv_block
 {
+private:
+	std::vector<std::string> _block;
+
 protected:
+	int						_port;
+	std::string				_server_name;
+	int						_client_max_body_size;
+	std::vector<loc_block>	_location;
+	// confpars				_tmp;
 
 public:
-	serv_block(/* args */);
+	serv_block();
 	~serv_block();
+
+	// PARSING
+	void pars_serv(std::vector<std::string> block);
 };
 
 #endif

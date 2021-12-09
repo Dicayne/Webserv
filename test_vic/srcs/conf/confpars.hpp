@@ -6,7 +6,7 @@
 /*   By: vmoreau <vmoreau@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/07 15:55:46 by vmoreau           #+#    #+#             */
-/*   Updated: 2021/12/08 18:21:26 by vmoreau          ###   ########.fr       */
+/*   Updated: 2021/12/09 18:48:30 by vmoreau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,14 +23,16 @@
 class confpars
 {
 private:
-	std::ifstream	fc;
-	std::string		path;
+	std::ifstream				_fc;
+	std::string					_path;
+	std::vector<std::string>	_file;
+	std::vector< std::vector<std::string> >	_server_block;
+
 protected:
 
-	bool sendfile;
-	std::map<int, std::string> error_page;
-	std::vector<serv_block> server;
-	bool error_conf;
+	bool						_sendfile;
+	std::vector<serv_block>		_server;
+	std::map<std::string, std::string>		_error_page;
 
 public:
 	confpars();
@@ -40,16 +42,19 @@ public:
 	void open_fc(const char *path);
 	void reopen_fc();
 	void close_fc();
-	void read_fc(std::ifstream &fc);
 
 	// GETTER
-	std::ifstream &get_fd() {return (this->fc);}
+	std::ifstream &get_fd() {return (this->_fc);}
+
+	// SETTER
+	void set_sendfile(std::string value);
+	void set_error_page(std::string value);
 
 	// PARSING
-	void pars_line(std::string line);
+	void pars_fc(std::ifstream &fc);
+	void pars_http();
 
 	// EXEPTIONS
-
 	class FileNotFound : public std::exception
 	{
 		private:
@@ -59,6 +64,29 @@ public:
 			virtual ~FileNotFound() throw() {}
 			virtual const char *what() const throw() {return (this->_msg.c_str());}
 	};
+	class ConfFile : public std::exception
+	{
+		private:
+			std::string _msg;
+		public:
+			ConfFile(std::string msg) : _msg(msg){}
+			virtual ~ConfFile() throw() {}
+			virtual const char *what() const throw() {return (this->_msg.c_str());}
+	};
+	class NoServerFound : public std::exception
+	{
+		private:
+			std::string _msg;
+		public:
+			NoServerFound(std::string path) : _msg(" No Server block found in " + path){}
+			virtual ~NoServerFound() throw() {}
+			virtual const char *what() const throw() {return (this->_msg.c_str());}
+	};
+
+	// Private Function
+	private:
+		std::vector<std::string> separate_server_block(std::vector<std::string> tmp, size_t nb_serv);
+		std::vector<std::string> save_server_block(std::vector<std::string> tmp, size_t *pos);
 };
 
 #endif
