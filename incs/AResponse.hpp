@@ -6,7 +6,7 @@
 /*   By: mabriand <mabriand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/08 15:54:04 by mabriand          #+#    #+#             */
-/*   Updated: 2021/12/09 13:45:12 by mabriand         ###   ########.fr       */
+/*   Updated: 2021/12/09 14:55:39 by mabriand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,6 @@
 class   AResponse
 {
     private:
-        AResponse();
         AResponse(AResponse& toCopy);
         AResponse&  operator=(AResponse& toAssign);
 
@@ -35,10 +34,11 @@ class   AResponse
 		std::string	body;
 
 	public:
+        AResponse();
         AResponse(const std::string& protocol_version, const std::string& status, const std::string& status_message, const std::string& body);
         virtual ~AResponse();
 
-        const std::string&  buildResponse() const;
+        const void*     buildResponse() const;
 
         /*
             All setters (one for each attribute corresponding to a field of the HTTP request):
@@ -65,6 +65,6 @@ class   AResponse
 
 };
 
-std::ostream&	operator<<(std::ostream& os, const AResponse& r)
+std::ostream&	operator<<(std::ostream& os, const AResponse& r);
 
 #endif

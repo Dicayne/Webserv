@@ -1,4 +1,8 @@
 #include "../incs/webserv.hpp"
+#include "../incs/Request.hpp"
+#include "../incs/AResponse.hpp"
+#include "../incs/Resp2.hpp"
+
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
@@ -91,17 +95,31 @@ int main()
 
 	if (ms.is_open() == false)
 	{
-		std::cout << "FALSE\n";
+		std::cout << YELLOW << "FALSE\n" << NC;
+		Resp2	success("HTTP 1.1", "400", "NOPE", "OH SHIT");
+
+		std::cout << success.getProtocolVersion() << std::endl;
+		std::cout << success.getStatus() << std::endl;
+		std::cout << success.getStatusMessage() << std::endl;
+		std::cout << success.getBody() << std::endl;
+
+
+
 		std::string fuck("HTTP/1.1 200 OK\nContent-Type: text/plain\nContent-Length: 8\n\nFUCK IT!");
-		send(newSocket, fuck.c_str(), fuck.size(), 0);
+		
+		int ret = send(newSocket, success.buildResponse(), 8, 0);
+		// int ret = send(newSocket, fuck.c_str(), fuck.size(), 0);
+		std::cout << "RET OF SEND() = " << ret << std::endl;
+		// send(newSocket, success.buildResponse(), 8, 0);
 		// std::cout << root << ": Not Found\n";
 		// ms.open("./html/error/404.html");
 	}
 	else
 	{
-		Resp2	success();
-		send(newSocket, success.getResponse(), success.getContentLenght(), 0);
-		// send(newSocket, resp.c_str(), hello.size(), 0);
+		std::cout << GREEN << "TRUE\n" << NC << std::endl;
+		// Resp2	success("HTTP 1.1", "200", "OK", "OH \nYEAAAAAAAAAH \nBABY");
+		// send(newSocket, success.buildResponse(), 8, 0);
+		// // send(newSocket, hello.c_str(), hello.size(), 0);
 	}
     std::cout << "---> 'Hi' message sent in response\n";
     close(newSocket);

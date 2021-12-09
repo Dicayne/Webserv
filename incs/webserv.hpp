@@ -6,7 +6,7 @@
 /*   By: mabriand <mabriand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/29 16:53:05 by vmoreau           #+#    #+#             */
-/*   Updated: 2021/12/09 13:09:26 by mabriand         ###   ########.fr       */
+/*   Updated: 2021/12/09 14:45:51 by mabriand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,13 +33,13 @@
 #include <bitset>
 #include <sstream>
 
-#include "./Request.hpp"
-#include "./AResponse.hpp"
-#include "./Resp1.hpp"
-#include "./Resp2.hpp"
-#include "./Resp3.hpp"
-#include "./Resp4.hpp"
-#include "./Resp5.hpp"
+// #include "./Request.hpp"
+// #include "./AResponse.hpp"
+// #include "./Resp1.hpp"
+// #include "./Resp2.hpp"
+// #include "./Resp3.hpp"
+// #include "./Resp4.hpp"
+// #include "./Resp5.hpp"
 
 // #include <sys/types.h>
 // #include <netinet/in.h>

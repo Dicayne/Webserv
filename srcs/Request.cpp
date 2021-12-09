@@ -6,11 +6,11 @@
 /*   By: mabriand <mabriand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/06 20:57:30 by mabriand          #+#    #+#             */
-/*   Updated: 2021/12/09 13:36:34 by mabriand         ###   ########.fr       */
+/*   Updated: 2021/12/09 14:45:46 by mabriand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../incs/webserv.hpp"
+#include "../incs/Request.hpp"
 
 Request::Request(std::string& buf) : request(buf)
 {

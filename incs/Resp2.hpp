@@ -6,15 +6,15 @@
 /*   By: mabriand <mabriand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/09 13:07:32 by mabriand          #+#    #+#             */
-/*   Updated: 2021/12/09 13:37:15 by mabriand         ###   ########.fr       */
+/*   Updated: 2021/12/09 14:41:15 by mabriand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef RESP2_HPP
-# define RESP1_HPP
+# define RESP2_HPP
 
 #include "webserv.hpp"
-
+#include "./AResponse.hpp"
 class   Resp2 : public AResponse
 {
     private:
@@ -22,7 +22,7 @@ class   Resp2 : public AResponse
 
     public:
 		Resp2(const std::string& protocol_version, const std::string& status, const std::string& status_message, const std::string& body);
-		~Resp2();
-}
+		virtual ~Resp2();
+};                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             
 
 #endif
