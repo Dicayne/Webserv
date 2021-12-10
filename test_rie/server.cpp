@@ -102,15 +102,13 @@ int main()
 			std::cout << "I can't open html\n";
 		else
 			std::cout << "The html is open!\n";
-
-
 		while(std::getline(ms, buf))
 		{
 			msg += buf;
 			msg += '\n';
 		}
 		msg.pop_back();
-		Resp2	failure("HTTP/1.1", "400", "NOPE", "text/plain", msg/*"The page you requested does not exist..."*/);
+		Resp2	failure("HTTP/1.1", "400", "NOPE", "./html_marie/test.html", msg/*"The page you requested does not exist..."*/);
 		send(newSocket, failure.respond(), failure.getResponse().size() , 0);
 	}
 	else

@@ -6,23 +6,25 @@
 /*   By: mabriand <mabriand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/09 14:27:09 by mabriand          #+#    #+#             */
-/*   Updated: 2021/12/10 20:01:34 by mabriand         ###   ########.fr       */
+/*   Updated: 2021/12/10 21:21:03 by mabriand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../incs/AResponse.hpp"
 
 AResponse::AResponse(){}
-AResponse::AResponse(const std::string& protocol_version, const std::string& status, const std::string& status_message, const std::string& content_type,/* const std::string& content_lenght,*/ const std::string& body)
+AResponse::AResponse(const std::string& protocol_version, const std::string& status, const std::string& status_message, const std::string& url,/* const std::string& content_lenght,*/ const std::string& body)
 {
+	this->setMimeMap();
+	
 	this->setProtocolVersion(protocol_version);
 	this->setStatus(status);
 	this->setStatusMessage(status_message);
 	this->setDate();
 	// this->setServer();
 	this->setBody(body);
-	this->setContentType(content_type);
-	this->setContentLenght(/*content_lenght*/);
+	this->setContentType(url);
+	this->setContentLenght();
 	
 	this->buildResponse();
 	return ;
@@ -63,14 +65,20 @@ void	AResponse::setDate()
 	return ;                                     
 }
 ///////////////////////////////////
-void	AResponse::setContentType(const std::string& content_type)
+void	AResponse::setContentType(const std::string& url)
 {
-	this->content_type = content_type;
+	size_t pos = url.find_last_of(".", url.size());
+	if (pos == std::string::npos)
+		return ;
+
+	std::string key(url.substr(pos, url.size() - pos));
+	std::map<std::string, std::string>::iterator	itf = (this->mime).find(key);
+	this->content_type = itf->second;
 	std::pair<std::string, std::string> elem("Content-Type", this->content_type);		
 	this->stock.insert(elem);
 	return ;
 }
-void	AResponse::setContentLenght(/*const std::string& content_lenght*/)
+void	AResponse::setContentLenght()
 {
 	std::stringstream content_lenght;
 	content_lenght << this->body.size();
@@ -85,7 +93,6 @@ void	AResponse::setBody(const std::string& b)
 	this->body = b;
 	std::pair<std::string, std::string> elem("Body", this->body);		
 	this->stock.insert(elem);
-	// std::cout << "|" << this->body << "|" << std::endl;
 	return ;
 }
 
@@ -97,7 +104,7 @@ const std::string&	AResponse::getDate() const{ return (this->date); }
 const std::string&  AResponse::getBody() const{ return (this->body); }
 const std::string&	AResponse::getContentType() const{ return (this->content_type); }
 const std::string&	AResponse::getContentLenght() const{ return (this->content_lenght); }
-
+//
 const std::string&  AResponse::getResponse() const{ return (this->response); }///////////////
 
 void	AResponse::buildMime(const std::string& key, const std::string& mapped)
@@ -106,7 +113,6 @@ void	AResponse::buildMime(const std::string& key, const std::string& mapped)
 	this->mime.insert(elem);
 	return ;
 }
-
 
 void	AResponse::setMimeMap()
 {
@@ -175,9 +181,30 @@ void	AResponse::setMimeMap()
 	this->buildMime(".svg", "image/svg+xml");
 	this->buildMime(".swf", "application/x-shockwave-flash");
 	// t
-
-	
-
+	this->buildMime(".tar", "application/x-tar");
+	this->buildMime(".tif", "image/tiff");
+	this->buildMime(".tiff", "image/tiff");
+	this->buildMime(".ts", "application/typescript");
+	this->buildMime(".ttf", "font/ttf");
+	// v
+	this->buildMime(".vsd", "application/vnd.visio");
+	// w
+	this->buildMime(".wav", "audio/x-wav");
+	this->buildMime(".weba", "image/tiff");
+	this->buildMime(".webm", "image/tiff");
+	this->buildMime(".woff", "application/typescript");
+	this->buildMime(".woff2", "font/ttf");
+	// x
+	this->buildMime(".xhtml", "application/xhtml+xml");
+	this->buildMime(".xls", "application/vnd.ms-excel");
+	this->buildMime(".xlsx", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+	this->buildMime(".xml", "application/xml");
+	this->buildMime(".xul", "application/vnd.mozilla.xul+xml");
+	// y
+	// z
+	this->buildMime(".zip", "application/zip");
+	this->buildMime(".7z", "application/x-7z-compressed");
+	return ;
 }
 
 
@@ -204,8 +231,6 @@ void	AResponse::buildPartResp(const std::string& key, int *i)
 		return (this->buildLineResp(itf->second.c_str(), "\n", NULL, NULL, i));
 	else if (key.compare("Body") == 0)
 		return (this->buildLineResp("\n", NULL, itf->second.c_str(), NULL, i));
-	// else if (key.compare("Date") == 0)
-	// 	return (this->buildLineResp(itf->first.c_str(), ": ", itf->second.c_str(), "", i));
 	return (this->buildLineResp(itf->first.c_str(), ": ", itf->second.c_str(), "\n", i));
 }
 void	AResponse::buildResponse()

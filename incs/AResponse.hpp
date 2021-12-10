@@ -40,7 +40,7 @@ class   AResponse
 
 	public:
 		AResponse();
-		AResponse(const std::string& protocol_version, const std::string& status, const std::string& status_message, const std::string& content_type,/* const std::string& content_lenght,*/ const std::string& body);
+		AResponse(const std::string& protocol_version, const std::string& status, const std::string& status_message, const std::string& url,/* const std::string& content_lenght,*/ const std::string& body);
 		virtual ~AResponse();
 
 		/*
@@ -52,7 +52,7 @@ class   AResponse
 		void	setDate();
 		// void	setServer();
 		void	setContentType(const std::string& content_type);
-		void	setContentLenght(/*const std::string& content_lenght*/);
+		void	setContentLenght();
 		void	setBody(const std::string& b);
 
 
