@@ -6,7 +6,7 @@
 /*   By: vmoreau <vmoreau@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/08 14:44:09 by vmoreau           #+#    #+#             */
-/*   Updated: 2021/12/10 16:04:22 by vmoreau          ###   ########.fr       */
+/*   Updated: 2021/12/10 18:37:01 by vmoreau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,8 +29,6 @@ private:
 	std::string				_path;
 	std::vector<std::string> _block;
 	std::vector< std::vector<std::string> >	_loc_block;
-
-protected:
 	int						_port;
 	std::string				_host;
 	std::string				_server_name;
@@ -56,6 +54,33 @@ public:
 		public:
 			ConfFile(std::string msg) : _msg(msg){}
 			virtual ~ConfFile() throw() {}
+			virtual const char *what() const throw() {return (this->_msg.c_str());}
+	};
+	class NoListenFound : public std::exception
+	{
+		private:
+			std::string _msg;
+		public:
+			NoListenFound(std::string path) : _msg(" Listen is missing in " + path){}
+			virtual ~NoListenFound() throw() {}
+			virtual const char *what() const throw() {return (this->_msg.c_str());}
+	};
+	class NoS_NameFound : public std::exception
+	{
+		private:
+			std::string _msg;
+		public:
+			NoS_NameFound(std::string path) : _msg(" Server_name is missing in " + path){}
+			virtual ~NoS_NameFound() throw() {}
+			virtual const char *what() const throw() {return (this->_msg.c_str());}
+	};
+	class NoPortFound : public std::exception
+	{
+		private:
+			std::string _msg;
+		public:
+			NoPortFound(std::string path) : _msg(" Port is missing in " + path){}
+			virtual ~NoPortFound() throw() {}
 			virtual const char *what() const throw() {return (this->_msg.c_str());}
 	};
 	class NoLocationFound : public std::exception

@@ -6,7 +6,7 @@
 /*   By: vmoreau <vmoreau@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/08 14:44:06 by vmoreau           #+#    #+#             */
-/*   Updated: 2021/12/10 16:20:00 by vmoreau          ###   ########.fr       */
+/*   Updated: 2021/12/10 20:01:37 by vmoreau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@
 	// 		std::cout << YELLOW << "	" << this->_loc_block[i][j] << NC << '\n';
 
 
-serv_block::serv_block() : _path(CONF_DEFAULT_PATH), _port(-1), _client_max_body_size(BODY_DEFAULT_SIZE)
+serv_block::serv_block() : _path(CONF_DEFAULT_PATH), _port(-1), _client_max_body_size(-1)
 {
 	// std::cout << "Serv_Block construct\n";
 }
@@ -49,6 +49,8 @@ void serv_block::pars_serv(std::vector<std::string> block, std::string path)
 	size_t i = 2;
 	while (i < tmp.size() - 1)
 	{
+		if (tmp[i].find_first_of(' ') == tmp[i].npos)
+			throw ConfFile(" Server block is wrongly formatted");
 		std::string key(tmp[i].begin(), tmp[i].begin() + tmp[i].find_first_of(' '));
 		std::string value(tmp[i].begin() + key.size(), tmp[i].end());
 
@@ -61,13 +63,23 @@ void serv_block::pars_serv(std::vector<std::string> block, std::string path)
 		i++;
 	}
 
+	if (this->_port == -1 && this->_host.empty() == true)
+		throw NoListenFound(this->_path);
+	if (this->_server_name.empty() == true)
+		throw NoS_NameFound(this->_path);
+	if (this->_client_max_body_size == -1)
+	{
+		this->_client_max_body_size = BODY_DEFAULT_SIZE;
+		std::cout << YELLOW << "Warning: " << NC << " Client_max_body_size is missing in ";
+		std::cout << this->_path << " client_max_body_size is set by default at " << BODY_DEFAULT_SIZE << '\n';
+	}
 	for (size_t i = 0; i < nb_loc; i++)
 	{
 		loc_block tmp;
 
 		tmp.pars_loc(this->_loc_block[i], this->_path);
 		this->_location.push_back(tmp);
-		std::cout << '\n';
+		// std::cout << '\n';
 	}
 
 	// // DEBUG
@@ -81,20 +93,32 @@ void serv_block::pars_serv(std::vector<std::string> block, std::string path)
 
 void serv_block::set_port_host(std::string value)
 {
-	std::string host(value.begin()+ value.find_first_not_of(' '), value.begin() + value.find_first_of(':'));
+	if (value.empty() == true)
+		throw ConfFile(" Listen is wrongly formatted (exemple: 127.0.0.1:8080)");
+	if (value.find(':') == value.npos)
+	{
+		std::string err_val(value.begin() + value.find_first_not_of(' '), value.end());
+		throw ConfFile(" Listen \"" + err_val + "\" is wrongly formatted (exemple: 127.0.0.1:8080)");
+	}
+	std::string host(value.begin() + value.find_first_not_of(' '), value.begin() + value.find_first_of(':'));
 	std::string port(value.begin() + value.find_first_of(':') + 1, value.end());
 
+	if (port.size() == 0)
+		throw NoPortFound(this->_path);
 	for (size_t i = 0; i < port.size(); i++)
 		if (!isdigit(port[i]))
-			throw ConfFile(" Port " + port + " is not digit");
+			throw ConfFile(" Port \"" + port + "\" is not digit");
 
 	for (size_t i = 0; i < host.size(); i++)
 		if (!isdigit(host[i]))
 			if (host[i] != '.')
-				throw ConfFile(" Host " + host + " is not digit");
+				throw ConfFile(" Host \"" + host + "\" is not digit");
 	check_host(host);
 	this->_port = atoi(port.c_str());
 	this->_host = host;
+
+	if (this->_port < 0 || this->_port > 65535)
+		throw ConfFile(" Port \"" + port + "\" is wrongly formatted. (0 >= port <= 65535)");
 }
 
 void serv_block::set_server_name(std::string value)
@@ -109,7 +133,7 @@ void serv_block::set_client_max_body_size(std::string value)
 
 	for (size_t i = 0; i < c_m_b_s.size(); i++)
 		if (!isdigit(c_m_b_s[i]))
-			throw ConfFile(" Client Max Body Size " + c_m_b_s + " is not digit");
+			throw ConfFile(" Client Max Body Size \"" + c_m_b_s + "\" is not digit");
 
 	this->_client_max_body_size = atoi(c_m_b_s.c_str());
 }
@@ -174,7 +198,7 @@ void serv_block::check_host(std::string value)
 	std::vector<std::string> host;
 
 	int last_dot_pos = -1;
-
+	int nb_dot = 3;
 	for (size_t i = 0; i < value.size(); i++)
 	{
 		if (value[i] == '.')
@@ -182,6 +206,7 @@ void serv_block::check_host(std::string value)
 			std::string tmp(value.begin() + last_dot_pos + 1, value.begin() + i);
 			host.push_back(tmp);
 			last_dot_pos = i;
+			nb_dot--;
 		}
 		if (i + 1 == value.size())
 		{
@@ -196,12 +221,14 @@ void serv_block::check_host(std::string value)
 		if (i == 0)
 		{
 			if (val != 127)
-				throw ConfFile(" Host first byte must be 127");
+				throw ConfFile(" Host \"" + value + "\" first byte must be 127");
 		}
 		else
 		{
 			if (val < 0 || val > 255)
-				throw ConfFile(" Host must be between 127.0.0.1 && 127.255.255.255");
+				throw ConfFile(" Host \"" + value + "\" must be between 127.0.0.1 && 127.255.255.255");
 		}
 	}
+	if (nb_dot != 0)
+		throw ConfFile( " Host \"" + value + "\" is wrongly formmated (exemple: 127.0.0.1)");
 }

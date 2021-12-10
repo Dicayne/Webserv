@@ -6,7 +6,7 @@
 /*   By: vmoreau <vmoreau@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/07 15:55:46 by vmoreau           #+#    #+#             */
-/*   Updated: 2021/12/09 18:48:30 by vmoreau          ###   ########.fr       */
+/*   Updated: 2021/12/10 18:37:08 by vmoreau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,9 +27,6 @@ private:
 	std::string					_path;
 	std::vector<std::string>	_file;
 	std::vector< std::vector<std::string> >	_server_block;
-
-protected:
-
 	bool						_sendfile;
 	std::vector<serv_block>		_server;
 	std::map<std::string, std::string>		_error_page;
@@ -80,6 +77,24 @@ public:
 		public:
 			NoServerFound(std::string path) : _msg(" No Server block found in " + path){}
 			virtual ~NoServerFound() throw() {}
+			virtual const char *what() const throw() {return (this->_msg.c_str());}
+	};
+	class NoSendfileFound : public std::exception
+	{
+		private:
+			std::string _msg;
+		public:
+			NoSendfileFound(std::string path) : _msg(" Sendfile is missing in " + path){}
+			virtual ~NoSendfileFound() throw() {}
+			virtual const char *what() const throw() {return (this->_msg.c_str());}
+	};
+	class NoErr_PageFound : public std::exception
+	{
+		private:
+			std::string _msg;
+		public:
+			NoErr_PageFound(std::string path) : _msg(" Error_page is missing in " + path){}
+			virtual ~NoErr_PageFound() throw() {}
 			virtual const char *what() const throw() {return (this->_msg.c_str());}
 	};
 

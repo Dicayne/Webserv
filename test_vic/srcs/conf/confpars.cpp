@@ -6,7 +6,7 @@
 /*   By: vmoreau <vmoreau@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/07 16:02:13 by vmoreau           #+#    #+#             */
-/*   Updated: 2021/12/10 16:15:30 by vmoreau          ###   ########.fr       */
+/*   Updated: 2021/12/10 19:30:43 by vmoreau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,13 +86,6 @@ void confpars::set_sendfile(std::string value)
 {
 	std::string val(value.begin() + value.find_first_not_of(" "), value.end());
 
-	for (std::string::reverse_iterator rit = val.rbegin(); rit != val.rend(); rit++)
-	{
-		if (*rit != ' ' && *rit != ';')
-			break;
-		val.pop_back();
-	}
-
 	if (val.compare("on") == 0)
 		this->_sendfile = true;
 	else if (val.compare("off") == 0)
@@ -164,18 +157,27 @@ void confpars::pars_http()
 		throw ConfFile(this->_path + " HTTP block \"{\" Missing\n");
 	tmp = this->separate_server_block(tmp, nb_serv);
 
+	bool is_sendfile = false;
 	while (i < tmp.size() - 1)
 	{
+		if (tmp[i].find_first_of(' ') == tmp[i].npos)
+			throw ConfFile(" HTTP block is wrongly formatted");
 		std::string key(tmp[i].begin(), tmp[i].begin() + tmp[i].find_first_of(' '));
 		std::string value(tmp[i].begin() + key.size(), tmp[i].end());
 
 		if (key.compare("sendfile") == 0)
+		{
+			is_sendfile = true;
 			this->set_sendfile(value);
+		}
 		else if (key.compare("error_page") == 0)
 			this->set_error_page(value);
 		i++;
 	}
-
+	if (is_sendfile == false)
+		throw NoSendfileFound(this->_path);
+	if (this->_error_page.empty() == true)
+		throw NoErr_PageFound(this->_path);
 	// DEBUG //
 	// std::cout << std::boolalpha << this->_sendfile << '\n';
 	// for (std::map<std::string, std::string>::iterator it = this->_error_page.begin(); it != this->_error_page.end(); it++)
