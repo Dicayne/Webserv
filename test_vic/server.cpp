@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   server.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vmoreau <vmoreau@student.42.fr>            +#+  +:+       +#+        */
+/*   By: mabriand <mabriand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/06 14:08:02 by vmoreau           #+#    #+#             */
-/*   Updated: 2021/12/08 18:46:36 by vmoreau          ###   ########.fr       */
+/*   Updated: 2021/12/10 18:27:20 by mabriand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -112,7 +112,7 @@ int main()
 			std::cerr << RED << "Error=> " << NC << "Message not send\n";
 			exit(EXIT_FAILURE);
 		}
-		close(new_sock)
+		close(new_sock)                                                                                      
 	}
 	return (0);
 }

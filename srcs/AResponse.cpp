@@ -6,7 +6,7 @@
 /*   By: mabriand <mabriand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/09 14:27:09 by mabriand          #+#    #+#             */
-/*   Updated: 2021/12/10 16:18:56 by mabriand         ###   ########.fr       */
+/*   Updated: 2021/12/10 20:01:34 by mabriand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,17 +72,9 @@ void	AResponse::setContentType(const std::string& content_type)
 }
 void	AResponse::setContentLenght(/*const std::string& content_lenght*/)
 {
-	// int a = 10;
-	// stringstream ss;
-	// ss << a;
-	// string str = ss.str();
-
-
 	std::stringstream content_lenght;
 	content_lenght << this->body.size();
 
-
-	// std::string content_lenght(std::itoa(this->body.size()));
 	this->content_lenght = content_lenght.str();
 	std::pair<std::string, std::string> elem("Content-Lenght", this->content_lenght);		
 	this->stock.insert(elem);
@@ -93,6 +85,7 @@ void	AResponse::setBody(const std::string& b)
 	this->body = b;
 	std::pair<std::string, std::string> elem("Body", this->body);		
 	this->stock.insert(elem);
+	// std::cout << "|" << this->body << "|" << std::endl;
 	return ;
 }
 
@@ -106,6 +99,86 @@ const std::string&	AResponse::getContentType() const{ return (this->content_type
 const std::string&	AResponse::getContentLenght() const{ return (this->content_lenght); }
 
 const std::string&  AResponse::getResponse() const{ return (this->response); }///////////////
+
+void	AResponse::buildMime(const std::string& key, const std::string& mapped)
+{
+	std::pair<std::string, std::string>	elem(key, mapped);	
+	this->mime.insert(elem);
+	return ;
+}
+
+
+void	AResponse::setMimeMap()
+{
+	// a
+	this->buildMime(".aac", "audio/aac");
+	this->buildMime(".abw", "application/x-abiword");
+	this->buildMime(".arc", "application/octet-stream");
+	this->buildMime(".avi", "video/x-msvideo");
+	this->buildMime(".azw", "application/vnd.amazon.ebook");
+	// b
+	this->buildMime(".bin", "application/octet-stream");
+	this->buildMime(".bmp", "image/bmp");
+	this->buildMime(".bz", "application/x-bzip");
+	this->buildMime(".bz2", "application/x-bzip2");
+	// c
+	this->buildMime(".csh", "application/x-csh");
+	this->buildMime(".css", "text/css");
+	this->buildMime(".csv", "text/csv");
+	// d
+	this->buildMime(".doc", "application/msword");
+	this->buildMime(".docx", "application/vnd.openxmlformats-officedocument.wordprocessingml.document");
+	// e
+	this->buildMime(".eot", "application/vnd.ms-fontobject");
+	this->buildMime(".epub", "application/epub+zip");
+	// f
+	// g
+	this->buildMime(".gif", "image/gif");
+	// h
+	this->buildMime(".htm", "text/html");
+	this->buildMime(".html", "text/html");
+	// i
+	this->buildMime(".ico", "image/x-icon");
+	this->buildMime(".ics", "text/calendar");
+	// j
+	this->buildMime(".jar", "application/java-archive");
+	this->buildMime(".jpeg", "image/jpeg");
+	this->buildMime(".jpg", "image/jpeg");
+	this->buildMime(".js", "application/javascript");
+	this->buildMime(".json", "application/json");
+	// k
+	// l
+	// m
+	this->buildMime(".mid", "audio/midi");
+	this->buildMime(".midi", "audio/midi");
+	this->buildMime(".mpeg", "video/mpeg");
+	this->buildMime(".mppkg", "application/vnd.apple.installer+xml");
+	// n
+	// o
+	this->buildMime(".odp", "application/vnd.oasis.opendocument.presentation");
+	this->buildMime(".ods", "application/vnd.oasis.opendocument.spreadsheet");
+	this->buildMime(".odt", "application/vnd.oasis.opendocument.text");
+	this->buildMime(".oga", "audio/ogg");
+	this->buildMime(".ogv", "video/ogg");
+	this->buildMime(".ogx", "application/ogg");
+	this->buildMime(".otf", "font/otf");
+	// p
+	this->buildMime(".png", "image/png");
+	this->buildMime(".pdf", "application/pdf");
+	this->buildMime(".ppt", "application/vnd.ms-powerpoint");
+	this->buildMime(".pptx", "application/vnd.openxmlformats-officedocument.presentationml.presentation");
+	// r
+	this->buildMime(".rar", "application/x-rar-compressed");
+	this->buildMime(".rtf", "application/rtf");
+	// s
+	this->buildMime(".sh", "application/x-sh");
+	this->buildMime(".svg", "image/svg+xml");
+	this->buildMime(".swf", "application/x-shockwave-flash");
+	// t
+
+	
+
+}
 
 
 void	AResponse::buildLineResp(const char *str1, const char *sep1, const char *str2, const char *sep2, int *i)
