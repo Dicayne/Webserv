@@ -6,7 +6,7 @@
 /*   By: vmoreau <vmoreau@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/07 16:02:13 by vmoreau           #+#    #+#             */
-/*   Updated: 2021/12/09 18:33:47 by vmoreau          ###   ########.fr       */
+/*   Updated: 2021/12/10 16:15:30 by vmoreau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,13 @@ std::string norm_line(std::string line)
 	}
 	int j = ret.find_first_not_of(' ');
 	std::string ret2(ret.begin() + j, ret.end());
+
+	for (std::string::reverse_iterator rit = ret2.rbegin(); rit != ret2.rend(); rit++)
+	{
+		if (*rit != ' ' && *rit != ';')
+			break;
+		ret2.pop_back();
+	}
 	return (ret2);
 }
 
@@ -104,20 +111,13 @@ void confpars::set_error_page(std::string value)
 		throw ConfFile(" Error_page code is based on 5xx or 4xx only");
 	if (code_err.front() != '4' && code_err.front() != '5')
 		throw ConfFile(" Error_page code is based on 5xx or 4xx only");
+
 	code_err.pop_back();
 
 	for (size_t i = 0; i < code_err.size(); i++)
-	{
 		if (!isdigit(code_err[i]))
 			if (code_err[i] != 'x')
 				throw ConfFile(" CodeError is not digit");
-	}
-	for (std::string::reverse_iterator rit = path_err.rbegin(); rit != path_err.rend(); rit++)
-	{
-		if (*rit != ' ' && *rit != ';')
-			break;
-		path_err.pop_back();
-	}
 
 	this->_error_page.insert(std::make_pair(code_err, path_err));
 }
@@ -134,17 +134,17 @@ void confpars::pars_fc(std::ifstream &fc)
 			this->_file.push_back(norm_line(line));
 	}
 	this->reopen_fc();
+
 	this->pars_http();
 	for (size_t i = 0; i < this->_server_block.size(); i++)
 	{
 		serv_block tmp;
 
-		tmp.pars_serv(this->_server_block[i]);
+		tmp.pars_serv(this->_server_block[i], this->_path);
 		this->_server.push_back(tmp);
 	}
 
 }
-
 
 void confpars::pars_http()
 {
@@ -153,10 +153,9 @@ void confpars::pars_http()
 	size_t nb_serv = 0;
 
 	for (size_t j = 0; j < this->_file.size(); j++)
-	{
 		if (this->_file[j].compare("server") == 0)
 			nb_serv++;
-	}
+
 	if (nb_serv == 0)
 		throw NoServerFound(this->_path);
 	if (tmp[i++].compare("http") != 0)
@@ -178,9 +177,9 @@ void confpars::pars_http()
 	}
 
 	// DEBUG //
-	std::cout << std::boolalpha << this->_sendfile << '\n';
-	for (std::map<std::string, std::string>::iterator it = this->_error_page.begin(); it != this->_error_page.end(); it++)
-		std::cout << it->first << "-> \"" << it->second << "\"\n";
+	// std::cout << std::boolalpha << this->_sendfile << '\n';
+	// for (std::map<std::string, std::string>::iterator it = this->_error_page.begin(); it != this->_error_page.end(); it++)
+	// 	std::cout << it->first << "-> \"" << it->second << "\"\n";
 }
 
 // ************** INTERNE FUNCTION PARS ************** //

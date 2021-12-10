@@ -6,7 +6,7 @@
 /*   By: vmoreau <vmoreau@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/08 14:44:20 by vmoreau           #+#    #+#             */
-/*   Updated: 2021/12/08 16:34:59 by vmoreau          ###   ########.fr       */
+/*   Updated: 2021/12/10 16:16:33 by vmoreau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,9 @@ private:
 public:
 	loc_block(/* args */);
 	~loc_block();
+
+	// PARSING
+	void pars_loc(std::vector<std::string> block, std::string path);
 };
 
 #endif
