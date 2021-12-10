@@ -41,6 +41,7 @@ class   AResponse
 		AResponse(const std::string& protocol_version, const std::string& status, const std::string& status_message, const std::string& content_type, const std::string& content_lenght, const std::string& body);
 		virtual ~AResponse();
 
+		void	buildLineResp(const char *str1, const char *sep1, const char *str2, const char *sep2, int *i);
 		void	buildPartResp(const std::string& key, int *i);
 		void	buildResponse();
 		void*	respond() const;

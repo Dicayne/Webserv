@@ -6,7 +6,7 @@
 /*   By: mabriand <mabriand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/09 14:27:09 by mabriand          #+#    #+#             */
-/*   Updated: 2021/12/10 12:45:32 by mabriand         ###   ########.fr       */
+/*   Updated: 2021/12/10 14:35:02 by mabriand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,57 +83,31 @@ const std::string&  AResponse::getBody() const{ return (this->body); }
 
 const std::string&  AResponse::getResponse() const{ return (this->response); }///////////////
 
+
+void	AResponse::buildLineResp(const char *str1, const char *sep1, const char *str2, const char *sep2, int *i)
+{
+	if (str1)
+		*i = (this->response).insert(*i, str1).size();
+	if (sep1)
+		*i = (this->response).insert(*i, sep1).size();
+	if (str2)	
+		*i = (this->response).insert(*i, str2).size();
+	if (sep2)
+		*i = (this->response).insert(*i, sep2).size();
+	return ;
+
+}
 void	AResponse::buildPartResp(const std::string& key, int *i)
 {
 	std::map<std::string, std::string>::iterator	itf = (this->stock).find(key);
 	
-	if (key.compare("Protocol-Version") == 0 || key.compare("Status") == 0 || key.compare("Status-Message") == 0)
-	{
-		(this->response).insert(*i, (const char *)itf->second.c_str());
-		*i = (this->response).size();
-		if (key.compare("Protocol-Version") == 0 || key.compare("Status") == 0)
-			(this->response).insert(*i, " ");
-		else
-			(this->response).insert(*i, "\n");
-		*i += 1;
-	}
-	else
-	{
-		if (key.compare("Body") != 0)
-		{
-			(this->response).insert(*i, (const char *)itf->first.c_str());
-			*i = (this->response).size();
-			(this->response).insert(*i, ":");
-			*i += 1;
-			(this->response).insert(*i, " ");
-			*i += 1;
-			(this->response).insert(*i, (const char *)itf->second.c_str());
-			*i = (this->response).size();
-			(this->response).insert(*i, "\n");
-			*i += 1;
-		}
-		else
-		{
-			(this->response).insert(*i, "\n");
-			*i += 1;
-			(this->response).insert(*i, (const char *)itf->second.c_str());
-			*i = (this->response).size();
-		}
-	}
-
-
-	// (this->response).insert(*i, (const char *)itf->second.c_str());
-	// *i = (this->response).size();
-	
-
-
-	// if (key.compare("protocol_version") == 0 || key.compare("status") == 0)
-	// 	(this->response).insert(*i, " ");
-	// else if (key.compare("body") != 0)
-	// 	(this->response).insert(*i, "\n");
-
-	// *i += 1;
-	return ;
+	if (key.compare("Protocol-Version") == 0 || key.compare("Status") == 0)
+		return (this->buildLineResp(itf->second.c_str(), " ", NULL, NULL, i));
+	else if (key.compare("Status-Message") == 0)
+		return (this->buildLineResp(itf->second.c_str(), "\n", NULL, NULL, i));
+	else if (key.compare("Body") == 0)
+		return (this->buildLineResp("\n", NULL, itf->second.c_str(), NULL, i));
+	return (this->buildLineResp(itf->first.c_str(), ": ", itf->second.c_str(), "\n", i));
 }
 void	AResponse::buildResponse()
 {
@@ -142,8 +116,11 @@ void	AResponse::buildResponse()
 	this->buildPartResp("Protocol-Version", &i);
 	this->buildPartResp("Status", &i);
 	this->buildPartResp("Status-Message", &i);
+
+	
 	this->buildPartResp("Content-Type", &i);
 	this->buildPartResp("Content-Lenght", &i);
+	
 	this->buildPartResp("Body", &i);
 	
 	return ;
