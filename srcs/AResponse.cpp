@@ -6,23 +6,24 @@
 /*   By: mabriand <mabriand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/09 14:27:09 by mabriand          #+#    #+#             */
-/*   Updated: 2021/12/10 21:44:24 by mabriand         ###   ########.fr       */
+/*   Updated: 2021/12/10 22:37:13 by mabriand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../incs/AResponse.hpp"
 
 AResponse::AResponse(){}
-AResponse::AResponse(const std::string& protocol_version, const std::string& status, const std::string& status_message, const std::string& url)
+AResponse::AResponse(const std::string& protocol_version, const std::string& status, const std::string& url)
 {
 	// Independant from the parameters
 	this->setMimeMap();
+	this->setMessagesMap();
 
 
 	// Dependant from the parameters
 	this->setProtocolVersion(protocol_version);
 	this->setStatus(status);
-	this->setStatusMessage(status_message);
+	this->setStatusMessage(status);
 	this->setDate();
 	// this->setServer();
 	this->setBody(url);
@@ -49,11 +50,21 @@ void	AResponse::setStatus(const std::string& status)
 	this->stock.insert(elem);
 	return ;
 }
-void	AResponse::setStatusMessage(const std::string& status_message)
+void	AResponse::setStatusMessage(const std::string& status)
 {
-	this->status_message = status_message;
+	(void)status;
+	int key = 200;
+	std::map<int, std::string>::iterator	itf = (this->messages).find(key);
+	this->status_message = itf->second;
 	std::pair<std::string, std::string> elem("Status-Message", this->status_message);		
 	this->stock.insert(elem);
+	return ;
+
+
+
+	// this->status_message = status_message;
+	// std::pair<std::string, std::string> elem("Status-Message", this->status_message);		
+	// this->stock.insert(elem);
 	return ;
 }
 void	AResponse::setDate()
@@ -94,19 +105,20 @@ void	AResponse::setContentLenght()
 void	AResponse::setBody(const std::string& url)
 {
 	std::ifstream ms;
-	ms.open(url);
-	
 	std::string	temp;
 	std::string body;
+
+	ms.open(url);
 	while(std::getline(ms, temp))
 	{
 		body += temp;
 		body += '\n';
 	}
 	ms.close();
-	body.pop_back();
 
+	body.pop_back();
 	this->body = body;
+	
 	std::pair<std::string, std::string> elem("Body", this->body);		
 	this->stock.insert(elem);
 	return ;
@@ -215,6 +227,82 @@ void	AResponse::setMimeMap()
 	// z
 	this->buildMime(".zip", "application/zip");
 	this->buildMime(".7z", "application/x-7z-compressed");
+	return ;
+}
+void	AResponse::buildMessages(int key, const std::string& mapped)
+{
+	std::pair<int, std::string>	elem(key, mapped);	
+	this->messages.insert(elem);
+	return ;
+}
+void	AResponse::setMessagesMap()
+{
+	// 1xx
+	this->buildMessages(100, "Continue");
+	this->buildMessages(101, "Switching Protocol");
+	this->buildMessages(102, "Processing");
+	this->buildMessages(103, "Early Hints");
+	// 2xx
+	this->buildMessages(200, "OK");
+	this->buildMessages(201, "Created");
+	this->buildMessages(202, "Accepted");
+	this->buildMessages(203, "Non-Authoritative Information");
+	this->buildMessages(204, "No Content");
+	this->buildMessages(205, "Reset Content");
+	this->buildMessages(206, "Partial Content");
+	this->buildMessages(207, "Multi-Status");
+	this->buildMessages(208, "Already Reported");
+	this->buildMessages(226, "IM Used");
+	// 3xx
+	this->buildMessages(300, "Multiple Choice");
+	this->buildMessages(301, "Moved Permanently");
+	this->buildMessages(302, "Found");
+	this->buildMessages(303, "See Other");
+	this->buildMessages(304, "Not Modified");
+	this->buildMessages(307, "Temporary Redirect");
+	this->buildMessages(308, "Permanent Redirect");
+	// 4xx
+	this->buildMessages(400, "Bad Request");
+	this->buildMessages(401, "Unauthorized");
+	this->buildMessages(402, "Payment Required");
+	this->buildMessages(403, "Forbidden");
+	this->buildMessages(404, "Not Found");
+	this->buildMessages(405, "Method Not Allowed");
+	this->buildMessages(406, "Method Not Acceptable");
+	this->buildMessages(407, "Proxy Authentification Required");
+	this->buildMessages(408, "Request Timeout");
+	this->buildMessages(409, "Conflict");
+	this->buildMessages(410, "Gone");
+	this->buildMessages(411, "Lenght Required");
+	this->buildMessages(412, "Precondition Failed");
+	this->buildMessages(413, "Payload Too Large");
+	this->buildMessages(414, "URI Too Long");
+	this->buildMessages(415, "Unsupported Media Type");
+	this->buildMessages(416, "Requested Range Not Satisiable");
+	this->buildMessages(417, "Excpectation Failed");
+	this->buildMessages(418, "I'm a teapot");
+	this->buildMessages(421, "Misdirected Request");
+	this->buildMessages(422, "Unprocessable Entity");
+	this->buildMessages(423, "Locked");
+	this->buildMessages(424, "Failed Dependency");
+	this->buildMessages(425, "TooEarly");
+	this->buildMessages(426, "Upgrade Required");
+	this->buildMessages(428, "Precondition Required");
+	this->buildMessages(429, "Too Many Requests");
+	this->buildMessages(431, "Request Header Fields Too Large");
+	this->buildMessages(451, "Unavailable For Legal Reasons");
+	// 5xx
+	this->buildMessages(500, "Internal Server Error");
+	this->buildMessages(501, "Not Implemented");
+	this->buildMessages(502, "Bad Gateway");
+	this->buildMessages(503, "Service Unavailable");
+	this->buildMessages(504, "Gateway Timeout");
+	this->buildMessages(505, "HTTP VErsion Not Supported");
+	this->buildMessages(506, "Variant Also Negotiates");
+	this->buildMessages(507, "Insufficient Storage");
+	this->buildMessages(508, "Loop Detected");
+	this->buildMessages(510, "Not Extended");
+	this->buildMessages(511, "Network Authentication Required");
 	return ;
 }
 

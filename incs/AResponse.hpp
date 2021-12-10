@@ -24,6 +24,7 @@ class   AResponse
 		std::string							response;
 		std::map<std::string, std::string>	stock;
 		std::map<std::string, std::string>	mime;
+		std::map<int, std::string>			messages;
 
 		/*
 			Attributes corresponding to the fields of the HTTP request:
@@ -40,7 +41,7 @@ class   AResponse
 
 	public:
 		AResponse();
-		AResponse(const std::string& protocol_version, const std::string& status, const std::string& status_message, const std::string& url);
+		AResponse(const std::string& protocol_version, const std::string& status, const std::string& url);
 		virtual ~AResponse();
 
 		/*
@@ -58,6 +59,8 @@ class   AResponse
 
 		void	buildMime(const std::string& key, const std::string& mapped);
 		void	setMimeMap();
+		void	buildMessages(int key, const std::string& mapped);
+		void	setMessagesMap();
 		
 		void	buildLineResp(const char *str1, const char *sep1, const char *str2, const char *sep2, int *i);
 		void	buildPartResp(const std::string& key, int *i);

@@ -105,12 +105,12 @@ int main()
 		ms.close();
 
 		std::string url("./html_marie/failure.html");
-		Resp2	failure("HTTP/1.1", "400", "NOPE", url);
+		Resp2	failure("HTTP/1.1", "400", url);
 		send(newSocket, failure.respond(), failure.getResponse().size() , 0);
 	}
 	else
 	{
-		Resp2	failure("HTTP/1.1", "200", "OKAY", firstRequest.getUrl());
+		Resp2	failure("HTTP/1.1", "200", firstRequest.getUrl());
 		send(newSocket, failure.respond(), failure.getResponse().size() , 0);
 		ms.close();
 	}
