@@ -30,15 +30,16 @@ class   AResponse
 		std::string	protocol_version;
 		std::string	status;
 		std::string	status_message;
-		// std::string date;
+		std::string date;
 		// std::string	server;
+		std::string	body;
 		std::string content_type;
 		std::string content_lenght; // Content-Lenght : ne doit pas dépasser le client body size max
-		std::string	body;
+		
 
 	public:
 		AResponse();
-		AResponse(const std::string& protocol_version, const std::string& status, const std::string& status_message, const std::string& content_type, const std::string& content_lenght, const std::string& body);
+		AResponse(const std::string& protocol_version, const std::string& status, const std::string& status_message, const std::string& content_type,/* const std::string& content_lenght,*/ const std::string& body);
 		virtual ~AResponse();
 
 		void	buildLineResp(const char *str1, const char *sep1, const char *str2, const char *sep2, int *i);
@@ -52,10 +53,10 @@ class   AResponse
 		void	setProtocolVersion(const std::string& pv);
 		void	setStatus(const std::string& s);
 		void	setStatusMessage(const std::string& sm);
-		// void	setDate();
+		void	setDate();
 		// void	setServer();
 		void	setContentType(const std::string& content_type);
-		void	setContentLenght(const std::string& content_lenght);
+		void	setContentLenght(/*const std::string& content_lenght*/);
 		void	setBody(const std::string& b);
 		/*
 			All getters (one for each attribute corresponding to a field of the HTTP request):
@@ -63,7 +64,7 @@ class   AResponse
 		const std::string&	getProtocolVersion() const;
 		const std::string&	getStatus() const;
 		const std::string&	getStatusMessage() const;
-		// const std::string&  getDate() const;
+		const std::string&  getDate() const;
 		// const std::string&  getServer() const;
 		const std::string&  getContentType() const;
 		const std::string&	getContentLenght() const;

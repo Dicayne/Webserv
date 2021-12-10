@@ -6,22 +6,23 @@
 /*   By: mabriand <mabriand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/09 14:27:09 by mabriand          #+#    #+#             */
-/*   Updated: 2021/12/10 14:35:02 by mabriand         ###   ########.fr       */
+/*   Updated: 2021/12/10 16:18:56 by mabriand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../incs/AResponse.hpp"
 
 AResponse::AResponse(){}
-AResponse::AResponse(const std::string& protocol_version, const std::string& status, const std::string& status_message, const std::string& content_type, const std::string& content_lenght, const std::string& body)
+AResponse::AResponse(const std::string& protocol_version, const std::string& status, const std::string& status_message, const std::string& content_type,/* const std::string& content_lenght,*/ const std::string& body)
 {
 	this->setProtocolVersion(protocol_version);
 	this->setStatus(status);
 	this->setStatusMessage(status_message);
-	//
-	this->setContentType(content_type);
-	this->setContentLenght(content_lenght);
+	this->setDate();
+	// this->setServer();
 	this->setBody(body);
+	this->setContentType(content_type);
+	this->setContentLenght(/*content_lenght*/);
 	
 	this->buildResponse();
 	return ;
@@ -50,7 +51,18 @@ void	AResponse::setStatusMessage(const std::string& status_message)
 	this->stock.insert(elem);
 	return ;
 }
-//
+void	AResponse::setDate()
+{
+    std::time_t result = std::time(nullptr);
+	std::string date(std::asctime(std::localtime(&result)));
+	date.pop_back();
+	
+	this->date = date;
+	std::pair<std::string, std::string> elem("Date", this->date);
+	this->stock.insert(elem);
+	return ;                                     
+}
+///////////////////////////////////
 void	AResponse::setContentType(const std::string& content_type)
 {
 	this->content_type = content_type;
@@ -58,9 +70,20 @@ void	AResponse::setContentType(const std::string& content_type)
 	this->stock.insert(elem);
 	return ;
 }
-void	AResponse::setContentLenght(const std::string& content_lenght)
+void	AResponse::setContentLenght(/*const std::string& content_lenght*/)
 {
-	this->content_lenght = content_lenght;
+	// int a = 10;
+	// stringstream ss;
+	// ss << a;
+	// string str = ss.str();
+
+
+	std::stringstream content_lenght;
+	content_lenght << this->body.size();
+
+
+	// std::string content_lenght(std::itoa(this->body.size()));
+	this->content_lenght = content_lenght.str();
 	std::pair<std::string, std::string> elem("Content-Lenght", this->content_lenght);		
 	this->stock.insert(elem);
 	return ;
@@ -76,10 +99,11 @@ void	AResponse::setBody(const std::string& b)
 const std::string&	AResponse::getProtocolVersion() const{ return (this->protocol_version); }
 const std::string&	AResponse::getStatus() const{ return (this->status); }
 const std::string&	AResponse::getStatusMessage() const{ return (this->status_message); }
+const std::string&	AResponse::getDate() const{ return (this->date); }
 //
+const std::string&  AResponse::getBody() const{ return (this->body); }
 const std::string&	AResponse::getContentType() const{ return (this->content_type); }
 const std::string&	AResponse::getContentLenght() const{ return (this->content_lenght); }
-const std::string&  AResponse::getBody() const{ return (this->body); }
 
 const std::string&  AResponse::getResponse() const{ return (this->response); }///////////////
 
@@ -107,6 +131,8 @@ void	AResponse::buildPartResp(const std::string& key, int *i)
 		return (this->buildLineResp(itf->second.c_str(), "\n", NULL, NULL, i));
 	else if (key.compare("Body") == 0)
 		return (this->buildLineResp("\n", NULL, itf->second.c_str(), NULL, i));
+	// else if (key.compare("Date") == 0)
+	// 	return (this->buildLineResp(itf->first.c_str(), ": ", itf->second.c_str(), "", i));
 	return (this->buildLineResp(itf->first.c_str(), ": ", itf->second.c_str(), "\n", i));
 }
 void	AResponse::buildResponse()
@@ -116,7 +142,7 @@ void	AResponse::buildResponse()
 	this->buildPartResp("Protocol-Version", &i);
 	this->buildPartResp("Status", &i);
 	this->buildPartResp("Status-Message", &i);
-
+	this->buildPartResp("Date", &i);
 	
 	this->buildPartResp("Content-Type", &i);
 	this->buildPartResp("Content-Lenght", &i);

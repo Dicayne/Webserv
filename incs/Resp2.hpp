@@ -6,7 +6,7 @@
 /*   By: mabriand <mabriand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/09 13:07:32 by mabriand          #+#    #+#             */
-/*   Updated: 2021/12/10 12:19:11 by mabriand         ###   ########.fr       */
+/*   Updated: 2021/12/10 16:15:40 by mabriand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@ class   Resp2 : public AResponse
         Resp2();
 
     public:
-		Resp2(const std::string& protocol_version, const std::string& status, const std::string& status_message, const std::string& content_type, const std::string& content_lenght, const std::string& body);
+		Resp2(const std::string& protocol_version, const std::string& status, const std::string& status_message, const std::string& content_type,/* const std::string& content_lenght,*/ const std::string& body);
 		virtual ~Resp2();
 };                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             
 

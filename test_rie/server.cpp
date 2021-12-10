@@ -95,7 +95,7 @@ int main()
 
 	if (ms.is_open() == false)
 	{
-		Resp2	success("HTTP/1.1", "400", "NOPE", "text/plain", "15", "FUCK THAT BITCH");
+		Resp2	success("HTTP/1.1", "400", "NOPE", "text/plain", "FUCK THAT BITCH");
 
 		std::cout << PURPLE << success << NC;
 		// std::string fuck("HTTP/1.1 400 NOPE\nContent-Type: text/plain\nContent-Length: 15\n\nFUCK THIS B!TCH");

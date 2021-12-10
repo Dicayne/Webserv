@@ -6,7 +6,7 @@
 /*   By: mabriand <mabriand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/29 16:53:05 by vmoreau           #+#    #+#             */
-/*   Updated: 2021/12/09 14:45:51 by mabriand         ###   ########.fr       */
+/*   Updated: 2021/12/10 15:39:56 by mabriand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +32,7 @@
 #include <map>
 #include <bitset>
 #include <sstream>
+#include <ctime>
 
 // #include "./Request.hpp"
 // #include "./AResponse.hpp"
