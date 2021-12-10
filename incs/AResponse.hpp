@@ -32,13 +32,13 @@ class   AResponse
 		std::string	status_message;
 		// std::string date;
 		// std::string	server;
-		// std::string content_type;
-		// std::string content_lenght; // Content-Lenght : ne doit pas dépasser le client body size max
+		std::string content_type;
+		std::string content_lenght; // Content-Lenght : ne doit pas dépasser le client body size max
 		std::string	body;
 
 	public:
 		AResponse();
-		AResponse(const std::string& protocol_version, const std::string& status, const std::string& status_message, const std::string& body);
+		AResponse(const std::string& protocol_version, const std::string& status, const std::string& status_message, const std::string& content_type, const std::string& content_lenght, const std::string& body);
 		virtual ~AResponse();
 
 		void	buildPartResp(const std::string& key, int *i);
@@ -53,8 +53,8 @@ class   AResponse
 		void	setStatusMessage(const std::string& sm);
 		// void	setDate();
 		// void	setServer();
-		// void	setContentType();
-		// void	setContentLenght();
+		void	setContentType(const std::string& content_type);
+		void	setContentLenght(const std::string& content_lenght);
 		void	setBody(const std::string& b);
 		/*
 			All getters (one for each attribute corresponding to a field of the HTTP request):
@@ -64,7 +64,7 @@ class   AResponse
 		const std::string&	getStatusMessage() const;
 		// const std::string&  getDate() const;
 		// const std::string&  getServer() const;
-		// const std::string&  getContentType() const;
+		const std::string&  getContentType() const;
 		const std::string&	getContentLenght() const;
 		const std::string&	getBody() const;
 

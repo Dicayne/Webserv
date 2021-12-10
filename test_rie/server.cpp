@@ -85,7 +85,7 @@ int main()
 
 	char buffer[30000] = {0};
 	recv(newSocket, buffer, 30000, 0);
-    std::cout << RED << buffer << NC << std::endl;
+    // std::cout << RED << buffer << NC << std::endl;
 	std::string	buf = buffer;
 
 	Request	firstRequest(buf);
@@ -95,12 +95,12 @@ int main()
 
 	if (ms.is_open() == false)
 	{
-		Resp2	success("HTTP 1.1", "400", "NOPE", "OH SHIT");
+		Resp2	success("HTTP/1.1", "400", "NOPE", "text/plain", "15", "FUCK THAT BITCH");
 
 		std::cout << PURPLE << success << NC;
-		// std::string fuck("HTTP/1.1 200 OK\nContent-Type: text/plain\nContent-Length: 8\n\nFUCK IT!");
+		// std::string fuck("HTTP/1.1 400 NOPE\nContent-Type: text/plain\nContent-Length: 15\n\nFUCK THIS B!TCH");
 		
-		int ret = send(newSocket, success.respond(), 26 , 0);
+		int ret = send(newSocket, success.respond(), success.getResponse().size() , 0);
 		// int ret = send(newSocket, fuck.c_str(), fuck.size(), 0);
 		std::cout << "RET OF SEND() = " << ret << std::endl;
 		// send(newSocket, success.buildResponse(), 8, 0);
