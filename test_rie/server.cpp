@@ -89,30 +89,34 @@ int main()
 	std::string	buf = buffer;
 
 	Request	firstRequest(buf);
-	
-	std::ifstream ms;
-	ms.open(firstRequest.getUrl());
+	buf.clear();
 
+	std::ifstream ms;
+	ms.close();
+	ms.open(firstRequest.getUrl());
+	std::string msg;
 	if (ms.is_open() == false)
 	{
-		Resp2	success("HTTP/1.1", "400", "NOPE", "text/plain", "FUCK THAT BITCH");
+		ms.open("./html_marie/test.html");
+		if (ms.is_open() == false)
+			std::cout << "I can't open html\n";
+		else
+			std::cout << "The html is open!\n";
 
-		std::cout << PURPLE << success << NC;
-		// std::string fuck("HTTP/1.1 400 NOPE\nContent-Type: text/plain\nContent-Length: 15\n\nFUCK THIS B!TCH");
-		
-		int ret = send(newSocket, success.respond(), success.getResponse().size() , 0);
-		// int ret = send(newSocket, fuck.c_str(), fuck.size(), 0);
-		std::cout << "RET OF SEND() = " << ret << std::endl;
-		// send(newSocket, success.buildResponse(), 8, 0);
-		// std::cout << root << ": Not Found\n";
-		// ms.open("./html/error/404.html");
+
+		while(std::getline(ms, buf))
+		{
+			msg += buf;
+			msg += '\n';
+		}
+		msg.pop_back();
+		Resp2	failure("HTTP/1.1", "400", "NOPE", "text/plain", msg/*"The page you requested does not exist..."*/);
+		send(newSocket, failure.respond(), failure.getResponse().size() , 0);
 	}
 	else
 	{
-		std::cout << GREEN << "TRUE\n" << NC << std::endl;
-		// Resp2	success("HTTP 1.1", "200", "OK", "OH \nYEAAAAAAAAAH \nBABY");
-		// send(newSocket, success.buildResponse(), 8, 0);
-		// // send(newSocket, hello.c_str(), hello.size(), 0);
+		Resp2	success("HTTP/1.1", "200", "OKAY", "text/plain", "Well done: this is the page you wanted!");
+		send(newSocket, success.respond(), success.getResponse().size() , 0);
 	}
     std::cout << "---> 'Hi' message sent in response\n";
     close(newSocket);

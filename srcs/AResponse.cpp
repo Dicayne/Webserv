@@ -6,7 +6,7 @@
 /*   By: mabriand <mabriand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/09 14:27:09 by mabriand          #+#    #+#             */
-/*   Updated: 2021/12/10 16:18:56 by mabriand         ###   ########.fr       */
+/*   Updated: 2021/12/10 18:39:16 by mabriand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,15 +72,8 @@ void	AResponse::setContentType(const std::string& content_type)
 }
 void	AResponse::setContentLenght(/*const std::string& content_lenght*/)
 {
-	// int a = 10;
-	// stringstream ss;
-	// ss << a;
-	// string str = ss.str();
-
-
 	std::stringstream content_lenght;
 	content_lenght << this->body.size();
-
 
 	// std::string content_lenght(std::itoa(this->body.size()));
 	this->content_lenght = content_lenght.str();
@@ -93,6 +86,7 @@ void	AResponse::setBody(const std::string& b)
 	this->body = b;
 	std::pair<std::string, std::string> elem("Body", this->body);		
 	this->stock.insert(elem);
+	std::cout << "|" << this->body << "|" << std::endl;
 	return ;
 }
 
