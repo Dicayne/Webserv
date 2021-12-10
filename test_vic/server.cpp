@@ -6,7 +6,7 @@
 /*   By: mabriand <mabriand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/06 14:08:02 by vmoreau           #+#    #+#             */
-/*   Updated: 2021/12/10 18:27:20 by mabriand         ###   ########.fr       */
+/*   Updated: 2021/12/10 21:32:23 by mabriand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -101,11 +101,12 @@ int main()
 		}
 		else
 			std::cout << "File Found\n";
-		while(std::getline(ms, recep))
-		{
-			msg += recep;
-			msg += '\n';
-		}
+		std::string url("./html/error/404.html")
+		// while(std::getline(ms, recep))
+		// {
+		// 	msg += recep;
+		// 	msg += '\n';
+		// }
 		ms.close();
 		if (send(new_sock, msg.c_str(), msg.size() , 0) < 0)
 		{

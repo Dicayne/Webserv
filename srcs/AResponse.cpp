@@ -6,23 +6,26 @@
 /*   By: mabriand <mabriand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/09 14:27:09 by mabriand          #+#    #+#             */
-/*   Updated: 2021/12/10 21:21:03 by mabriand         ###   ########.fr       */
+/*   Updated: 2021/12/10 21:44:24 by mabriand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../incs/AResponse.hpp"
 
 AResponse::AResponse(){}
-AResponse::AResponse(const std::string& protocol_version, const std::string& status, const std::string& status_message, const std::string& url,/* const std::string& content_lenght,*/ const std::string& body)
+AResponse::AResponse(const std::string& protocol_version, const std::string& status, const std::string& status_message, const std::string& url)
 {
+	// Independant from the parameters
 	this->setMimeMap();
-	
+
+
+	// Dependant from the parameters
 	this->setProtocolVersion(protocol_version);
 	this->setStatus(status);
 	this->setStatusMessage(status_message);
 	this->setDate();
 	// this->setServer();
-	this->setBody(body);
+	this->setBody(url);
 	this->setContentType(url);
 	this->setContentLenght();
 	
@@ -88,9 +91,22 @@ void	AResponse::setContentLenght()
 	this->stock.insert(elem);
 	return ;
 }
-void	AResponse::setBody(const std::string& b)
-{ 
-	this->body = b;
+void	AResponse::setBody(const std::string& url)
+{
+	std::ifstream ms;
+	ms.open(url);
+	
+	std::string	temp;
+	std::string body;
+	while(std::getline(ms, temp))
+	{
+		body += temp;
+		body += '\n';
+	}
+	ms.close();
+	body.pop_back();
+
+	this->body = body;
 	std::pair<std::string, std::string> elem("Body", this->body);		
 	this->stock.insert(elem);
 	return ;
@@ -137,7 +153,6 @@ void	AResponse::setMimeMap()
 	// e
 	this->buildMime(".eot", "application/vnd.ms-fontobject");
 	this->buildMime(".epub", "application/epub+zip");
-	// f
 	// g
 	this->buildMime(".gif", "image/gif");
 	// h
@@ -152,14 +167,11 @@ void	AResponse::setMimeMap()
 	this->buildMime(".jpg", "image/jpeg");
 	this->buildMime(".js", "application/javascript");
 	this->buildMime(".json", "application/json");
-	// k
-	// l
 	// m
 	this->buildMime(".mid", "audio/midi");
 	this->buildMime(".midi", "audio/midi");
 	this->buildMime(".mpeg", "video/mpeg");
 	this->buildMime(".mppkg", "application/vnd.apple.installer+xml");
-	// n
 	// o
 	this->buildMime(".odp", "application/vnd.oasis.opendocument.presentation");
 	this->buildMime(".ods", "application/vnd.oasis.opendocument.spreadsheet");
@@ -200,13 +212,11 @@ void	AResponse::setMimeMap()
 	this->buildMime(".xlsx", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
 	this->buildMime(".xml", "application/xml");
 	this->buildMime(".xul", "application/vnd.mozilla.xul+xml");
-	// y
 	// z
 	this->buildMime(".zip", "application/zip");
 	this->buildMime(".7z", "application/x-7z-compressed");
 	return ;
 }
-
 
 void	AResponse::buildLineResp(const char *str1, const char *sep1, const char *str2, const char *sep2, int *i)
 {
@@ -260,7 +270,6 @@ std::ostream&	operator<<(std::ostream& os, const AResponse& r)
 	os << "[" << r.getContentType() << "]" << std::endl;
 	os << "[" << r.getContentLenght() << "]" << std::endl;
 	os << "[" << r.getBody() << "]" << std::endl;
-	os << "Message sent to the client as response:\n\n" << std::endl;
-	os << r.getResponse() << std::endl;
+	os << YELLOW << "===>" << r.getResponse() << "<===" << NC << std::endl;
 	return (os);
 }

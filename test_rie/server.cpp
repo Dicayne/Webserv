@@ -94,27 +94,25 @@ int main()
 	std::ifstream ms;
 	ms.close();
 	ms.open(firstRequest.getUrl());
-	std::string msg;
 	if (ms.is_open() == false)
 	{
-		ms.open("./html_marie/test.html");
+		ms.close(); // Because we're goning to open another
+		ms.open("./html_marie/failure.html");
 		if (ms.is_open() == false)
 			std::cout << "I can't open html\n";
 		else
 			std::cout << "The html is open!\n";
-		while(std::getline(ms, buf))
-		{
-			msg += buf;
-			msg += '\n';
-		}
-		msg.pop_back();
-		Resp2	failure("HTTP/1.1", "400", "NOPE", "./html_marie/test.html", msg/*"The page you requested does not exist..."*/);
+		ms.close();
+
+		std::string url("./html_marie/failure.html");
+		Resp2	failure("HTTP/1.1", "400", "NOPE", url);
 		send(newSocket, failure.respond(), failure.getResponse().size() , 0);
 	}
 	else
 	{
-		Resp2	success("HTTP/1.1", "200", "OKAY", "text/plain", "Well done: this is the page you wanted!");
-		send(newSocket, success.respond(), success.getResponse().size() , 0);
+		Resp2	failure("HTTP/1.1", "200", "OKAY", firstRequest.getUrl());
+		send(newSocket, failure.respond(), failure.getResponse().size() , 0);
+		ms.close();
 	}
     std::cout << "---> 'Hi' message sent in response\n";
     close(newSocket);
