@@ -3,14 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   AResponse.cpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mabriand <mabriand@student.42.fr>          +#+  +:+       +#+        */
+/*   By: vmoreau <vmoreau@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/09 14:27:09 by mabriand          #+#    #+#             */
-/*   Updated: 2021/12/10 22:37:13 by mabriand         ###   ########.fr       */
+/*   Updated: 2021/12/13 18:48:17 by vmoreau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../incs/AResponse.hpp"
+#include "./AResponse.hpp"
 
 AResponse::AResponse(){}
 AResponse::AResponse(const std::string& protocol_version, const std::string& status, const std::string& url)
@@ -29,7 +29,7 @@ AResponse::AResponse(const std::string& protocol_version, const std::string& sta
 	this->setBody(url);
 	this->setContentType(url);
 	this->setContentLenght();
-	
+
 	this->buildResponse();
 	return ;
 
@@ -39,14 +39,14 @@ AResponse::~AResponse(){}
 void	AResponse::setProtocolVersion(const std::string& protocol_version)
 {
 	this->protocol_version = protocol_version;
-	std::pair<std::string, std::string> elem("Protocol-Version", this->protocol_version);		
+	std::pair<std::string, std::string> elem("Protocol-Version", this->protocol_version);
 	this->stock.insert(elem);
-	return ; 
+	return ;
 }
 void	AResponse::setStatus(const std::string& status)
 {
 	this->status = status;
-	std::pair<std::string, std::string> elem("Status", this->status);		
+	std::pair<std::string, std::string> elem("Status", this->status);
 	this->stock.insert(elem);
 	return ;
 }
@@ -56,14 +56,14 @@ void	AResponse::setStatusMessage(const std::string& status)
 	int key = 200;
 	std::map<int, std::string>::iterator	itf = (this->messages).find(key);
 	this->status_message = itf->second;
-	std::pair<std::string, std::string> elem("Status-Message", this->status_message);		
+	std::pair<std::string, std::string> elem("Status-Message", this->status_message);
 	this->stock.insert(elem);
 	return ;
 
 
 
 	// this->status_message = status_message;
-	// std::pair<std::string, std::string> elem("Status-Message", this->status_message);		
+	// std::pair<std::string, std::string> elem("Status-Message", this->status_message);
 	// this->stock.insert(elem);
 	return ;
 }
@@ -72,11 +72,11 @@ void	AResponse::setDate()
     std::time_t result = std::time(nullptr);
 	std::string date(std::asctime(std::localtime(&result)));
 	date.pop_back();
-	
+
 	this->date = date;
 	std::pair<std::string, std::string> elem("Date", this->date);
 	this->stock.insert(elem);
-	return ;                                     
+	return ;
 }
 ///////////////////////////////////
 void	AResponse::setContentType(const std::string& url)
@@ -88,7 +88,7 @@ void	AResponse::setContentType(const std::string& url)
 	std::string key(url.substr(pos, url.size() - pos));
 	std::map<std::string, std::string>::iterator	itf = (this->mime).find(key);
 	this->content_type = itf->second;
-	std::pair<std::string, std::string> elem("Content-Type", this->content_type);		
+	std::pair<std::string, std::string> elem("Content-Type", this->content_type);
 	this->stock.insert(elem);
 	return ;
 }
@@ -98,7 +98,7 @@ void	AResponse::setContentLenght()
 	content_lenght << this->body.size();
 
 	this->content_lenght = content_lenght.str();
-	std::pair<std::string, std::string> elem("Content-Lenght", this->content_lenght);		
+	std::pair<std::string, std::string> elem("Content-Lenght", this->content_lenght);
 	this->stock.insert(elem);
 	return ;
 }
@@ -118,8 +118,8 @@ void	AResponse::setBody(const std::string& url)
 
 	body.pop_back();
 	this->body = body;
-	
-	std::pair<std::string, std::string> elem("Body", this->body);		
+
+	std::pair<std::string, std::string> elem("Body", this->body);
 	this->stock.insert(elem);
 	return ;
 }
@@ -137,7 +137,7 @@ const std::string&  AResponse::getResponse() const{ return (this->response); }//
 
 void	AResponse::buildMime(const std::string& key, const std::string& mapped)
 {
-	std::pair<std::string, std::string>	elem(key, mapped);	
+	std::pair<std::string, std::string>	elem(key, mapped);
 	this->mime.insert(elem);
 	return ;
 }
@@ -231,7 +231,7 @@ void	AResponse::setMimeMap()
 }
 void	AResponse::buildMessages(int key, const std::string& mapped)
 {
-	std::pair<int, std::string>	elem(key, mapped);	
+	std::pair<int, std::string>	elem(key, mapped);
 	this->messages.insert(elem);
 	return ;
 }
@@ -306,30 +306,40 @@ void	AResponse::setMessagesMap()
 	return ;
 }
 
-void	AResponse::buildLineResp(const char *str1, const char *sep1, const char *str2, const char *sep2, int *i)
-{
-	if (str1)
-		*i = (this->response).insert(*i, str1).size();
-	if (sep1)
-		*i = (this->response).insert(*i, sep1).size();
-	if (str2)	
-		*i = (this->response).insert(*i, str2).size();
-	if (sep2)
-		*i = (this->response).insert(*i, sep2).size();
-	return ;
+// void	AResponse::buildLineResp(const std::string str1, const std::string sep1, const std::string str2, const std::string sep2, int *i)
+// {
+// 	if (!str1.empty())
+// 		*i = (this->response).insert(*i, str1).size();
+// 	if (!sep1.empty())
+// 		*i = (this->response).insert(*i, sep1).size();
+// 	if (!str2.empty())
+// 		*i = (this->response).insert(*i, str2).size();
+// 	if (!sep2.empty())
+// 		*i = (this->response).insert(*i, sep2).size();
+// 	return ;
 
-}
+// }
 void	AResponse::buildPartResp(const std::string& key, int *i)
 {
 	std::map<std::string, std::string>::iterator	itf = (this->stock).find(key);
-	
+
+	(void) i;
 	if (key.compare("Protocol-Version") == 0 || key.compare("Status") == 0)
-		return (this->buildLineResp(itf->second.c_str(), " ", NULL, NULL, i));
+		this->response += itf->second;
 	else if (key.compare("Status-Message") == 0)
-		return (this->buildLineResp(itf->second.c_str(), "\n", NULL, NULL, i));
+		this->response += itf->second + "\n";									// Moyen Plus simple de fill la reponse, probleme si tu envoie le body d'une image avec c_str()
 	else if (key.compare("Body") == 0)
-		return (this->buildLineResp("\n", NULL, itf->second.c_str(), NULL, i));
-	return (this->buildLineResp(itf->first.c_str(), ": ", itf->second.c_str(), "\n", i));
+		this->response += "\n" + itf->second;
+	else
+		this->response += itf->first + ":" + itf->second + "\n";
+
+	// if (key.compare("Protocol-Version") == 0 || key.compare("Status") == 0)
+	// 	return (this->buildLineResp(itf->second, " ", "", "", i));
+	// else if (key.compare("Status-Message") == 0)
+	// 	return (this->buildLineResp(itf->second, "\n", "", "", i));
+	// else if (key.compare("Body") == 0)
+	// 	return (this->buildLineResp("\n", "", itf->second, "", i));
+	// return (this->buildLineResp(itf->first, ": ", itf->second, "\n", i));
 }
 void	AResponse::buildResponse()
 {
@@ -339,12 +349,12 @@ void	AResponse::buildResponse()
 	this->buildPartResp("Status", &i);
 	this->buildPartResp("Status-Message", &i);
 	this->buildPartResp("Date", &i);
-	
+
 	this->buildPartResp("Content-Type", &i);
 	this->buildPartResp("Content-Lenght", &i);
-	
+
 	this->buildPartResp("Body", &i);
-	
+
 	return ;
 }
 

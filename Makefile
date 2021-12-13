@@ -6,7 +6,7 @@
 #    By: vmoreau <vmoreau@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/11/29 16:52:41 by vmoreau           #+#    #+#              #
-#    Updated: 2021/12/04 15:15:28 by vmoreau          ###   ########.fr        #
+#    Updated: 2021/12/13 15:36:22 by vmoreau          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -29,6 +29,13 @@ WHITE = \033[0;37m
 ################################COMMON  SOURCES################################
 
 SRCS += srcs/main.cpp
+
+# Conf
+SRCS += srcs/conf/confpars.cpp srcs/conf/serv_block.cpp srcs/conf/loc_block.cpp
+# Request
+SRCS += srcs/request/Request.cpp
+# Response
+SRCS += srcs/response/AResponse.cpp srcs/response/Resp2.cpp
 
 ####################################BASIC######################################
 

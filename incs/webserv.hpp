@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   webserv.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mabriand <mabriand@student.42.fr>          +#+  +:+       +#+        */
+/*   By: vmoreau <vmoreau@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/29 16:53:05 by vmoreau           #+#    #+#             */
-/*   Updated: 2021/12/10 15:39:56 by mabriand         ###   ########.fr       */
+/*   Updated: 2021/12/13 14:55:39 by vmoreau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,6 +51,6 @@
 #include "color.hpp"
 
 
-#define CONF_DEFAULT_PATH "../conf.d/used/default.conf"
+#define CONF_DEFAULT_PATH "./srcs/conf.d/used/default.conf"
 
 #endif

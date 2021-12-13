@@ -13,7 +13,7 @@
 #ifndef REQUEST_HPP
 # define REQUEST_HPP
 
-#include "webserv.hpp"
+#include "../incs/webserv.hpp"
 
 class   Request
 {
@@ -21,7 +21,7 @@ class   Request
 		Request();
 		Request(Request& toCopy);
 		Request&	operator=(Request& toAssign);
-		
+
 		std::string							request;
 		std::map<std::string, std::string>	stock;
 		/*
@@ -71,7 +71,7 @@ class   Request
 		const std::string&	getAcceptEncoding() const;
 		const std::string&	getConnection() const;
 		const std::string&	getBody() const;
-		
+
 };
 
 std::ostream&	operator<<(std::ostream& os, const Request& r);

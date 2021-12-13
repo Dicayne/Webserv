@@ -3,14 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   Request.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mabriand <mabriand@student.42.fr>          +#+  +:+       +#+        */
+/*   By: vmoreau <vmoreau@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/06 20:57:30 by mabriand          #+#    #+#             */
-/*   Updated: 2021/12/10 13:27:35 by mabriand         ###   ########.fr       */
+/*   Updated: 2021/12/13 14:39:56 by vmoreau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../incs/Request.hpp"
+#include "./Request.hpp"
 
 Request::Request(std::string& buf) : request(buf)
 {
@@ -26,7 +26,7 @@ Request::Request(std::string& buf) : request(buf)
 	this->setMethod(line);
 	this->setUrl(line);
 	this->setProtocolVersion(line);
-	
+
 	while (std::getline(b, line))
 		this->buildMap(line);
 
@@ -37,7 +37,7 @@ Request::Request(std::string& buf) : request(buf)
 	this->setAcceptEncoding();
 	this->setConnection();
 	this->setBody();
-	
+
 	std::cout << *this << std::endl;
 	return ;
 }
@@ -68,7 +68,7 @@ std::string		Request::extractMapped(std::string& line) const
 	while (ite != line.end())
 		ite++;
 	std::string	info(it, ite);
-	
+
 	line.erase(it, ite);
 	return (info);
 }
@@ -77,13 +77,13 @@ void			Request::buildMap(std::string& line)
 	std::string	key = this->extractInfo(line);
 	std::string	mapped = this->extractMapped(line);
 
-	std::pair<std::string, std::string> elem(key, mapped);		
+	std::pair<std::string, std::string> elem(key, mapped);
 	this->stock.insert(elem);
-	
+
 	return ;
 }
 /*
-	All setters (one for each attribute corresponding to a field of the HTTP request):	
+	All setters (one for each attribute corresponding to a field of the HTTP request):
 	(The following three assign the value of the second element of the pair returned by std::map::find(),
 	which corresponds to the mapped-value of the std::map this->info).
 */
@@ -105,7 +105,7 @@ void		Request::setUserAgent()
 	return ;
 }
 void		Request::setAccept()
-{ 
+{
 	std::map<std::string, std::string>::iterator	it = this->stock.find("Accept:");
 	if (it != this->stock.end())
 		this->accept = it->second;
@@ -119,7 +119,7 @@ void		Request::setAcceptLanguage()
 	return ;
 }
 void		Request::setAcceptEncoding()
-{ 
+{
 	std::map<std::string, std::string>::iterator	it = this->stock.find("Accept-Encoding:");
 	if (it != this->stock.end())
 		this->accept_encoding = it->second;

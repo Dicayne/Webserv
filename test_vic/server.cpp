@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   server.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mabriand <mabriand@student.42.fr>          +#+  +:+       +#+        */
+/*   By: vmoreau <vmoreau@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/06 14:08:02 by vmoreau           #+#    #+#             */
-/*   Updated: 2021/12/10 21:32:23 by mabriand         ###   ########.fr       */
+/*   Updated: 2021/12/13 14:48:53 by vmoreau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -101,7 +101,7 @@ int main()
 		}
 		else
 			std::cout << "File Found\n";
-		std::string url("./html/error/404.html")
+		std::string url("./html/error/404.html");
 		// while(std::getline(ms, recep))
 		// {
 		// 	msg += recep;
@@ -113,7 +113,7 @@ int main()
 			std::cerr << RED << "Error=> " << NC << "Message not send\n";
 			exit(EXIT_FAILURE);
 		}
-		close(new_sock)                                                                                      
+		close(new_sock);
 	}
 	return (0);
 }

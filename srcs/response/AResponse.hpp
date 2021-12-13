@@ -13,7 +13,7 @@
 #ifndef ARESPONSE_HPP
 # define ARESPONSE_HPP
 
-#include "webserv.hpp"
+#include "../incs/webserv.hpp"
 
 class   AResponse
 {
@@ -37,7 +37,7 @@ class   AResponse
 		std::string	body;
 		std::string content_type;
 		std::string content_lenght; // Content-Lenght : ne doit pas dépasser le client body size max
-		
+
 
 	public:
 		AResponse();
@@ -61,8 +61,8 @@ class   AResponse
 		void	setMimeMap();
 		void	buildMessages(int key, const std::string& mapped);
 		void	setMessagesMap();
-		
-		void	buildLineResp(const char *str1, const char *sep1, const char *str2, const char *sep2, int *i);
+
+		void	buildLineResp(const std::string str1, const std::string sep1, const std::string str2, const std::string sep2, int *i);
 		void	buildPartResp(const std::string& key, int *i);
 		void	buildResponse();
 		void*	respond() const;
@@ -85,7 +85,7 @@ class   AResponse
 		const std::string&	getResponse() const;
 
 
-		
+
 
 };
 
