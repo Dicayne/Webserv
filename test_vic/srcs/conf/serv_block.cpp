@@ -6,7 +6,7 @@
 /*   By: vmoreau <vmoreau@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/08 14:44:06 by vmoreau           #+#    #+#             */
-/*   Updated: 2021/12/10 20:01:37 by vmoreau          ###   ########.fr       */
+/*   Updated: 2021/12/13 12:26:21 by vmoreau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,10 +31,12 @@ serv_block::~serv_block()
 
 // ********************* PARSING ********************* //
 
-void serv_block::pars_serv(std::vector<std::string> block, std::string path)
+void serv_block::pars_serv(std::vector<std::string> block, std::string path, std::map<std::string, std::string> error_page, bool sendfile)
 {
 	this->_block = block;
 	this->_path = path;
+	this->_error_page = error_page;
+	this->_sendfile = sendfile;
 	std::vector<std::string> tmp(this->_block);
 	size_t nb_loc = 0;
 

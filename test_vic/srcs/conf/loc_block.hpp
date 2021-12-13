@@ -6,7 +6,7 @@
 /*   By: vmoreau <vmoreau@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/08 14:44:20 by vmoreau           #+#    #+#             */
-/*   Updated: 2021/12/10 18:52:12 by vmoreau          ###   ########.fr       */
+/*   Updated: 2021/12/13 12:51:21 by vmoreau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,7 @@ class loc_block
 private:
 	std::vector<std::string>	_block;
 	std::string					_path_conf;
+
 	std::string					_path;
 	std::string					_root;
 	std::vector<std::string>	_method_limit;
@@ -42,6 +43,13 @@ public:
 	void set_method_limit(std::string value);
 	void set_index(std::string value);
 	void set_autoindex(std::string value);
+
+	// GETTER
+	std::string get_path() const 					{ return (this->_path); }
+	std::string get_root() const 					{ return (this->_root); }
+	bool get_autoindex() const 						{ return (this->_autoindex); }
+	std::vector<std::string>	get_index() const 	{ return (this->_index); }
+	std::vector<std::string>	get_method_limit() const { return (this->_method_limit); }
 
 	// EXCEPTION
 		class ConfFile : public std::exception

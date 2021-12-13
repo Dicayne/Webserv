@@ -6,7 +6,7 @@
 /*   By: vmoreau <vmoreau@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/07 15:55:46 by vmoreau           #+#    #+#             */
-/*   Updated: 2021/12/10 18:37:08 by vmoreau          ###   ########.fr       */
+/*   Updated: 2021/12/13 12:50:26 by vmoreau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,7 @@ private:
 	std::string					_path;
 	std::vector<std::string>	_file;
 	std::vector< std::vector<std::string> >	_server_block;
+
 	bool						_sendfile;
 	std::vector<serv_block>		_server;
 	std::map<std::string, std::string>		_error_page;
@@ -41,7 +42,10 @@ public:
 	void close_fc();
 
 	// GETTER
-	std::ifstream &get_fd() {return (this->_fc);}
+	std::ifstream &get_fd()						{ return (this->_fc); }
+	bool get_sendfile() const 					{ return (this->_sendfile); }
+	std::vector<serv_block> get_server() const	{ return (this->_server); }
+	std::map<std::string, std::string> get_error_page() const { return (this->_error_page); };
 
 	// SETTER
 	void set_sendfile(std::string value);

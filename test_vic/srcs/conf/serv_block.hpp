@@ -6,7 +6,7 @@
 /*   By: vmoreau <vmoreau@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/08 14:44:09 by vmoreau           #+#    #+#             */
-/*   Updated: 2021/12/10 18:37:01 by vmoreau          ###   ########.fr       */
+/*   Updated: 2021/12/13 12:46:31 by vmoreau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,6 @@
 #include <map>
 
 #include "loc_block.hpp"
-// #include "confpars.hpp"
 
 #define BODY_DEFAULT_SIZE 100000
 
@@ -28,6 +27,8 @@ class serv_block
 private:
 	std::string				_path;
 	std::vector<std::string> _block;
+	std::map<std::string, std::string>		_error_page;
+	bool					_sendfile;
 	std::vector< std::vector<std::string> >	_loc_block;
 	int						_port;
 	std::string				_host;
@@ -40,12 +41,23 @@ public:
 	~serv_block();
 
 	// PARSING
-	void pars_serv(std::vector<std::string> block, std::string path);
+	void pars_serv(std::vector<std::string> block, std::string path, std::map<std::string, std::string> error_page, bool sendfile);
 
 	// SETTER
 	void set_port_host(std::string value);
 	void set_server_name(std::string value);
 	void set_client_max_body_size(std::string value);
+
+	// GETTER
+	std::string get_host() const					{ return (this->_host); }
+	std::string get_server_name() const				{ return (this->_server_name); }
+	int get_port() const							{ return (this->_port); }
+	int get_client_max_body_size() const			{ return (this->_client_max_body_size); }
+	std::vector<loc_block> get_location() const		{ return (this->_location); }
+	bool get_sendfile() const						{ return (this->_sendfile); }
+	std::map<std::string, std::string> get_error_page() const	{ return (this->_error_page); }
+
+
 	// EXCEPTION
 	class ConfFile : public std::exception
 	{

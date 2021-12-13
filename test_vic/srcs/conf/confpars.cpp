@@ -6,7 +6,7 @@
 /*   By: vmoreau <vmoreau@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/07 16:02:13 by vmoreau           #+#    #+#             */
-/*   Updated: 2021/12/10 19:30:43 by vmoreau          ###   ########.fr       */
+/*   Updated: 2021/12/13 12:17:59 by vmoreau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -133,7 +133,7 @@ void confpars::pars_fc(std::ifstream &fc)
 	{
 		serv_block tmp;
 
-		tmp.pars_serv(this->_server_block[i], this->_path);
+		tmp.pars_serv(this->_server_block[i], this->_path, this->_error_page, this->_sendfile);
 		this->_server.push_back(tmp);
 	}
 
