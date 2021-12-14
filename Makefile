@@ -6,7 +6,7 @@
 #    By: vmoreau <vmoreau@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/11/29 16:52:41 by vmoreau           #+#    #+#              #
-#    Updated: 2021/12/13 15:36:22 by vmoreau          ###   ########.fr        #
+#    Updated: 2021/12/14 15:59:46 by vmoreau          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -36,10 +36,11 @@ SRCS += srcs/conf/confpars.cpp srcs/conf/serv_block.cpp srcs/conf/loc_block.cpp
 SRCS += srcs/request/Request.cpp
 # Response
 SRCS += srcs/response/AResponse.cpp srcs/response/Resp2.cpp
-
+# Server
+SRCS += srcs/server/Server.cpp
 ####################################BASIC######################################
 
-CFLAGS =
+CFLAGS = -Wall -Werror -Wextra -std=c++98
 
 CC = clang++
 

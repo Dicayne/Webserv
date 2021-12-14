@@ -6,18 +6,11 @@
 /*   By: vmoreau <vmoreau@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/08 14:44:06 by vmoreau           #+#    #+#             */
-/*   Updated: 2021/12/13 12:26:21 by vmoreau          ###   ########.fr       */
+/*   Updated: 2021/12/14 15:04:31 by vmoreau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "serv_block.hpp"
-
-	// for (size_t i = 0; i < tmp.size(); i++)
-	// 	std::cout << BLUE << tmp[i] << NC << '\n';
-
-	// for (size_t i = 0; i < this->_loc_block.size(); i++)
-	// 	for (size_t j = 0; j < this->_loc_block[i].size(); j++)
-	// 		std::cout << YELLOW << "	" << this->_loc_block[i][j] << NC << '\n';
 
 
 serv_block::serv_block() : _path(CONF_DEFAULT_PATH), _port(-1), _client_max_body_size(-1)
@@ -111,10 +104,18 @@ void serv_block::set_port_host(std::string value)
 		if (!isdigit(port[i]))
 			throw ConfFile(" Port \"" + port + "\" is not digit");
 
-	for (size_t i = 0; i < host.size(); i++)
-		if (!isdigit(host[i]))
-			if (host[i] != '.')
-				throw ConfFile(" Host \"" + host + "\" is not digit");
+	if (host.compare("localhost") == 0)
+	{
+		host.clear();
+		host = "127.0.0.1";
+	}
+	else
+	{
+		for (size_t i = 0; i < host.size(); i++)
+			if (!isdigit(host[i]))
+				if (host[i] != '.')
+					throw ConfFile(" Host \"" + host + "\" is not digit");
+	}
 	check_host(host);
 	this->_port = atoi(port.c_str());
 	this->_host = host;
