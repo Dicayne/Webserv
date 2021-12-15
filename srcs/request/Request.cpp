@@ -6,11 +6,15 @@
 /*   By: vmoreau <vmoreau@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/06 20:57:30 by mabriand          #+#    #+#             */
-/*   Updated: 2021/12/13 14:39:56 by vmoreau          ###   ########.fr       */
+/*   Updated: 2021/12/15 18:21:38 by vmoreau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "./Request.hpp"
+
+// Request::Request()
+// {
+// }
 
 Request::Request(std::string& buf) : request(buf)
 {

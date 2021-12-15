@@ -6,7 +6,7 @@
 /*   By: vmoreau <vmoreau@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/07 15:55:46 by vmoreau           #+#    #+#             */
-/*   Updated: 2021/12/13 14:53:45 by vmoreau          ###   ########.fr       */
+/*   Updated: 2021/12/15 15:18:36 by vmoreau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,6 +35,7 @@ private:
 public:
 	confpars();
 	~confpars();
+	// confpars& operator=(const confpars conf);
 
 	// FD MANIPULATION
 	void open_fc(const char *path);

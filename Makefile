@@ -6,7 +6,7 @@
 #    By: vmoreau <vmoreau@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/11/29 16:52:41 by vmoreau           #+#    #+#              #
-#    Updated: 2021/12/14 15:59:46 by vmoreau          ###   ########.fr        #
+#    Updated: 2021/12/15 16:30:42 by vmoreau          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -41,6 +41,8 @@ SRCS += srcs/server/Server.cpp
 ####################################BASIC######################################
 
 CFLAGS = -Wall -Werror -Wextra -std=c++98
+
+# CFLAGS += -g3 -fsanitize=address
 
 CC = clang++
 

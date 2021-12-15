@@ -6,7 +6,7 @@
 /*   By: vmoreau <vmoreau@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/07 16:02:13 by vmoreau           #+#    #+#             */
-/*   Updated: 2021/12/13 12:17:59 by vmoreau          ###   ########.fr       */
+/*   Updated: 2021/12/15 15:18:41 by vmoreau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,6 +57,17 @@ confpars::confpars() : _sendfile(false)
 confpars::~confpars()
 {
 }
+
+// confpars& confpars::operator=(const confpars conf)
+// {
+// 	this->_error_page = conf._error_page;
+// 	this->_fc = conf._fc;
+// 	this->_file = conf._file;
+// 	this->_path = conf._path;
+// 	this->_sendfile = conf._sendfile;
+// 	this->_server = conf._server;
+// 	this->_server_block = conf._server_block;
+// }
 
 // ******************** FD MANIP ********************* //
 void confpars::open_fc(const char *path)

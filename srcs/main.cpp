@@ -6,7 +6,7 @@
 /*   By: vmoreau <vmoreau@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/29 16:52:54 by vmoreau           #+#    #+#             */
-/*   Updated: 2021/12/14 19:30:05 by vmoreau          ###   ########.fr       */
+/*   Updated: 2021/12/15 12:16:14 by vmoreau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,6 +56,7 @@ int main()
 
 		Server *serv = new Server();
 
+		serv->Server_init(conf, conf->get_server());
 		serv->Server_launch(conf);
 		delete conf;
 		delete serv;
