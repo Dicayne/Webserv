@@ -1,19 +1,19 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   AResponse.cpp                                      :+:      :+:    :+:   */
+/*   Response.cpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vmoreau <vmoreau@student.42.fr>            +#+  +:+       +#+        */
+/*   By: mabriand <mabriand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2021/12/09 14:27:09 by mabriand          #+#    #+#             */
-/*   Updated: 2021/12/13 18:48:17 by vmoreau          ###   ########.fr       */
+/*   Created: 2021/12/16 15:24:59 by mabriand          #+#    #+#             */
+/*   Updated: 2021/12/16 18:47:22 by mabriand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "./AResponse.hpp"
+#include "./Response.hpp"
 
-AResponse::AResponse(){}
-AResponse::AResponse(const std::string& protocol_version, const std::string& status, const std::string& url)
+Response::Response(){}
+Response::Response(const std::string& protocol_version, int status, const std::string& url)
 {
 	// Independant from the parameters
 	this->setMimeMap();
@@ -23,7 +23,7 @@ AResponse::AResponse(const std::string& protocol_version, const std::string& sta
 	// Dependant from the parameters
 	this->setProtocolVersion(protocol_version);
 	this->setStatus(status);
-	this->setStatusMessage(status);
+	this->setStatusMessage(this->_status);
 	this->setDate();
 	// this->setServer();
 	this->setBody(url);
@@ -34,40 +34,44 @@ AResponse::AResponse(const std::string& protocol_version, const std::string& sta
 	return ;
 
 }
-AResponse::~AResponse(){}
+Response::~Response(){}
 
-void	AResponse::setProtocolVersion(const std::string& protocol_version)
+void	Response::setProtocolVersion(const std::string& protocol_version)
 {
 	this->protocol_version = protocol_version;
 	std::pair<std::string, std::string> elem("Protocol-Version", this->protocol_version);
-	this->stock.insert(elem);
+	this->_stock.insert(elem);
 	return ;
 }
-void	AResponse::setStatus(const std::string& status)
+void	Response::setStatus(int status)
 {
-	this->status = status;
-	std::pair<std::string, std::string> elem("Status", this->status);
-	this->stock.insert(elem);
+	std::stringstream	out;
+		
+	out << status;
+	this->_status = out.str();
+
+	std::pair<std::string, std::string> elem("Status", this->_status);
+	this->_stock.insert(elem);
 	return ;
 }
-void	AResponse::setStatusMessage(const std::string& status)
+void	Response::setStatusMessage(const std::string& status)
 {
 	(void)status;
 	int key = 200;
 	std::map<int, std::string>::iterator	itf = (this->messages).find(key);
 	this->status_message = itf->second;
 	std::pair<std::string, std::string> elem("Status-Message", this->status_message);
-	this->stock.insert(elem);
+	this->_stock.insert(elem);
 	return ;
 
 
 
 	// this->status_message = status_message;
 	// std::pair<std::string, std::string> elem("Status-Message", this->status_message);
-	// this->stock.insert(elem);
+	// this->_stock.insert(elem);
 	return ;
 }
-void	AResponse::setDate()
+void	Response::setDate()
 {
     std::time_t result = std::time(nullptr);
 	std::string date(std::asctime(std::localtime(&result)));
@@ -75,11 +79,11 @@ void	AResponse::setDate()
 
 	this->date = date;
 	std::pair<std::string, std::string> elem("Date", this->date);
-	this->stock.insert(elem);
+	this->_stock.insert(elem);
 	return ;
 }
 ///////////////////////////////////
-void	AResponse::setContentType(const std::string& url)
+void	Response::setContentType(const std::string& url)
 {
 	size_t pos = url.find_last_of(".", url.size());
 	if (pos == std::string::npos)
@@ -89,20 +93,20 @@ void	AResponse::setContentType(const std::string& url)
 	std::map<std::string, std::string>::iterator	itf = (this->mime).find(key);
 	this->content_type = itf->second;
 	std::pair<std::string, std::string> elem("Content-Type", this->content_type);
-	this->stock.insert(elem);
+	this->_stock.insert(elem);
 	return ;
 }
-void	AResponse::setContentLenght()
+void	Response::setContentLenght()
 {
 	std::stringstream content_lenght;
 	content_lenght << this->body.size();
 
 	this->content_lenght = content_lenght.str();
 	std::pair<std::string, std::string> elem("Content-Lenght", this->content_lenght);
-	this->stock.insert(elem);
+	this->_stock.insert(elem);
 	return ;
 }
-void	AResponse::setBody(const std::string& url)
+void	Response::setBody(const std::string& url)
 {
 	std::ifstream ms;
 	std::string	temp;
@@ -120,29 +124,29 @@ void	AResponse::setBody(const std::string& url)
 	this->body = body;
 
 	std::pair<std::string, std::string> elem("Body", this->body);
-	this->stock.insert(elem);
+	this->_stock.insert(elem);
 	return ;
 }
 
-const std::string&	AResponse::getProtocolVersion() const{ return (this->protocol_version); }
-const std::string&	AResponse::getStatus() const{ return (this->status); }
-const std::string&	AResponse::getStatusMessage() const{ return (this->status_message); }
-const std::string&	AResponse::getDate() const{ return (this->date); }
+const std::string&	Response::getProtocolVersion() const{ return (this->protocol_version); }
+const std::string&	Response::getStatus() const{ return (this->_status); }
+const std::string&	Response::getStatusMessage() const{ return (this->status_message); }
+const std::string&	Response::getDate() const{ return (this->date); }
 //
-const std::string&  AResponse::getBody() const{ return (this->body); }
-const std::string&	AResponse::getContentType() const{ return (this->content_type); }
-const std::string&	AResponse::getContentLenght() const{ return (this->content_lenght); }
+const std::string&  Response::getBody() const{ return (this->body); }
+const std::string&	Response::getContentType() const{ return (this->content_type); }
+const std::string&	Response::getContentLenght() const{ return (this->content_lenght); }
 //
-const std::string&  AResponse::getResponse() const{ return (this->response); }///////////////
+const std::string&  Response::getResponse() const{ return (this->response); }///////////////
 
-void	AResponse::buildMime(const std::string& key, const std::string& mapped)
+void	Response::buildMime(const std::string& key, const std::string& mapped)
 {
 	std::pair<std::string, std::string>	elem(key, mapped);
 	this->mime.insert(elem);
 	return ;
 }
 
-void	AResponse::setMimeMap()
+void	Response::setMimeMap()
 {
 	// a
 	this->buildMime(".aac", "audio/aac");
@@ -229,13 +233,13 @@ void	AResponse::setMimeMap()
 	this->buildMime(".7z", "application/x-7z-compressed");
 	return ;
 }
-void	AResponse::buildMessages(int key, const std::string& mapped)
+void	Response::buildMessages(int key, const std::string& mapped)
 {
 	std::pair<int, std::string>	elem(key, mapped);
 	this->messages.insert(elem);
 	return ;
 }
-void	AResponse::setMessagesMap()
+void	Response::setMessagesMap()
 {
 	// 1xx
 	this->buildMessages(100, "Continue");
@@ -297,7 +301,7 @@ void	AResponse::setMessagesMap()
 	this->buildMessages(502, "Bad Gateway");
 	this->buildMessages(503, "Service Unavailable");
 	this->buildMessages(504, "Gateway Timeout");
-	this->buildMessages(505, "HTTP VErsion Not Supported");
+	this->buildMessages(505, "HTTP Version Not Supported");
 	this->buildMessages(506, "Variant Also Negotiates");
 	this->buildMessages(507, "Insufficient Storage");
 	this->buildMessages(508, "Loop Detected");
@@ -305,43 +309,22 @@ void	AResponse::setMessagesMap()
 	this->buildMessages(511, "Network Authentication Required");
 	return ;
 }
-
-// void	AResponse::buildLineResp(const std::string str1, const std::string sep1, const std::string str2, const std::string sep2, int *i)
-// {
-// 	if (!str1.empty())
-// 		*i = (this->response).insert(*i, str1).size();
-// 	if (!sep1.empty())
-// 		*i = (this->response).insert(*i, sep1).size();
-// 	if (!str2.empty())
-// 		*i = (this->response).insert(*i, str2).size();
-// 	if (!sep2.empty())
-// 		*i = (this->response).insert(*i, sep2).size();
-// 	return ;
-
-// }
-void	AResponse::buildPartResp(const std::string& key, int *i)
+void	Response::buildPartResp(const std::string& key, int *i)
 {
-	std::map<std::string, std::string>::iterator	itf = (this->stock).find(key);
+	std::map<std::string, std::string>::iterator	itf = (this->_stock).find(key);
 
 	(void) i;
 	if (key.compare("Protocol-Version") == 0 || key.compare("Status") == 0)
-		this->response += itf->second;
+		this->response += itf->second + " ";
 	else if (key.compare("Status-Message") == 0)
-		this->response += itf->second + "\n";									// Moyen Plus simple de fill la reponse, probleme si tu envoie le body d'une image avec c_str()
+		this->response += itf->second + "\n";
 	else if (key.compare("Body") == 0)
 		this->response += "\n" + itf->second;
 	else
-		this->response += itf->first + ":" + itf->second + "\n";
-
-	// if (key.compare("Protocol-Version") == 0 || key.compare("Status") == 0)
-	// 	return (this->buildLineResp(itf->second, " ", "", "", i));
-	// else if (key.compare("Status-Message") == 0)
-	// 	return (this->buildLineResp(itf->second, "\n", "", "", i));
-	// else if (key.compare("Body") == 0)
-	// 	return (this->buildLineResp("\n", "", itf->second, "", i));
-	// return (this->buildLineResp(itf->first, ": ", itf->second, "\n", i));
+		this->response += itf->first + ": " + itf->second + "\n";
+	return ;
 }
-void	AResponse::buildResponse()
+void	Response::buildResponse()
 {
 	int i = 0;
 
@@ -358,9 +341,9 @@ void	AResponse::buildResponse()
 	return ;
 }
 
-void*  AResponse::respond() const{ return ((void *)(this->response.c_str())); }
+void*  Response::respond() const{ return ((void *)(this->response.c_str())); }
 
-std::ostream&	operator<<(std::ostream& os, const AResponse& r)
+std::ostream&	operator<<(std::ostream& os, const Response& r)
 {
 	os << "[" << r.getProtocolVersion() << "]" << std::endl;
 	os << "[" << r.getStatus() << "]" << std::endl;

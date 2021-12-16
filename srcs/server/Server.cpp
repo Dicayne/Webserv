@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vmoreau <vmoreau@student.42.fr>            +#+  +:+       +#+        */
+/*   By: mabriand <mabriand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/13 19:18:35 by vmoreau           #+#    #+#             */
-/*   Updated: 2021/12/15 19:18:32 by vmoreau          ###   ########.fr       */
+/*   Updated: 2021/12/16 18:59:38 by mabriand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -145,38 +145,20 @@ void Server::Server_launch(confpars *conf)
 			{
 				if (FD_ISSET(*it, &this->_readfds))
 				{
+					
 					char buffer[30001] = {0};
 					int ret = recv(*it, buffer, 30000, MSG_DONTWAIT);
-					// std::cout << RED << buffer << NC << std::endl;
+
 					std::string	buf = buffer;
 					std::cout << PURPLE << ret << NC << "  " << std::strerror(errno) << '\n';
-					Request	firstRequest(buf);
+
+					std::map<std::string, std::string> error_page = server.get_error_page();
+					
+					//Request	firstRequest(buf, &error_page);
 					buf.clear();
 
-					std::ifstream ms;
-					ms.close();
-					ms.open(firstRequest.getUrl());
-					if (ms.is_open() == false)
-					{
-						ms.close(); // Because we're goning to open another
-						ms.open(server.get_error_page().find("404")->second);
-						if (ms.is_open() == false)
-							std::cout << "I can't open html\n";
-						else
-							std::cout << "The html is open!\n";
-						ms.close();
-
-						std::string url(server.get_error_page().find("404")->second);
-						Resp2	failure("HTTP/1.1", "400", url);
-						send(*it, failure.respond(), failure.getResponse().size() , 0);
-					}
-					else
-					{
-						std::cout << "FOUND\n";
-						Resp2	failure("HTTP/1.1", "200", firstRequest.getUrl());
-						send(*it, failure.respond(), failure.getResponse().size() , 0);
-						ms.close();
-					}
+					Response r(firstRequest.returnProtocolVersion(), firstRequest.returnStatusCode(), firstRequest.returnUrl());
+					send(*it, r.respond(), r.getResponse().size() , 0);
 				}
 				// FD_CLR(*it, &this->_all_sock);
 				// close(*it);

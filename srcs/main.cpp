@@ -3,18 +3,17 @@
 /*                                                        :::      ::::::::   */
 /*   main.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vmoreau <vmoreau@student.42.fr>            +#+  +:+       +#+        */
+/*   By: mabriand <mabriand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/29 16:52:54 by vmoreau           #+#    #+#             */
-/*   Updated: 2021/12/15 12:16:14 by vmoreau          ###   ########.fr       */
+/*   Updated: 2021/12/16 15:30:35 by mabriand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../incs/webserv.hpp"
 #include "conf/confpars.hpp"
 #include "request/Request.hpp"
-#include "response/AResponse.hpp"
-#include "response/Resp2.hpp"
+#include "response/Response.hpp"
 #include "server/Server.hpp"
 
 void signal_handler(int signum)

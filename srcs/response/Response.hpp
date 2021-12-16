@@ -1,28 +1,28 @@
 /* ************************************************************************** */
-/*																			*/
-/*														:::	  ::::::::   */
-/*   AResponse.hpp									  :+:	  :+:	:+:   */
-/*													+:+ +:+		 +:+	 */
-/*   By: mabriand <mabriand@student.42.fr>		  +#+  +:+	   +#+		*/
-/*												+#+#+#+#+#+   +#+		   */
-/*   Created: 2021/12/08 15:54:04 by mabriand		  #+#	#+#			 */
-/*   Updated: 2021/12/09 16:38:28 by mabriand		 ###   ########.fr	   */
-/*																			*/
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   Response.hpp                                       :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: mabriand <mabriand@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2021/12/16 15:24:45 by mabriand          #+#    #+#             */
+/*   Updated: 2021/12/16 18:45:49 by mabriand         ###   ########.fr       */
+/*                                                                            */
 /* ************************************************************************** */
 
-#ifndef ARESPONSE_HPP
-# define ARESPONSE_HPP
+#ifndef RESPONSE_HPP
+# define RESPONSE_HPP
 
 #include "../incs/webserv.hpp"
 
-class   AResponse
+class   Response
 {
 	private:
-		AResponse(AResponse& toCopy);
-		AResponse&  operator=(AResponse& toAssign);
+		Response(Response& toCopy);
+		Response&  operator=(Response& toAssign);
 
 		std::string							response;
-		std::map<std::string, std::string>	stock;
+		std::map<std::string, std::string>	_stock;
 		std::map<std::string, std::string>	mime;
 		std::map<int, std::string>			messages;
 
@@ -30,7 +30,7 @@ class   AResponse
 			Attributes corresponding to the fields of the HTTP request:
 		*/
 		std::string	protocol_version;
-		std::string	status;
+		std::string	_status;
 		std::string	status_message;
 		std::string date;
 		// std::string	server;
@@ -40,15 +40,15 @@ class   AResponse
 
 
 	public:
-		AResponse();
-		AResponse(const std::string& protocol_version, const std::string& status, const std::string& url);
-		virtual ~AResponse();
+		Response();
+		Response(const std::string& protocol_version, int status, const std::string& url);
+		virtual ~Response();
 
 		/*
 			All setters (one for each attribute corresponding to a field of the HTTP request):
 		*/
 		void	setProtocolVersion(const std::string& pv);
-		void	setStatus(const std::string& s);
+		void	setStatus(int s);
 		void	setStatusMessage(const std::string& sm);
 		void	setDate();
 		// void	setServer();
@@ -89,6 +89,6 @@ class   AResponse
 
 };
 
-std::ostream&	operator<<(std::ostream& os, const AResponse& r);
+std::ostream&	operator<<(std::ostream& os, const Response& r);
 
 #endif

@@ -21,32 +21,41 @@ class   Request
 		Request();
 		Request(Request& toCopy);
 		Request&	operator=(Request& toAssign);
-
-		std::string							request;
-		std::map<std::string, std::string>	stock;
-		/*
-			Attributes corresponding to the fields of the HTTP request:
+		
+		std::string							_request;
+		std::map<std::string, std::string>	_stock;
+		std::map<std::string, std::string>	*_errors;
+		/*	Attributes corresponding to the fields of the HTTP request:
 		*/
-		std::string	method;
-		std::string url;
-		std::string protocol_version;
-		std::string host;
-		std::string user_agent;
-		std::string accept;
-		std::string accept_language;
-		std::string accept_encoding;
-		std::string connection;
-		std::string body;
+		std::string	_method;
+		std::string _url;
+		std::string _protocol_version;
+		std::string _host;
+		std::string _user_agent;
+		std::string _accept;
+		std::string _accept_language;
+		std::string _accept_encoding;
+		std::string _connection;
+		std::string _body;
+		/*	Attributes corresponding to the parameters of the reponse's constructor that will be asked
+			when creating it to send it back to the client:
+		*/
+		std::string	_response_protocol_version;
+		int			_response_status_code;
+		std::string	_response_url;
 
 	public:
-		Request(std::string& buf);
+		Request(int socket, std::map<std::string, std::string> *error_page);
+		//Request(std::string& buf, std::map<std::string, std::string> *error_page);
 		~Request();
-
+		/*	Some utils needed to extract information from the constructor's parameter 'buf' and to
+			return some when the appropriate functions are called.
+		*/
 		std::string	extractInfo(std::string& line) const;// const std::string& --> pour le retour ?
 		std::string	extractMapped(std::string& line) const;// const std::string& --> pour le retour ?
 		void		buildMap(std::string& buf);
-		/*
-			All setters (one for each attribute corresponding to a field of the HTTP request):
+		void		parseBuf(std::string& buf, std::map<std::string, std::string> *error_page);
+		/*	All setters (one for each attribute i.e. a field of the HTTP request):
 		*/
 		void		setMethod(std::string& buf);
 		void		setUrl(std::string& buf);
@@ -59,7 +68,11 @@ class   Request
 		void		setConnection();
 		void		setBody();
 		/*
-			All getters (one for each attribute corresponding to a field of the HTTP request):
+		*/
+		void		defineProtocolVersion();
+		void		defineStatusCode();
+		void		defineUrl();
+		/*	All getters (one for each attribute i.e. a field of the HTTP request):
 		*/
 		const std::string&	getMethod() const;
 		const std::string&	getUrl() const;
@@ -71,7 +84,11 @@ class   Request
 		const std::string&	getAcceptEncoding() const;
 		const std::string&	getConnection() const;
 		const std::string&	getBody() const;
-
+		/*
+		*/
+		const std::string&	returnProtocolVersion() const;
+		int					returnStatusCode() const;
+		const std::string&	returnUrl() const;
 };
 
 std::ostream&	operator<<(std::ostream& os, const Request& r);

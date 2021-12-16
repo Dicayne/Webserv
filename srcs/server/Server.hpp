@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vmoreau <vmoreau@student.42.fr>            +#+  +:+       +#+        */
+/*   By: mabriand <mabriand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/13 19:18:32 by vmoreau           #+#    #+#             */
-/*   Updated: 2021/12/15 19:02:56 by vmoreau          ###   ########.fr       */
+/*   Updated: 2021/12/16 15:27:39 by mabriand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,8 +16,7 @@
 #include "../incs/webserv.hpp"
 #include "../conf/confpars.hpp"
 #include "../request/Request.hpp"
-#include "../response/AResponse.hpp"
-#include "../response/Resp2.hpp"
+#include "../response/Response.hpp"
 
 class Server
 {

@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: vmoreau <vmoreau@student.42.fr>            +#+  +:+       +#+         #
+#    By: mabriand <mabriand@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/11/29 16:52:41 by vmoreau           #+#    #+#              #
-#    Updated: 2021/12/15 16:30:42 by vmoreau          ###   ########.fr        #
+#    Updated: 2021/12/16 15:28:19 by mabriand         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -35,7 +35,7 @@ SRCS += srcs/conf/confpars.cpp srcs/conf/serv_block.cpp srcs/conf/loc_block.cpp
 # Request
 SRCS += srcs/request/Request.cpp
 # Response
-SRCS += srcs/response/AResponse.cpp srcs/response/Resp2.cpp
+SRCS += srcs/response/Response.cpp
 # Server
 SRCS += srcs/server/Server.cpp
 ####################################BASIC######################################
