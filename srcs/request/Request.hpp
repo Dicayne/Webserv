@@ -22,6 +22,7 @@ class   Request
 		Request(Request& toCopy);
 		Request&	operator=(Request& toAssign);
 		
+		int									_socket;
 		std::string							_request;
 		std::map<std::string, std::string>	_stock;
 		std::map<std::string, std::string>	*_errors;
@@ -54,7 +55,7 @@ class   Request
 		std::string	extractInfo(std::string& line) const;// const std::string& --> pour le retour ?
 		std::string	extractMapped(std::string& line) const;// const std::string& --> pour le retour ?
 		void		buildMap(std::string& buf);
-		void		parseBuf(std::string& buf, std::map<std::string, std::string> *error_page);
+		void		parseBuf(std::string& buf);
 		/*	All setters (one for each attribute i.e. a field of the HTTP request):
 		*/
 		void		setMethod(std::string& buf);

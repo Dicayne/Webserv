@@ -6,46 +6,23 @@
 /*   By: mabriand <mabriand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/06 20:57:30 by mabriand          #+#    #+#             */
-/*   Updated: 2021/12/16 18:34:59 by mabriand         ###   ########.fr       */
+/*   Updated: 2021/12/16 19:23:32 by mabriand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "./Request.hpp"
 
-Request::Request(std::string& buf, std::map<std::string, std::string> *error_page) : _request(buf), _errors(error_page)
+Request::Request(int socket, std::map<std::string, std::string> *error_page)  :  _socket(socket), _errors(error_page)
 {
-	this->_response_status_code = 0;
+	char buffer[30001] = {0};
+	int ret = recv(socket, buffer, 30000, MSG_DONTWAIT);
 
-	size_t pos;
-	while ((pos = buf.find("\r")) != std::string::npos)
-		buf.replace(pos, 1, "\n");
-
-	std::stringstream	b(buf);
-	std::string 		line;
-
-	// Voir si on fait vraiment ça où si on met pas plutot un vecteur là aussi, car on assume que cette première ligne est la même tout le temps alors que si le client est nous depuis un terminal : non
-	std::getline(b, line);
-	this->setMethod(line);
-	this->setUrl(line);
-	this->setProtocolVersion(line);
-
-	while (std::getline(b, line))
-		this->buildMap(line);
-
-	this->setHost();
-	this->setUserAgent();
-	this->setAccept();
-	this->setAcceptLanguage();
-	this->setAcceptEncoding();
-	this->setConnection();
-	this->setBody();
-
-	std::cout << *this << std::endl;
-
-	this->defineProtocolVersion();
-	this->defineStatusCode();
-	this->defineUrl();
+	std::string	buf = buffer;
+	this->_request = buf;
 	
+	std::cout << PURPLE << ret << NC << "  " << std::strerror(errno) << '\n';
+	this->parseBuf(buf);
+	buf.clear();
 	return ;
 }
 
@@ -87,6 +64,42 @@ void			Request::buildMap(std::string& line)
 	std::pair<std::string, std::string> elem(key, mapped);
 	this->_stock.insert(elem);
 
+	return ;
+}
+void	Request::parseBuf(std::string& buf)
+{
+	this->_response_status_code = 0;
+
+	size_t pos;
+	while ((pos = buf.find("\r")) != std::string::npos)
+		buf.replace(pos, 1, "\n");
+
+	std::stringstream	b(buf);
+	std::string 		line;
+
+	// Voir si on fait vraiment ça où si on met pas plutot un vecteur là aussi, car on assume que cette première ligne est la même tout le temps alors que si le client est nous depuis un terminal : non
+	std::getline(b, line);
+	this->setMethod(line);
+	this->setUrl(line);
+	this->setProtocolVersion(line);
+
+	while (std::getline(b, line))
+		this->buildMap(line);
+
+	this->setHost();
+	this->setUserAgent();
+	this->setAccept();
+	this->setAcceptLanguage();
+	this->setAcceptEncoding();
+	this->setConnection();
+	this->setBody();
+
+	std::cout << *this << std::endl;
+
+	this->defineProtocolVersion();
+	this->defineStatusCode();
+	this->defineUrl();
+	
 	return ;
 }
 /*
