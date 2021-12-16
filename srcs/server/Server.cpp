@@ -6,7 +6,7 @@
 /*   By: mabriand <mabriand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/13 19:18:35 by vmoreau           #+#    #+#             */
-/*   Updated: 2021/12/16 19:07:54 by mabriand         ###   ########.fr       */
+/*   Updated: 2021/12/16 19:36:42 by mabriand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -145,24 +145,14 @@ void Server::Server_launch(confpars *conf)
 			{
 				if (FD_ISSET(*it, &this->_readfds))
 				{
-					
-					// char buffer[30001] = {0};
-					// int ret = recv(*it, buffer, 30000, MSG_DONTWAIT);
-
-					// std::string	buf = buffer;
-					// std::cout << PURPLE << ret << NC << "  " << std::strerror(errno) << '\n';
-
 					std::map<std::string, std::string> error_page = server.get_error_page();
 					
-					//Request	firstRequest(buf, &error_page);
-					Request	firstRequest(*it, &error_page);
-					// buf.clear();
-
-					Response r(firstRequest.returnProtocolVersion(), firstRequest.returnStatusCode(), firstRequest.returnUrl());
-					send(*it, r.respond(), r.getResponse().size() , 0);
+					Request	rqst(*it, &error_page);
+					Response resp(rqst.returnProtocolVersion(), rqst.returnStatusCode(), rqst.returnUrl());
+					send(*it, resp.respond(), resp.getResponse().size() , 0);
 				}
 				// FD_CLR(*it, &this->_all_sock);
-				// close(*it);
+				// close(*it); 
 			}
 		}
 
