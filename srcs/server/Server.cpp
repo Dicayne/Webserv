@@ -6,7 +6,7 @@
 /*   By: mabriand <mabriand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/13 19:18:35 by vmoreau           #+#    #+#             */
-/*   Updated: 2021/12/16 19:36:42 by mabriand         ###   ########.fr       */
+/*   Updated: 2021/12/17 16:20:05 by mabriand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -143,15 +143,24 @@ void Server::Server_launch(confpars *conf)
 			}
 			for (std::vector<int>::iterator it = this->_client_fd.begin(); it != this->_client_fd.end(); it++)
 			{
+				std::cout << BLUE << *it << std::endl;
 				if (FD_ISSET(*it, &this->_readfds))
 				{
-					std::map<std::string, std::string> error_page = server.get_error_page();
+					Request		rqst(*it, &server);
+					Response	resp(rqst.returnProtocolVersion(), rqst.returnStatusCode(), rqst.returnUrl(), &server);
 					
-					Request	rqst(*it, &error_page);
-					Response resp(rqst.returnProtocolVersion(), rqst.returnStatusCode(), rqst.returnUrl());
+					std::cout << resp << std::endl;
+					
 					send(*it, resp.respond(), resp.getResponse().size() , 0);
+					// if ()
 				}
 				// FD_CLR(*it, &this->_all_sock);
+				// close(*it); 
+			}
+			for (std::vector<int>::iterator it = this->_client_fd.begin(); it != this->_client_fd.end(); it++)
+			{
+				// FD_CLR(*it, &this->_all_sock);
+				std::cout << GREEN << *it << std::endl;
 				// close(*it); 
 			}
 		}

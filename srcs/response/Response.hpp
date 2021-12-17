@@ -6,7 +6,7 @@
 /*   By: mabriand <mabriand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/16 15:24:45 by mabriand          #+#    #+#             */
-/*   Updated: 2021/12/16 18:45:49 by mabriand         ###   ########.fr       */
+/*   Updated: 2021/12/17 15:57:44 by mabriand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,81 +14,72 @@
 # define RESPONSE_HPP
 
 #include "../incs/webserv.hpp"
+#include "../conf/serv_block.hpp"
 
 class   Response
 {
 	private:
 		Response(Response& toCopy);
-		Response&  operator=(Response& toAssign);
+		Response&	operator=(Response& toAssign);
 
-		std::string							response;
+		std::string							_response;
 		std::map<std::string, std::string>	_stock;
-		std::map<std::string, std::string>	mime;
-		std::map<int, std::string>			messages;
+		std::map<std::string, std::string>	_mime;
+		std::map<int, std::string>			_messages;
+		serv_block							*_block;
 
-		/*
-			Attributes corresponding to the fields of the HTTP request:
+		/*	Attributes corresponding to the fields of the HTTP request:
 		*/
-		std::string	protocol_version;
+		std::string	_protocol_version;
 		std::string	_status;
-		std::string	status_message;
-		std::string date;
-		// std::string	server;
-		std::string	body;
-		std::string content_type;
-		std::string content_lenght; // Content-Lenght : ne doit pas dépasser le client body size max
+		std::string	_status_message;
+		std::string	_date;
+		std::string	_server;
+		std::string	_body;
+		std::string	_content_type;
+		std::string	_content_lenght; // Content-Lenght : ne doit pas dépasser le client body size max
 
 
 	public:
 		Response();
-		Response(const std::string& protocol_version, int status, const std::string& url);
+		Response(const std::string& protocol_version, int status, const std::string& url, serv_block *block);
 		virtual ~Response();
 
-		/*
-			All setters (one for each attribute corresponding to a field of the HTTP request):
+		/*	All setters (one for each attribute corresponding to a field of the HTTP request):
 		*/
-		void	setProtocolVersion(const std::string& pv);
-		void	setStatus(int s);
-		void	setStatusMessage(const std::string& sm);
-		void	setDate();
-		// void	setServer();
-		void	setContentType(const std::string& content_type);
-		void	setContentLenght();
-		void	setBody(const std::string& b);
+		void		setProtocolVersion(const std::string& protocol_version);
+		void		setStatus(int status);
+		void		setStatusMessage(int status);
+		void		setDate();
+		void		setServer();
+		void		setContentType(const std::string& content_type);
+		void		setContentLenght();
+		void		setBody(const std::string& body);
 
+		void		buildMime(const std::string& key, const std::string& mapped);
+		void		setMimeMap();
+		void		buildMessages(int key, const std::string& mapped);
+		void		setMessagesMap();
 
-		void	buildMime(const std::string& key, const std::string& mapped);
-		void	setMimeMap();
-		void	buildMessages(int key, const std::string& mapped);
-		void	setMessagesMap();
+		void		buildLineResp(const std::string str1, const std::string sep1, const std::string str2, const std::string sep2, int *i);
+		void		buildPartResp(const std::string& key, int *i);
+		void		buildResponse();
+		void*		respond() const;
 
-		void	buildLineResp(const std::string str1, const std::string sep1, const std::string str2, const std::string sep2, int *i);
-		void	buildPartResp(const std::string& key, int *i);
-		void	buildResponse();
-		void*	respond() const;
-
-
-
-
-		/*
-			All getters (one for each attribute corresponding to a field of the HTTP request):
+		/*	All getters (one for each attribute corresponding to a field of the HTTP request):
 		*/
 		const std::string&	getProtocolVersion() const;
 		const std::string&	getStatus() const;
 		const std::string&	getStatusMessage() const;
-		const std::string&  getDate() const;
-		// const std::string&  getServer() const;
-		const std::string&  getContentType() const;
+		const std::string&	getDate() const;
+		const std::string&	getServer() const;
+		const std::string&	getContentType() const;
 		const std::string&	getContentLenght() const;
 		const std::string&	getBody() const;
 
 		const std::string&	getResponse() const;
-
-
-
-
 };
 
-std::ostream&	operator<<(std::ostream& os, const Response& r);
+std::ostream&		operator<<(std::ostream& os, const Response& r);
 
 #endif

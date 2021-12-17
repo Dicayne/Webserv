@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   serv_block.hpp                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vmoreau <vmoreau@student.42.fr>            +#+  +:+       +#+        */
+/*   By: mabriand <mabriand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/08 14:44:09 by vmoreau           #+#    #+#             */
-/*   Updated: 2021/12/13 14:53:53 by vmoreau          ###   ########.fr       */
+/*   Updated: 2021/12/17 15:38:13 by mabriand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,16 +25,16 @@
 class serv_block
 {
 private:
-	std::string				_path;
-	std::vector<std::string> _block;
+	std::string								_path;
+	std::vector<std::string>				_block;
 	std::map<std::string, std::string>		_error_page;
-	bool					_sendfile;
+	bool									_sendfile;
 	std::vector< std::vector<std::string> >	_loc_block;
-	int						_port;
-	std::string				_host;
-	std::string				_server_name;
-	int						_client_max_body_size;
-	std::vector<loc_block>	_location;
+	int										_port;
+	std::string								_host;
+	std::string								_server_name;
+	int										_client_max_body_size;
+	std::vector<loc_block>					_location;
 
 public:
 	serv_block();
