@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mabriand <mabriand@student.42.fr>          +#+  +:+       +#+        */
+/*   By: vmoreau <vmoreau@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/13 19:18:32 by vmoreau           #+#    #+#             */
-/*   Updated: 2021/12/17 13:35:00 by mabriand         ###   ########.fr       */
+/*   Updated: 2022/01/04 15:26:44 by vmoreau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,22 +26,28 @@ private:
 	fd_set							_readfds;
 	fd_set							_writefds;
 	int								_nfds;
+
 	std::vector< serv_block >		_servers;
 	confpars 						*_html;
 	std::map< int, sockaddr_in >	_socket;
 	std::vector< int >				_client_fd;
+	int								_rdy_fd;
 
 	void Server_setSocket();
 	void Server_setFd();
 	void Server_closeSocket(int socket);
 	void Server_closeAllSocket();
+	void Server_select();
+	void Server_loopServ();
+	void Server_loopClient();
+
 public:
 	static int server_is_alive;
 	Server(/* args */);
 	~Server();
 
 	void Server_init(confpars *html, std::vector< serv_block > serv);
-	void Server_launch(confpars *conf);
+	void Server_launch();
 
 	class ServerError : public std::exception
 	{
