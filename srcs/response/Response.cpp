@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Response.cpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mabriand <mabriand@student.42.fr>          +#+  +:+       +#+        */
+/*   By: vmoreau <vmoreau@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/16 15:24:59 by mabriand          #+#    #+#             */
-/*   Updated: 2021/12/17 16:03:49 by mabriand         ###   ########.fr       */
+/*   Updated: 2022/01/04 14:55:21 by vmoreau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,22 +37,22 @@ Response::~Response(){}
 void				Response::setProtocolVersion(const std::string& protocol_version)
 {
 	this->_protocol_version = protocol_version;
-	
+
 	std::pair<std::string, std::string> elem("Protocol-Version", this->_protocol_version);
 	this->_stock.insert(elem);
-	
+
 	return ;
 }
 void				Response::setStatus(int status)
 {
 	std::stringstream	out;
-		
+
 	out << status;
 	this->_status = out.str();
 
 	std::pair<std::string, std::string> elem("Status", this->_status);
 	this->_stock.insert(elem);
-	
+
 	return ;
 }
 void				Response::setStatusMessage(int status)
@@ -73,7 +73,7 @@ void				Response::setDate()
 	this->_date = date;
 	std::pair<std::string, std::string> elem("Date", this->_date);
 	this->_stock.insert(elem);
-	
+
 	return ;
 }
 void				Response::setServer()
@@ -82,7 +82,7 @@ void				Response::setServer()
 
 	std::pair<std::string, std::string> elem("Server", this->_server);
 	this->_stock.insert(elem);
-	
+
 	return ;
 }
 void				Response::setContentType(const std::string& url)
@@ -96,7 +96,7 @@ void				Response::setContentType(const std::string& url)
 	this->_content_type = itf->second;
 	std::pair<std::string, std::string> elem("Content-Type", this->_content_type);
 	this->_stock.insert(elem);
-	
+
 	return ;
 }
 void				Response::setContentLenght()
@@ -107,7 +107,7 @@ void				Response::setContentLenght()
 	this->_content_lenght = content_lenght.str();
 	std::pair<std::string, std::string> elem("Content-Lenght", this->_content_lenght);
 	this->_stock.insert(elem);
-	
+
 	return ;
 }
 void				Response::setBody(const std::string& url)
@@ -313,34 +313,31 @@ void				Response::setMessagesMap()
 	this->buildMessages(511, "Network Authentication Required");
 	return ;
 }
-void				Response::buildPartResp(const std::string& key, int *i)
+void				Response::buildPartResp(const std::string& key)
 {
 	std::map<std::string, std::string>::iterator	itf = (this->_stock).find(key);
 
-	(void) i;
 	if (key.compare("Protocol-Version") == 0 || key.compare("Status") == 0)
-		this->_response += itf->second + " ";
+		this->_response += itf->second;
 	else if (key.compare("Status-Message") == 0)
-		this->_response += itf->second + "\n";
+		this->_response += itf->second + "\r\n";		// Moyen Plus simple de fill la reponse, probleme si tu envoie le body d'une image avec c_str()
 	else if (key.compare("Body") == 0)
-		this->_response += "\n" + itf->second;
+		this->_response += "\r\n" + itf->second;
 	else
-		this->_response += itf->first + ": " + itf->second + "\n";
+		this->_response += itf->first + ":" + itf->second + "\r\n";
 	return ;
 }
 void				Response::buildResponse()
 {
-	int i = 0;
+	this->buildPartResp("Protocol-Version");
+	this->buildPartResp("Status");
+	this->buildPartResp("Status-Message");
+	this->buildPartResp("Date");
+	this->buildPartResp("Server");
+	this->buildPartResp("Content-Type");
+	this->buildPartResp("Content-Lenght");
 
-	this->buildPartResp("Protocol-Version", &i);
-	this->buildPartResp("Status", &i);
-	this->buildPartResp("Status-Message", &i);
-	this->buildPartResp("Date", &i);
-	this->buildPartResp("Server", &i);
-	this->buildPartResp("Content-Type", &i);
-	this->buildPartResp("Content-Lenght", &i);
-
-	this->buildPartResp("Body", &i);
+	this->buildPartResp("Body");
 
 	return ;
 }

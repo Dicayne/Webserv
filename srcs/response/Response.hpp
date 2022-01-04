@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Response.hpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mabriand <mabriand@student.42.fr>          +#+  +:+       +#+        */
+/*   By: vmoreau <vmoreau@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/16 15:24:45 by mabriand          #+#    #+#             */
-/*   Updated: 2021/12/17 15:57:44 by mabriand         ###   ########.fr       */
+/*   Updated: 2022/01/04 14:56:19 by vmoreau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,8 +61,7 @@ class   Response
 		void		buildMessages(int key, const std::string& mapped);
 		void		setMessagesMap();
 
-		void		buildLineResp(const std::string str1, const std::string sep1, const std::string str2, const std::string sep2, int *i);
-		void		buildPartResp(const std::string& key, int *i);
+		void		buildPartResp(const std::string& key);
 		void		buildResponse();
 		void*		respond() const;
 
