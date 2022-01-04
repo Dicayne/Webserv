@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: mabriand <mabriand@student.42.fr>          +#+  +:+       +#+         #
+#    By: vmoreau <vmoreau@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/11/29 16:52:41 by vmoreau           #+#    #+#              #
-#    Updated: 2021/12/16 15:28:19 by mabriand         ###   ########.fr        #
+#    Updated: 2022/01/04 14:45:21 by vmoreau          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -71,6 +71,9 @@ fclean : clean echoFCLEAN
 	$(RM) $(NAME)
 
 re : fclean all
+
+test : $(NAME)
+	./Serv
 
 ####################################ECHO######################################
 
