@@ -6,7 +6,7 @@
 /*   By: vmoreau <vmoreau@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/13 19:18:32 by vmoreau           #+#    #+#             */
-/*   Updated: 2022/01/04 15:26:44 by vmoreau          ###   ########.fr       */
+/*   Updated: 2022/01/04 17:13:46 by vmoreau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@ class Server
 {
 private:
 
-	fd_set							_all_sock;
+	fd_set							_currentfds;
 	fd_set							_readfds;
 	fd_set							_writefds;
 	int								_nfds;
@@ -38,7 +38,7 @@ private:
 	void Server_closeSocket(int socket);
 	void Server_closeAllSocket();
 	void Server_select();
-	void Server_loopServ();
+	void Server_loopServ(int fd);
 	void Server_loopClient();
 
 public:

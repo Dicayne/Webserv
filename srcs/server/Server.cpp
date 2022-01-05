@@ -6,7 +6,7 @@
 /*   By: vmoreau <vmoreau@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/13 19:18:35 by vmoreau           #+#    #+#             */
-/*   Updated: 2022/01/04 15:27:38 by vmoreau          ###   ########.fr       */
+/*   Updated: 2022/01/04 17:30:53 by vmoreau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -113,9 +113,9 @@ void Server::Server_setSocket()
 
 void Server::Server_setFd()
 {
-	FD_ZERO(&this->_all_sock);
+	FD_ZERO(&this->_currentfds);
 	for (std::map< int, sockaddr_in >::iterator it = this->_socket.begin(); it != this->_socket.end(); it++)
-		FD_SET(it->first, &this->_all_sock);
+		FD_SET(it->first, &this->_currentfds);
 	this->_nfds = this->_socket.rbegin()->first;
 }
 
@@ -128,86 +128,35 @@ void Server::Server_init(confpars *html, std::vector< serv_block > serv)
 
 void Server::Server_select()
 {
-	this->_readfds = this->_all_sock;
-	this->_writefds = this->_all_sock;
-	int ret_select = select(this->_nfds + 1, &this->_readfds, &this->_writefds, NULL, NULL);
+	this->_readfds = this->_currentfds;
+	this->_writefds = this->_currentfds;
 
-	if (ret_select < 0 && (errno != EINTR))
+	// std::cout << "B SEL!\n";
+	int ret_select = select(this->_nfds + 1, &this->_readfds, &this->_writefds, NULL, NULL);
+	// std::cout << "A SEL!\n";
+	if (ret_select < 0)
 		throw ServerError(std::strerror(errno));
-	this->_rdy_fd = ret_select;
+	// if (ret_select < 0 && (errno != EINTR))
+	// 	throw ServerError(std::strerror(errno));
+	// this->_rdy_fd = ret_select;
 }
 
-void Server::Server_loopServ()
+void Server::Server_loopServ(int fd)
 {
-	for (std::map< int, sockaddr_in >::iterator it = this->_socket.begin(); it != this->_socket.end(); it++)
-	{
-		if (FD_ISSET(it->first, &this->_readfds))
-		{
-			std::cout << PURPLE << "PASS  " << it->first << '\n' << NC;
-			this->_rdy_fd--;
-			int	clientSocket = accept(it->first, NULL, NULL);
+	serv_block	server = this->_servers[0];
 
-			if (clientSocket < 0 && errno != EAGAIN)
-			{
-				std::cerr << RED << "Server error: " << NC << "Couldn't accept connection.\n";
-				std::cerr << std::strerror(errno);
-				exit(EXIT_FAILURE);
-			}
-			else if (clientSocket > 0)
-			{
-				std::cout << YELLOW << "New incoming connection (fd " << clientSocket << ")" << NC << std::endl;
-				FD_SET(clientSocket, &this->_all_sock);
-				this->_client_fd.push_back(clientSocket);
-				if (clientSocket > this->_nfds)
-					this->_nfds = clientSocket;
-			}
-		}
-	}
+	Request		rqst(fd, &server);
+	Response	resp(rqst.returnProtocolVersion(), rqst.returnStatusCode(), rqst.returnUrl(), &server);
+
+	// std::cout << resp << std::endl;
+
+	send(fd, resp.respond(), resp.getResponse().size() , 0);
+	close(fd);
 }
 
 void Server::Server_loopClient()
 {
-	for (std::vector<int>::iterator it = this->_client_fd.begin(); it != this->_client_fd.end() && this->_rdy_fd > 0;)
-	{
-		if (FD_ISSET(*it, &this->_readfds))
-		{
-			// char buffer[30001] = {0};
-			// recv(*it, buffer, 30000, MSG_DONTWAIT);
-			// // std::cout << RED << buffer << NC << std::endl;
-			// std::string	buf = buffer;
-			// Request	firstRequest(buf);
-			// buf.clear();
-			// if (FD_ISSET(*it, &this->_writefds))
-			// {
-			// 	std::ifstream ms;
-			// 	ms.close();
-			// 	ms.open(firstRequest.getUrl());
-			// 	if (ms.is_open() == false)
-			// 	{
-			// 		ms.close(); // Because we're goning to open another
-			// 		ms.open(this->_servers[0].get_error_page().find("404")->second);
-			// 		if (ms.is_open() == false)
-			// 			std::cout << "I can't open html\n";
-			// 		else
-			// 			std::cout << "The html is open!\n";
-			// 		ms.close();
 
-			// 		std::string url(this->_servers[0].get_error_page().find("404")->second);
-			// 		Resp2	failure("HTTP/1.1", "400", url);
-			// 		send(*it, failure.respond(), failure.getResponse().size() , MSG_DONTWAIT);
-			// 	}
-			// 	else
-			// 	{
-			// 		std::cout << "FOUND\n";
-			// 		Resp2	failure("HTTP/1.1", "200", firstRequest.getUrl());
-			// 		send(*it, failure.respond(), failure.getResponse().size() , MSG_DONTWAIT);
-			// 		ms.close();
-			// 	}
-			// 	// FD_CLR(*it++, &_all_sock);
-			// }
-		}
-		it++;
-	}
 }
 
 void Server::Server_launch()
@@ -220,7 +169,33 @@ void Server::Server_launch()
 		{
 			this->Server_select();
 
-			this->Server_loopServ();
-			this->Server_loopClient();
+			for (int i = 0; i <= this->_nfds; i++)
+			{
+				if (FD_ISSET(i, &this->_readfds))
+				{
+					if (this->_socket.find(i) != this->_socket.end())
+					{
+						std::map<int, sockaddr_in>::iterator it = this->_socket.find(i);
+						int client_socket = accept(it->first, NULL, NULL);
+						if (client_socket < 0 && errno != EAGAIN)
+						{
+							std::cerr << client_socket << "  " << EAGAIN << '\n';
+							std::cerr << RED << "Server error: " << NC << "Couldn't accept connection.\n";
+							std::cerr << std::strerror(errno);
+							exit(EXIT_FAILURE);
+						}
+						FD_SET(client_socket, &this->_currentfds);
+						if (client_socket > this->_nfds)
+							this->_nfds = client_socket;
+					}
+					else
+					{
+						this->Server_loopServ(i);
+						FD_CLR(i, &this->_currentfds);
+					}
+				}
+			}
+			// this->Server_loopServ();
+			// this->Server_loopClient();
 		}
 }

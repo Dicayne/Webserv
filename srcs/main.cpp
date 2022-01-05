@@ -6,7 +6,7 @@
 /*   By: vmoreau <vmoreau@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/29 16:52:54 by vmoreau           #+#    #+#             */
-/*   Updated: 2022/01/04 15:46:22 by vmoreau          ###   ########.fr       */
+/*   Updated: 2022/01/04 15:49:58 by vmoreau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,17 +25,6 @@ void signal_handler(int signum)
 	if (signum == SIGPIPE)
 	{
 		std::cout << "SP caught" << std::endl;
-	}
-}
-
-void clear_buf(char buff[1024])
-{
-	int i = 0;
-
-	while (i < 1024)
-	{
-		buff[i] = '\0';
-		i++;
 	}
 }
 
