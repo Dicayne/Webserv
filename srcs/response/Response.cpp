@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Response.cpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vmoreau <vmoreau@student.42.fr>            +#+  +:+       +#+        */
+/*   By: mabriand <mabriand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/16 15:24:59 by mabriand          #+#    #+#             */
-/*   Updated: 2022/01/04 14:55:21 by vmoreau          ###   ########.fr       */
+/*   Updated: 2022/01/06 11:18:37 by mabriand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -320,7 +320,7 @@ void				Response::buildPartResp(const std::string& key)
 	if (key.compare("Protocol-Version") == 0 || key.compare("Status") == 0)
 		this->_response += itf->second;
 	else if (key.compare("Status-Message") == 0)
-		this->_response += itf->second + "\r\n";		// Moyen Plus simple de fill la reponse, probleme si tu envoie le body d'une image avec c_str()
+		this->_response += itf->second + "\r\n";
 	else if (key.compare("Body") == 0)
 		this->_response += "\r\n" + itf->second;
 	else
@@ -341,9 +341,7 @@ void				Response::buildResponse()
 
 	return ;
 }
-
 void*				Response::respond() const{ return ((void *)(this->_response.c_str())); }
-
 std::ostream&		operator<<(std::ostream& os, const Response& r)
 {
 	os << "[" << r.getProtocolVersion() << "]" << std::endl;

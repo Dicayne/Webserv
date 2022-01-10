@@ -1,13 +1,13 @@
 /* ************************************************************************** */
-/*																			*/
-/*														:::	  ::::::::   */
-/*   Request.hpp										:+:	  :+:	:+:   */
-/*													+:+ +:+		 +:+	 */
-/*   By: mabriand <mabriand@student.42.fr>		  +#+  +:+	   +#+		*/
-/*												+#+#+#+#+#+   +#+		   */
-/*   Created: 2021/12/06 19:46:24 by mabriand		  #+#	#+#			 */
-/*   Updated: 2021/12/09 13:24:56 by mabriand		 ###   ########.fr	   */
-/*																			*/
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   Request.hpp                                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: mabriand <mabriand@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2022/01/06 11:16:47 by mabriand          #+#    #+#             */
+/*   Updated: 2022/01/06 11:16:53 by mabriand         ###   ########.fr       */
+/*                                                                            */
 /* ************************************************************************** */
 
 #ifndef REQUEST_HPP
@@ -27,7 +27,6 @@ class   Request
 		serv_block							*_block;
 		std::string							_request;
 		std::map<std::string, std::string>	_stock;
-		// std::map<std::string, std::string>	*_errors;
 		/*	Attributes corresponding to the fields of the HTTP request:
 		*/
 		std::string	_method;
@@ -49,7 +48,6 @@ class   Request
 
 		bool connexion_end;
 	public:
-		// Request(int socket, std::map<std::string, std::string> *error_page);
 		Request(int socket, serv_block *block);
 		~Request();
 		/*	Some utils needed to extract information from the constructor's parameter 'buf' and to

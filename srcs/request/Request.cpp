@@ -12,20 +12,6 @@
 
 #include "./Request.hpp"
 
-// Request::Request(int socket, serv_block *block) : _socket(socket), _block(block)
-// {
-// 	char buffer[30001] = {0};
-// 	int ret = recv(socket, buffer, 30000, MSG_DONTWAIT);
-
-// 	std::string	buf = buffer;
-// 	this->_request = buf;
-
-// 	std::cout << PURPLE << ret << NC << "  " << std::strerror(errno) << '\n';
-// 	this->parseBuf(buf);
-// 	buf.clear();
-// 	return ;
-// }
-
 Request::Request(int socket, serv_block *block)  :  _socket(socket), _block(block)
 {
 	this->connexion_end = false;
@@ -130,22 +116,6 @@ void				Request::setMethod(std::string& line)
 	if (this->_method.compare("GET") != 0 && this->_method.compare("POST") != 0 && this->_method.compare("DELETE"))
 		_response_status_code = 405;
 	return ;
-
-	// this->_method = this->extractInfo(line);
-	// std::vector<std::string>::iterator	it = this->_block->_loc_block._method_limit.begin();
-	// while (it != this->_block->_loc_block._method_limit.end())
-	// {
-	// 	if (*it.compare(this->_method) == 0)
-	// 		return ;
-	// 	it++;
-	// }
-	// _response_status_code = 405;
-	// return ;
-
-	// std::vector<std::string>::iterator	it = this->_block->_loc_block._method_limit.find(this->_method);
-	// if (it == this->_block->_loc_block._method_limit.end())
-	// 	_response_status_code = 405;
-	// return ;
 }
 void				Request::setUrl(std::string& line)
 {
@@ -233,24 +203,7 @@ void				Request::defineStatusCode()
 
 	return ;
 }
-// void				Request::defineUrl()
-// {
-// 	int sub = this->_response_status_code - 200;
-// 	if (sub <= 8 || sub == 10 || sub == 26)
-// 		this->_response_url = this->_url;
-// 	else
-// 	{
-// 		std::stringstream	out;
-// 		std::string			str;
 
-// 		out << this->_response_status_code;
-// 		str = out.str();
-
-// 		std::map<std::string, std::string>::iterator	it = this->_block->get_error_page().find(str);
-// 		this->_response_url = it->second;
-// 	}
-// 	return ;
-// }
 void		Request::defineUrl()
 {
 	int sub = this->_response_status_code - 200;
@@ -272,7 +225,6 @@ void		Request::defineUrl()
 	}
 	return ;
 }
-
 /*	All getters (one for each attribute corresponding to a field of the HTTP _request):
 */
 const std::string&	Request::getMethod() const{ return (this->_method); }
