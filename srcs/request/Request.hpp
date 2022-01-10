@@ -27,7 +27,6 @@ class   Request
 		serv_block							*_block;
 		std::string							_request;
 		std::map<std::string, std::string>	_stock;
-		// std::map<std::string, std::string>	*_errors;
 		/*	Attributes corresponding to the fields of the HTTP request:
 		*/
 		std::string	_method;
@@ -48,7 +47,6 @@ class   Request
 		std::string	_response_url;
 
 	public:
-		// Request(int socket, std::map<std::string, std::string> *error_page);
 		Request(int socket, serv_block *block);
 		~Request();
 		/*	Some utils needed to extract information from the constructor's parameter 'buf' and to
