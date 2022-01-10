@@ -6,7 +6,7 @@
 /*   By: vmoreau <vmoreau@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/29 16:53:05 by vmoreau           #+#    #+#             */
-/*   Updated: 2021/12/14 13:45:47 by vmoreau          ###   ########.fr       */
+/*   Updated: 2022/01/04 15:31:36 by vmoreau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,14 +35,6 @@
 #include <sstream>
 #include <ctime>
 
-// #include "./Request.hpp"
-// #include "./AResponse.hpp"
-// #include "./Resp1.hpp"
-// #include "./Resp2.hpp"
-// #include "./Resp3.hpp"
-// #include "./Resp4.hpp"
-// #include "./Resp5.hpp"
-
 // #include <sys/types.h>
 // #include <netinet/in.h>
 
@@ -51,7 +43,11 @@
 
 #include "color.hpp"
 
-// #define CONF_DEFAULT_PATH "../conf.d/used/default.conf"
 #define CONF_DEFAULT_PATH "./srcs/conf.d/used/default.conf"
+#define DEFAULT_ERR_400 "./srcs/html/error/400.html"
+#define DEFAULT_ERR_404 "./srcs/html/error/404.html"
+#define DEFAULT_ERR_40x "./srcs/html/error/40x.html"
+#define DEFAULT_ERR_500 "./srcs/html/error/500.html"
+#define DEFAULT_ERR_50x "./srcs/html/error/50x.html"
 
 #endif

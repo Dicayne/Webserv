@@ -6,7 +6,7 @@
 /*   By: mabriand <mabriand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/16 15:24:59 by mabriand          #+#    #+#             */
-/*   Updated: 2022/01/10 10:59:07 by mabriand         ###   ########.fr       */
+/*   Updated: 2022/01/10 11:03:43 by mabriand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -339,9 +339,7 @@ void				Response::buildResponse()
 	this->buildPartResp("Body");
 	return ;
 }
-
 void*				Response::respond() const{ return ((void *)(this->_response.c_str())); }
-
 std::ostream&		operator<<(std::ostream& os, const Response& r)
 {
 	os << "[" << r.getProtocolVersion() << "]" << std::endl;
