@@ -22,7 +22,7 @@ class   Request
 		Request();
 		Request(Request& toCopy);
 		Request&	operator=(Request& toAssign);
-		
+
 		int									_socket;
 		serv_block							*_block;
 		std::string							_request;
@@ -46,6 +46,7 @@ class   Request
 		int			_response_status_code;
 		std::string	_response_url;
 
+		bool connexion_end;
 	public:
 		Request(int socket, serv_block *block);
 		~Request();
@@ -56,6 +57,7 @@ class   Request
 		std::string	extractMapped(std::string& line) const;// const std::string& --> pour le retour ?
 		void		buildMap(std::string& buf);
 		void		parseBuf(std::string& buf);
+		int			parse();
 		/*	All setters (one for each attribute i.e. a field of the HTTP request):
 		*/
 		void		setMethod(std::string& buf);
@@ -85,6 +87,7 @@ class   Request
 		const std::string&	getAcceptEncoding() const;
 		const std::string&	getConnection() const;
 		const std::string&	getBody() const;
+		serv_block*	getBlock();
 		/*
 		*/
 		const std::string&	returnProtocolVersion() const;

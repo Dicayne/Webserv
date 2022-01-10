@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Request.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mabriand <mabriand@student.42.fr>          +#+  +:+       +#+        */
+/*   By: vmoreau <vmoreau@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/06 20:57:30 by mabriand          #+#    #+#             */
-/*   Updated: 2022/01/06 11:17:39 by mabriand         ###   ########.fr       */
+/*   Updated: 2022/01/06 15:50:09 by vmoreau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,16 +14,7 @@
 
 Request::Request(int socket, serv_block *block)  :  _socket(socket), _block(block)
 {
-	char buffer[30001] = {0};
-	int ret = recv(socket, buffer, 30000, MSG_DONTWAIT);
-
-	std::string	buf = buffer;
-	this->_request = buf;
-	
-	std::cout << PURPLE << ret << NC << "  " << std::strerror(errno) << '\n';
-	this->parseBuf(buf);
-	buf.clear();
-	return ;
+	this->connexion_end = false;
 }
 
 Request::~Request(){}
@@ -38,10 +29,26 @@ std::string			Request::extractInfo(std::string& line) const
 	std::string	info(it, ite);
 	while (std::isspace(*ite) != 0 && ite != line.end())
 		ite++;
-	
+
 	line.erase(it, ite);
 	return (info);
 }
+
+int					Request::parse()
+{
+	char buffer[65537] = {0};
+	int ret = recv(this->_socket, buffer, 65536, MSG_DONTWAIT);
+
+	std::string	buf = buffer;
+	this->_request = buf;
+
+	std::cout << PURPLE << ret << NC << "  " << std::strerror(errno) << '\n';
+	this->parseBuf(buf);
+	buf.clear();
+
+	return (ret);
+}
+
 std::string			Request::extractMapped(std::string& line) const
 {
 	std::string::iterator	it = line.begin();
@@ -96,7 +103,7 @@ void				Request::parseBuf(std::string& buf)
 	this->defineProtocolVersion();
 	this->defineStatusCode();
 	this->defineUrl();
-	
+
 	return ;
 }
 /*	All setters (one for each attribute corresponding to a field of the HTTP _request):
@@ -185,7 +192,7 @@ void				Request::defineStatusCode()
 		return ;
 
 	std::ifstream ms;
-	
+
 	ms.close();
 	ms.open(this->_url);
 	if (ms.is_open() == true)
@@ -193,9 +200,10 @@ void				Request::defineStatusCode()
 	else
 		this->_response_status_code = 404;
 	ms.close();
-	
+
 	return ;
 }
+
 void		Request::defineUrl()
 {
 	int sub = this->_response_status_code - 200;
@@ -205,13 +213,13 @@ void		Request::defineUrl()
 	{
 		std::stringstream	out;
 		std::string			str;
-		
+
 		out << this->_response_status_code;
 		str = out.str();
-		
+
 		std::map<std::string, std::string>				tmp = this->_block->get_error_page();
 		std::map<std::string, std::string>::iterator	it = tmp.find(str);
-		
+
 		this->_response_url = it->second;
 		std::cout << BLUE << this->_response_url << NC << std::endl;
 	}
@@ -229,6 +237,7 @@ const std::string&	Request::getAcceptLanguage() const{ return(this->_accept_lang
 const std::string&	Request::getAcceptEncoding() const{ return (this->_accept_encoding); }
 const std::string&	Request::getConnection() const{ return(this->_connection); }
 const std::string&	Request::getBody() const{ return(this->_body); }
+serv_block*	Request::getBlock() { return(this->_block); }
 
 const std::string&	Request::returnProtocolVersion() const{ return (this->_response_protocol_version); }
 const std::string&	Request::returnUrl() const{ return (this->_response_url); }
