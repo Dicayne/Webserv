@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Request.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mabriand <mabriand@student.42.fr>          +#+  +:+       +#+        */
+/*   By: vmoreau <vmoreau@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/06 11:16:47 by mabriand          #+#    #+#             */
-/*   Updated: 2022/01/06 11:16:53 by mabriand         ###   ########.fr       */
+/*   Updated: 2022/01/18 15:25:01 by vmoreau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,6 +39,8 @@ class   Request
 		std::string	_accept_encoding;
 		std::string	_connection;
 		std::string	_body;
+		std::string _referer;
+		bool		_loc_referer;
 		/*	Attributes corresponding to the parameters of the reponse's constructor that will be asked
 			when creating it to send it back to the client:
 		*/
@@ -46,7 +48,7 @@ class   Request
 		int			_response_status_code;
 		std::string	_response_url;
 
-		bool connexion_end;
+		bool _request_ready;
 	public:
 		Request(int socket, serv_block *block);
 		~Request();
@@ -62,6 +64,8 @@ class   Request
 		*/
 		void		setMethod(std::string& buf);
 		void		setUrl(std::string& buf);
+		void		treatUrl();
+		std::string treat_referer(std::string ref);
 		void		setProtocolVersion(std::string& buf);
 		void		setHost();
 		void		setUserAgent();
@@ -69,12 +73,14 @@ class   Request
 		void		setAcceptLanguage();
 		void		setAcceptEncoding();
 		void		setConnection();
+		void		setReferer();
 		void		setBody();
 		/*
 		*/
 		void		defineProtocolVersion();
 		void		defineStatusCode();
 		void		defineUrl();
+		loc_block	*find_loc_block(std::string url);
 		/*	All getters (one for each attribute i.e. a field of the HTTP request):
 		*/
 		const std::string&	getMethod() const;
@@ -86,8 +92,10 @@ class   Request
 		const std::string&	getAcceptLanguage() const;
 		const std::string&	getAcceptEncoding() const;
 		const std::string&	getConnection() const;
+		const std::string&	getReferer() const;
 		const std::string&	getBody() const;
 		serv_block*	getBlock();
+		const bool&	is_request_ready() const;
 		/*
 		*/
 		const std::string&	returnProtocolVersion() const;

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mabriand <mabriand@student.42.fr>          +#+  +:+       +#+        */
+/*   By: vmoreau <vmoreau@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/13 19:18:35 by vmoreau           #+#    #+#             */
-/*   Updated: 2022/01/10 12:14:02 by vmoreau          ###   ########.fr       */
+/*   Updated: 2022/01/20 16:00:10 by vmoreau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,6 +40,20 @@ Server::Server(/* args */)
 
 Server::~Server()
 {
+	for (std::map< int, Request *>::iterator it = this->_client_sock.begin(); it != this->_client_sock.end(); it++)
+	{
+		close(it->first);
+		delete(it->second);
+	}
+	this->Server_closeAllSocket();
+	this->Server_Zero_all_set();
+}
+
+void Server::Server_Zero_all_set()
+{
+	FD_ZERO(&this->_currentfds);
+	FD_ZERO(&this->_readfds);
+	FD_ZERO(&this->_writefds);
 }
 
 void Server::Server_closeSocket(int socket)
@@ -167,7 +181,7 @@ void Server::Server_loopServ()
 					std::cout << YELLOW << "New incoming connection (fd " << client_socket << ")" << " for -> " << i << NC << std::endl;
 					FD_SET(client_socket, &this->_currentfds);
 
-					Request* req = new Request(client_socket, &this->_servers[0]);
+					Request* req = new Request(client_socket, &this->_servers[i - 3]);
 
 					this->_client_sock.insert(std::make_pair(client_socket, req));
 
@@ -179,17 +193,6 @@ void Server::Server_loopServ()
 	}
 }
 
-int Server::process_request(std::map<int, Request*>::iterator it)
-{
-	int ret = it->second->parse();
-	if (ret >= 0)
-	{
-		Response	resp(it->second->returnProtocolVersion(), it->second->returnStatusCode(), it->second->returnUrl(), it->second->getBlock());
-		this->_response = resp.getResponse();
-	}
-	return ret;
-}
-
 void Server::Server_loopClient()
 {
 	for (std::map<int, Request*>::iterator it = this->_client_sock.begin(); it != this->_client_sock.end() && this->_rdy_fd > 0; )
@@ -197,22 +200,37 @@ void Server::Server_loopClient()
 		int ret = 0;
 		if (FD_ISSET(it->first, &this->_readfds))
 		{
-			ret = process_request(it);
-			if (ret == 1)
+			ret = it->second->parse();
+			if (ret >= 0 && it->second->is_request_ready() == true)
 			{
-				int fd = it->first;
-				serv_block *serv = it->second->getBlock();
-				delete it->second;
-				it->second = new Request(fd, serv);
+				Response	resp(it->second->returnProtocolVersion(), it->second->returnStatusCode(), it->second->returnUrl(), it->second->getBlock());
+				this->_response = resp.getVecResponse();
 			}
 		}
 		if (FD_ISSET(it->first, &this->_writefds) && this->_response.size())
 		{
-			send(it->first, (void *)this->_response.c_str(), this->_response.size() , MSG_DONTWAIT);
-			this->_response.clear();
-			std::cout << RED << "connection closed(fd " << it->first << ")" << NC << std::endl;
-			FD_CLR(it->first, &this->_currentfds);
-			close(it->first);
+			ret = send(it->first, &this->_response[0], this->_response.size() , MSG_DONTWAIT);
+
+			if (ret == -1)
+			{
+				std::cout << PURPLE << "AIE AIE AIE !!!\n" << NC;
+			}
+
+			// std::cout << "AFTER SEND: " << ret << NC << std::endl;
+
+			this->_response.erase(this->_response.begin(), this->_response.begin() + ret);
+
+			if (this->_response.size() == 0)
+			{
+				std::cout << RED << "connection closed(fd " << it->first << ")" << NC << std::endl;
+				FD_CLR(it->first, &this->_currentfds);
+				close(it->first);
+				delete(it->second);
+				std::map<int, Request*>::iterator tmp = it;
+				it++;
+				this->_client_sock.erase(tmp);
+			}
+			continue;
 		}
 		it++;
 	}

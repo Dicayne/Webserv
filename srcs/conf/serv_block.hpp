@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   serv_block.hpp                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mabriand <mabriand@student.42.fr>          +#+  +:+       +#+        */
+/*   By: vmoreau <vmoreau@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/08 14:44:09 by vmoreau           #+#    #+#             */
-/*   Updated: 2021/12/17 15:38:13 by mabriand         ###   ########.fr       */
+/*   Updated: 2022/01/12 18:00:13 by vmoreau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,6 +35,8 @@ private:
 	std::string								_server_name;
 	int										_client_max_body_size;
 	std::vector<loc_block>					_location;
+	std::string								_default_root;
+	std::string								_default_path;
 
 public:
 	serv_block();
@@ -47,6 +49,8 @@ public:
 	void set_port_host(std::string value);
 	void set_server_name(std::string value);
 	void set_client_max_body_size(std::string value);
+	void set_default_root(std::string value);
+	void set_default_path(std::string value);
 
 	// GETTER
 	std::string get_host() const					{ return (this->_host); }
@@ -55,6 +59,8 @@ public:
 	int get_client_max_body_size() const			{ return (this->_client_max_body_size); }
 	std::vector<loc_block> get_location() const		{ return (this->_location); }
 	bool get_sendfile() const						{ return (this->_sendfile); }
+	std::string get_default_root() const			{ return (this->_default_root); }
+	std::string get_default_path() const			{ return (this->_default_path); }
 	std::map<std::string, std::string> get_error_page() const	{ return (this->_error_page); }
 
 

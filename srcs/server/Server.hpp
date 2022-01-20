@@ -6,7 +6,7 @@
 /*   By: vmoreau <vmoreau@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/13 19:18:32 by vmoreau           #+#    #+#             */
-/*   Updated: 2022/01/06 17:47:10 by vmoreau          ###   ########.fr       */
+/*   Updated: 2022/01/20 16:00:44 by vmoreau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,7 @@ private:
 	std::map< int, sockaddr_in >	_socket;
 	std::map< int, Request * >		_client_sock;
 	int								_rdy_fd;
-	std::string						_response;
+	std::vector< unsigned char >	_response;
 
 	void Server_setSocket();
 	void Server_setFd();
@@ -41,8 +41,7 @@ private:
 	void Server_select();
 	void Server_loopServ();
 	void Server_loopClient();
-
-	int process_request(std::map<int, Request*>::iterator it);
+	void Server_Zero_all_set();
 
 	void print_fds(const char *color);
 public:

@@ -6,7 +6,7 @@
 /*   By: vmoreau <vmoreau@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/07 16:02:13 by vmoreau           #+#    #+#             */
-/*   Updated: 2022/01/04 15:40:52 by vmoreau          ###   ########.fr       */
+/*   Updated: 2022/01/12 17:49:37 by vmoreau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -190,12 +190,12 @@ void confpars::pars_http()
 	if (this->_error_page.empty() == true)
 	{
 		std::cout << YELLOW << "Warning: " << NC << " Error pages is missing in ";
-		std::cout << this->_path << " Error pages are set by default at :\n\t" << PURPLE << DEFAULT_ERR_400 << "\n\t" << DEFAULT_ERR_400 << "\n\t" << DEFAULT_ERR_404 << "\n\t" << DEFAULT_ERR_40x << "\n\t" << DEFAULT_ERR_500 << "\n\t" << DEFAULT_ERR_50x << '\n' << NC;
+		std::cout << this->_path << " Error pages are set by default at :\n\t" << PURPLE << DEFAULT_ERR_400 << "\n\t" << DEFAULT_ERR_400 << "\n\t" << DEFAULT_ERR_404 << "\n\t" << DEFAULT_ERR_4xx << "\n\t" << DEFAULT_ERR_500 << "\n\t" << DEFAULT_ERR_5xx << '\n' << NC;
 		this->_error_page.insert(std::make_pair("400", DEFAULT_ERR_400));
 		this->_error_page.insert(std::make_pair("404", DEFAULT_ERR_404));
-		this->_error_page.insert(std::make_pair("40x", DEFAULT_ERR_40x));
+		this->_error_page.insert(std::make_pair("4xx", DEFAULT_ERR_4xx));
 		this->_error_page.insert(std::make_pair("500", DEFAULT_ERR_500));
-		this->_error_page.insert(std::make_pair("50x", DEFAULT_ERR_50x));
+		this->_error_page.insert(std::make_pair("5xx", DEFAULT_ERR_5xx));
 	}
 	// DEBUG //
 	// std::cout << std::boolalpha << this->_sendfile << '\n';

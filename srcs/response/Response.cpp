@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Response.cpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mabriand <mabriand@student.42.fr>          +#+  +:+       +#+        */
+/*   By: vmoreau <vmoreau@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/16 15:24:59 by mabriand          #+#    #+#             */
-/*   Updated: 2022/01/06 11:18:37 by mabriand         ###   ########.fr       */
+/*   Updated: 2022/01/20 16:01:20 by vmoreau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,8 @@ Response::Response(const std::string& protocol_version, int status, const std::s
 	this->setProtocolVersion(protocol_version);
 	this->setStatus(status);
 	this->setStatusMessage(status);
+	if (status == 300 )
+		this->setLocation(url);
 	this->setDate();
 	this->setServer();
 	this->setBody(url);
@@ -36,7 +38,7 @@ Response::~Response(){}
 
 void				Response::setProtocolVersion(const std::string& protocol_version)
 {
-	this->_protocol_version = protocol_version;
+	this->_protocol_version = protocol_version + " ";
 
 	std::pair<std::string, std::string> elem("Protocol-Version", this->_protocol_version);
 	this->_stock.insert(elem);
@@ -48,7 +50,7 @@ void				Response::setStatus(int status)
 	std::stringstream	out;
 
 	out << status;
-	this->_status = out.str();
+	this->_status = out.str() + " ";
 
 	std::pair<std::string, std::string> elem("Status", this->_status);
 	this->_stock.insert(elem);
@@ -60,6 +62,16 @@ void				Response::setStatusMessage(int status)
 	std::map<int, std::string>::iterator	itf = (this->_messages).find(status);
 	this->_status_message = itf->second;
 	std::pair<std::string, std::string> elem("Status-Message", this->_status_message);
+	this->_stock.insert(elem);
+
+	return ;
+}
+void				Response::setLocation(std::string url)
+{
+	std::string location(url.begin(), url.begin() + url.find_last_of('/'));
+
+	std::cout << RED << location << NC << '\n';
+	std::pair<std::string, std::string> elem("Location", location);
 	this->_stock.insert(elem);
 
 	return ;
@@ -96,39 +108,27 @@ void				Response::setContentType(const std::string& url)
 	this->_content_type = itf->second;
 	std::pair<std::string, std::string> elem("Content-Type", this->_content_type);
 	this->_stock.insert(elem);
-
+	this->_selected_mime = key;
 	return ;
 }
 void				Response::setContentLenght()
 {
-	std::stringstream content_lenght;
-	content_lenght << this->_body.size();
+	std::stringstream content_length;
+	content_length << this->_body.size();
 
-	this->_content_lenght = content_lenght.str();
-	std::pair<std::string, std::string> elem("Content-Lenght", this->_content_lenght);
+	this->_content_length = content_length.str();
+	std::pair<std::string, std::string> elem("Content-Length", this->_content_length);
 	this->_stock.insert(elem);
 
 	return ;
 }
 void				Response::setBody(const std::string& url)
 {
-	std::ifstream ms;
-	std::string	temp;
-	std::string body;
+	std::ifstream ms(url.c_str(), std::ios::in | std::ios::binary);
 
-	ms.open(url);
-	while(std::getline(ms, temp))
-	{
-		body += temp;
-		body += '\n';
-	}
+	this->_body.assign(std::istreambuf_iterator<char>(ms), std::istreambuf_iterator<char>());
+
 	ms.close();
-
-	body.pop_back();
-	this->_body = body;
-
-	std::pair<std::string, std::string> elem("Body", this->_body);
-	this->_stock.insert(elem);
 	return ;
 }
 
@@ -137,11 +137,11 @@ const std::string&	Response::getStatus() const{ return (this->_status); }
 const std::string&	Response::getStatusMessage() const{ return (this->_status_message); }
 const std::string&	Response::getDate() const{ return (this->_date); }
 const std::string&	Response::getServer() const{ return (this->_server); }
-const std::string&  Response::getBody() const{ return (this->_body); }
 const std::string&	Response::getContentType() const{ return (this->_content_type); }
-const std::string&	Response::getContentLenght() const{ return (this->_content_lenght); }
+const std::string&	Response::getContentLenght() const{ return (this->_content_length); }
+const std::string&  Response::getMime() const{ return (this->_selected_mime); }
 //
-const std::string&  Response::getResponse() const{ return (this->_response); }
+const std::vector< unsigned char >& Response::getVecResponse() const {return (this->_response); }
 
 void				Response::buildMime(const std::string& key, const std::string& mapped)
 {
@@ -313,18 +313,25 @@ void				Response::setMessagesMap()
 	this->buildMessages(511, "Network Authentication Required");
 	return ;
 }
+
+void				Response::fill_resp(const std::string& line)
+{
+	for (size_t i = 0; i < line.size(); i++)
+		this->_response.push_back(line[i]);
+}
+
 void				Response::buildPartResp(const std::string& key)
 {
 	std::map<std::string, std::string>::iterator	itf = (this->_stock).find(key);
 
 	if (key.compare("Protocol-Version") == 0 || key.compare("Status") == 0)
-		this->_response += itf->second;
+		fill_resp(itf->second);
+	else if (key.compare("Location") == 0)
+		fill_resp(itf->first + ": " + itf->second + "\r\n");
 	else if (key.compare("Status-Message") == 0)
-		this->_response += itf->second + "\r\n";
-	else if (key.compare("Body") == 0)
-		this->_response += "\r\n" + itf->second;
+		fill_resp(itf->second + "\r\n");
 	else
-		this->_response += itf->first + ":" + itf->second + "\r\n";
+		fill_resp(itf->first + ":" + itf->second + "\r\n");
 	return ;
 }
 void				Response::buildResponse()
@@ -332,16 +339,23 @@ void				Response::buildResponse()
 	this->buildPartResp("Protocol-Version");
 	this->buildPartResp("Status");
 	this->buildPartResp("Status-Message");
+	if (this->_status.compare("300 ") == 0)
+		this->buildPartResp("Location");
 	this->buildPartResp("Date");
 	this->buildPartResp("Server");
-	this->buildPartResp("Content-Type");
-	this->buildPartResp("Content-Lenght");
 
-	this->buildPartResp("Body");
+	fill_resp("Connection: keep-alive\r\n");
+	fill_resp("Keep-Alive: timeout=3\r\n");
+
+	this->buildPartResp("Content-Type");
+	this->buildPartResp("Content-Length");
+
+	this->fill_resp("\r\n");
+	for (std::vector< unsigned char >::iterator it = this->_body.begin(); it != this->_body.end(); it++)
+		this->_response.push_back(*it);
 
 	return ;
 }
-void*				Response::respond() const{ return ((void *)(this->_response.c_str())); }
 std::ostream&		operator<<(std::ostream& os, const Response& r)
 {
 	os << "[" << r.getProtocolVersion() << "]" << std::endl;
@@ -351,7 +365,5 @@ std::ostream&		operator<<(std::ostream& os, const Response& r)
 	os << "[" << r.getServer() << "]" << std::endl;
 	os << "[" << r.getContentType() << "]" << std::endl;
 	os << "[" << r.getContentLenght() << "]" << std::endl;
-	os << "[" << r.getBody() << "]" << std::endl;
-	os << YELLOW << "===>" << r.getResponse() << "<===" << NC << std::endl;
 	return (os);
 }
