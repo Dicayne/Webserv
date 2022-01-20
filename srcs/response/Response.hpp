@@ -6,7 +6,7 @@
 /*   By: vmoreau <vmoreau@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/16 15:24:45 by mabriand          #+#    #+#             */
-/*   Updated: 2022/01/20 16:00:07 by vmoreau          ###   ########.fr       */
+/*   Updated: 2022/01/20 16:37:12 by vmoreau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@ class   Response
 		Response(Response& toCopy);
 		Response&	operator=(Response& toAssign);
 
-		std::vector< unsigned char >		_response;
+		std::vector< char >		_response;
 
 		std::map<std::string, std::string>	_stock;
 		std::map<std::string, std::string>	_mime;
@@ -36,7 +36,7 @@ class   Response
 		std::string						_status_message;
 		std::string						_date;
 		std::string						_server;
-		std::vector< unsigned char >	_body;
+		std::vector< char >	_body;
 		std::string						_content_type;
 		std::string						_content_length; // Content-Lenght : ne doit pas dépasser le client body size max
 		std::string 					_selected_mime;
@@ -80,7 +80,7 @@ class   Response
 		const std::string&	getMime() const;
 
 		const std::string&	getResponse() const;
-		const std::vector< unsigned char >& getVecResponse() const;
+		const std::vector< char >& getVecResponse() const;
 };
 
 std::ostream&		operator<<(std::ostream& os, const Response& r);

@@ -6,7 +6,7 @@
 /*   By: vmoreau <vmoreau@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/16 15:24:59 by mabriand          #+#    #+#             */
-/*   Updated: 2022/01/20 16:01:20 by vmoreau          ###   ########.fr       */
+/*   Updated: 2022/01/20 16:39:59 by vmoreau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -126,7 +126,15 @@ void				Response::setBody(const std::string& url)
 {
 	std::ifstream ms(url.c_str(), std::ios::in | std::ios::binary);
 
-	this->_body.assign(std::istreambuf_iterator<char>(ms), std::istreambuf_iterator<char>());
+	if (!ms.eof() && !ms.fail())
+	{
+		ms.seekg(0, std::ios_base::end);
+		std::streampos fileSize = ms.tellg();
+		this->_body.resize(fileSize);
+
+		ms.seekg(0, std::ios_base::beg);
+		ms.read(&this->_body[0], fileSize);
+	}
 
 	ms.close();
 	return ;
@@ -141,7 +149,7 @@ const std::string&	Response::getContentType() const{ return (this->_content_type
 const std::string&	Response::getContentLenght() const{ return (this->_content_length); }
 const std::string&  Response::getMime() const{ return (this->_selected_mime); }
 //
-const std::vector< unsigned char >& Response::getVecResponse() const {return (this->_response); }
+const std::vector< char >& Response::getVecResponse() const {return (this->_response); }
 
 void				Response::buildMime(const std::string& key, const std::string& mapped)
 {
@@ -316,8 +324,7 @@ void				Response::setMessagesMap()
 
 void				Response::fill_resp(const std::string& line)
 {
-	for (size_t i = 0; i < line.size(); i++)
-		this->_response.push_back(line[i]);
+	this->_response.insert(this->_response.end(), line.begin(), line.end());
 }
 
 void				Response::buildPartResp(const std::string& key)
@@ -351,8 +358,7 @@ void				Response::buildResponse()
 	this->buildPartResp("Content-Length");
 
 	this->fill_resp("\r\n");
-	for (std::vector< unsigned char >::iterator it = this->_body.begin(); it != this->_body.end(); it++)
-		this->_response.push_back(*it);
+	this->_response.insert(this->_response.end(), this->_body.begin(), this->_body.end());
 
 	return ;
 }
