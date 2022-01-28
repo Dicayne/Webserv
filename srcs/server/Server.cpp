@@ -6,7 +6,7 @@
 /*   By: mabriand <mabriand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/13 19:18:35 by vmoreau           #+#    #+#             */
-/*   Updated: 2022/01/28 13:51:44 by mabriand         ###   ########.fr       */
+/*   Updated: 2022/01/28 15:31:00 by mabriand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -208,9 +208,8 @@ void Server::Server_loopClient()
 				CgiProcess newProcess(it->second, this);
 				if (newProcess.isCgiNeeded() == true)
 					newProcess.exeCgiProgram();
-				
-				// Response	resp(it->second->returnProtocolVersion(), it->second->returnStatusCode(), it->second->returnUrl(), it->second->getBlock());
-				// this->_response = resp.getVecResponse();
+				Response	resp(it->second->returnProtocolVersion(), it->second->returnStatusCode(), it->second->returnUrl(), it->second->getBlock());
+				this->_response = resp.getVecResponse();
 			}
 		}
 		if (FD_ISSET(it->first, &this->_writefds) && this->_response.size())
