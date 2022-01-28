@@ -6,7 +6,7 @@
 /*   By: mabriand <mabriand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/06 20:57:30 by mabriand          #+#    #+#             */
-/*   Updated: 2022/01/28 09:18:11 by mabriand         ###   ########.fr       */
+/*   Updated: 2022/01/28 13:44:27 by mabriand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -100,6 +100,7 @@ void				Request::parseBuf(std::string& buf)
 	this->setConnection();
 	this->setReferer();
 	this->setBody();
+	this->set_queryString();
 
 	std::cout << *this << std::endl;
 
@@ -229,7 +230,8 @@ void				Request::treatUrl()
 void				Request::setUrl(std::string& line)
 {
 	this->_url = this->extractInfo(line);
-
+	this->_baseUrl = this->_url;
+	
 	if (this->_url.size() > 512) // In order to have a small url to pass to provoque the error.
 		this->_response_status_code = 414;
 	return ;
@@ -297,6 +299,18 @@ void				Request::setBody()
 		this->_response_status_code = 400; // Pour le moment car je ne trouve pas s'il y a un code erreur précis
 	return ;
 }
+void				Request::set_queryString()
+{
+	size_t	i;
+
+	i = this->_baseUrl.find_first_of('?');
+	if (i != std::string::npos)
+	{
+		this->_queryString.assign(this->_baseUrl, i + 1, std::string::npos);
+		// this->_baseUrl = this->_path.substr(0, i);
+	}
+	return ;
+}
 void				Request::defineProtocolVersion()
 {
 	this->_response_protocol_version = this->_protocol_version;
@@ -348,6 +362,7 @@ void		Request::defineUrl()
 */
 const std::string&	Request::getMethod() const{ return (this->_method); }
 const std::string&	Request::getUrl() const{ return (this->_url); }
+const std::string&	Request::get_baseUrl() const{ return (this->_baseUrl); }
 const std::string&	Request::getProtocolVersion() const{ return (this->_protocol_version); }
 const std::string&	Request::getHost() const{ return(this->_host); }
 const std::string&	Request::getUserAgent() const{ return(this->_user_agent); }
@@ -357,6 +372,7 @@ const std::string&	Request::getAcceptEncoding() const{ return (this->_accept_enc
 const std::string&	Request::getConnection() const{ return(this->_connection); }
 const std::string&	Request::getReferer() const{ return(this->_referer); }
 const std::string&	Request::getBody() const{ return(this->_body); }
+const std::string&	Request::get_queryString() const{ return(this->_queryString); }
 serv_block*	Request::getBlock() { return(this->_block); }
 const bool&	Request::is_request_ready() const { return (this->_request_ready); }
 
@@ -368,6 +384,7 @@ std::ostream&		operator<<(std::ostream& os, const Request& r)
 {
 	os << "[" << r.getMethod() << "]" << std::endl;
 	os << "[" << r.getUrl() << "]" << std::endl;
+	os << "[" << r.get_baseUrl() << "]" << std::endl;
 	os << "[" << r.getProtocolVersion() << "]" << std::endl;
 	os << "[" << r.getHost() << "]" << std::endl;
 	os << "[" << r.getUserAgent() << "]" << std::endl;
@@ -377,5 +394,6 @@ std::ostream&		operator<<(std::ostream& os, const Request& r)
 	os << "[" << r.getConnection() << "]" << std::endl;
 	os << "[" << r.getReferer() << "]" << std::endl;
 	os << "[" << r.getBody() << "]" << std::endl;
+	os << "[" << r.get_queryString() << "]" << std::endl;
 	return (os);
 }

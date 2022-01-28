@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Request.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vmoreau <vmoreau@student.42.fr>            +#+  +:+       +#+        */
+/*   By: mabriand <mabriand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/06 11:16:47 by mabriand          #+#    #+#             */
-/*   Updated: 2022/01/18 15:25:01 by vmoreau          ###   ########.fr       */
+/*   Updated: 2022/01/28 13:40:14 by mabriand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,6 +31,7 @@ class   Request
 		*/
 		std::string	_method;
 		std::string	_url;
+		std::string	_baseUrl;
 		std::string	_protocol_version;
 		std::string	_host;
 		std::string	_user_agent;
@@ -39,6 +40,7 @@ class   Request
 		std::string	_accept_encoding;
 		std::string	_connection;
 		std::string	_body;
+		std::string	_queryString;
 		std::string _referer;
 		bool		_loc_referer;
 		/*	Attributes corresponding to the parameters of the reponse's constructor that will be asked
@@ -75,6 +77,7 @@ class   Request
 		void		setConnection();
 		void		setReferer();
 		void		setBody();
+		void		set_queryString();
 		/*
 		*/
 		void		defineProtocolVersion();
@@ -85,6 +88,7 @@ class   Request
 		*/
 		const std::string&	getMethod() const;
 		const std::string&	getUrl() const;
+		const std::string&	get_baseUrl() const;
 		const std::string&	getProtocolVersion() const;
 		const std::string&	getHost() const;
 		const std::string&	getUserAgent() const;
@@ -94,6 +98,7 @@ class   Request
 		const std::string&	getConnection() const;
 		const std::string&	getReferer() const;
 		const std::string&	getBody() const;
+		const std::string&	get_queryString() const;
 		serv_block*	getBlock();
 		const bool&	is_request_ready() const;
 		/*

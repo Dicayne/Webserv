@@ -3,14 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   Server.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vmoreau <vmoreau@student.42.fr>            +#+  +:+       +#+        */
+/*   By: mabriand <mabriand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/13 19:18:35 by vmoreau           #+#    #+#             */
-/*   Updated: 2022/01/20 16:00:10 by vmoreau          ###   ########.fr       */
+/*   Updated: 2022/01/28 13:51:44 by mabriand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "./Server.hpp"
+#include "../cgi/CgiProcess.hpp"
+#include "../response/Response.hpp"
 
 std::string ipToString(unsigned int ip)
 {
@@ -203,8 +205,12 @@ void Server::Server_loopClient()
 			ret = it->second->parse();
 			if (ret >= 0 && it->second->is_request_ready() == true)
 			{
-				Response	resp(it->second->returnProtocolVersion(), it->second->returnStatusCode(), it->second->returnUrl(), it->second->getBlock());
-				this->_response = resp.getVecResponse();
+				CgiProcess newProcess(it->second, this);
+				if (newProcess.isCgiNeeded() == true)
+					newProcess.exeCgiProgram();
+				
+				// Response	resp(it->second->returnProtocolVersion(), it->second->returnStatusCode(), it->second->returnUrl(), it->second->getBlock());
+				// this->_response = resp.getVecResponse();
 			}
 		}
 		if (FD_ISSET(it->first, &this->_writefds) && this->_response.size())

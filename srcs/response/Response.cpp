@@ -6,7 +6,7 @@
 /*   By: mabriand <mabriand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/16 15:24:59 by mabriand          #+#    #+#             */
-/*   Updated: 2022/01/28 09:18:07 by mabriand         ###   ########.fr       */
+/*   Updated: 2022/01/28 13:52:35 by mabriand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -355,16 +355,11 @@ void				Response::buildResponse()
 	fill_resp("Keep-Alive: timeout=3\r\n");
 
 	this->buildPartResp("Content-Type");
-<<<<<<< HEAD
-	this->buildPartResp("Content-Lenght");
-	this->buildPartResp("Body");
-=======
 	this->buildPartResp("Content-Length");
 
 	this->fill_resp("\r\n");
 	this->_response.insert(this->_response.end(), this->_body.begin(), this->_body.end());
 
->>>>>>> origin/master
 	return ;
 }
 std::ostream&		operator<<(std::ostream& os, const Response& r)

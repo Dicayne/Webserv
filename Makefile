@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: vmoreau <vmoreau@student.42.fr>            +#+  +:+       +#+         #
+#    By: mabriand <mabriand@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/11/29 16:52:41 by vmoreau           #+#    #+#              #
-#    Updated: 2022/01/06 15:53:20 by vmoreau          ###   ########.fr        #
+#    Updated: 2022/01/28 13:52:33 by mabriand         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -38,6 +38,8 @@ SRCS += srcs/request/Request.cpp
 SRCS += srcs/response/Response.cpp
 # Server
 SRCS += srcs/server/Server.cpp
+# CGI
+SRCS += srcs/cgi/CgiProcess.cpp
 ####################################BASIC######################################
 
 CFLAGS = -Wall -Werror -Wextra -std=c++98
