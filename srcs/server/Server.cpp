@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mabriand <mabriand@student.42.fr>          +#+  +:+       +#+        */
+/*   By: vmoreau <vmoreau@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/13 19:18:35 by vmoreau           #+#    #+#             */
-/*   Updated: 2022/01/06 11:19:28 by mabriand         ###   ########.fr       */
+/*   Updated: 2022/01/20 16:00:10 by vmoreau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,11 +36,24 @@ int Server::server_is_alive = 1;
 
 Server::Server(/* args */)
 {
-
 }
 
 Server::~Server()
 {
+	for (std::map< int, Request *>::iterator it = this->_client_sock.begin(); it != this->_client_sock.end(); it++)
+	{
+		close(it->first);
+		delete(it->second);
+	}
+	this->Server_closeAllSocket();
+	this->Server_Zero_all_set();
+}
+
+void Server::Server_Zero_all_set()
+{
+	FD_ZERO(&this->_currentfds);
+	FD_ZERO(&this->_readfds);
+	FD_ZERO(&this->_writefds);
 }
 
 void Server::Server_closeSocket(int socket)
@@ -131,32 +144,96 @@ void Server::Server_select()
 	this->_readfds = this->_currentfds;
 	this->_writefds = this->_currentfds;
 
-	// std::cout << "B SEL!\n";
+	// std::cout << "P1\n";
+	// this->print_fds(YELLOW);
+
 	int ret_select = select(this->_nfds + 1, &this->_readfds, &this->_writefds, NULL, NULL);
-	// std::cout << "A SEL!\n";
-	if (ret_select < 0)
+	// std::cout << "P2\n";
+
+	if (ret_select < 0 && (errno != EINTR))
 		throw ServerError(std::strerror(errno));
-	// if (ret_select < 0 && (errno != EINTR))
-	// 	throw ServerError(std::strerror(errno));
-	// this->_rdy_fd = ret_select;
+
+	this->_rdy_fd = ret_select;
+
+	// this->print_fds(PURPLE);
 }
 
-void Server::Server_loopServ(int fd)
+void Server::Server_loopServ()
 {
-	serv_block	server = this->_servers[0];
+	for (int i = 0; i <= this->_nfds; i++)
+	{
+		if (FD_ISSET(i, &this->_readfds))
+		{
+			this->_rdy_fd--;
+			if (this->_socket.find(i) != this->_socket.end())
+			{
+				std::map<int, sockaddr_in>::iterator it = this->_socket.find(i);
+				int client_socket = accept(it->first, NULL, NULL);
+				if (client_socket < 0 && errno != EAGAIN)
+				{
+					std::cerr << client_socket << "  " << EAGAIN << '\n';
+					std::cerr << RED << "Server error: " << NC << "Couldn't accept connection.\n";
+					std::cerr << std::strerror(errno);
+					exit(EXIT_FAILURE);
+				}
+				else if (client_socket > 0)
+				{
+					std::cout << YELLOW << "New incoming connection (fd " << client_socket << ")" << " for -> " << i << NC << std::endl;
+					FD_SET(client_socket, &this->_currentfds);
 
-	Request		rqst(fd, &server);
-	Response	resp(rqst.returnProtocolVersion(), rqst.returnStatusCode(), rqst.returnUrl(), &server);
+					Request* req = new Request(client_socket, &this->_servers[i - 3]);
 
-	// std::cout << resp << std::endl;
+					this->_client_sock.insert(std::make_pair(client_socket, req));
 
-	send(fd, resp.respond(), resp.getResponse().size() , 0);
-	close(fd);
+					if (client_socket > this->_nfds)
+						this->_nfds = client_socket;
+				}
+			}
+		}
+	}
 }
 
 void Server::Server_loopClient()
 {
+	for (std::map<int, Request*>::iterator it = this->_client_sock.begin(); it != this->_client_sock.end() && this->_rdy_fd > 0; )
+	{
+		int ret = 0;
+		if (FD_ISSET(it->first, &this->_readfds))
+		{
+			ret = it->second->parse();
+			if (ret >= 0 && it->second->is_request_ready() == true)
+			{
+				Response	resp(it->second->returnProtocolVersion(), it->second->returnStatusCode(), it->second->returnUrl(), it->second->getBlock());
+				this->_response = resp.getVecResponse();
+			}
+		}
+		if (FD_ISSET(it->first, &this->_writefds) && this->_response.size())
+		{
+			ret = send(it->first, &this->_response[0], this->_response.size() , MSG_DONTWAIT);
 
+			if (ret == -1)
+			{
+				std::cout << PURPLE << "AIE AIE AIE !!!\n" << NC;
+			}
+
+			// std::cout << "AFTER SEND: " << ret << NC << std::endl;
+
+			this->_response.erase(this->_response.begin(), this->_response.begin() + ret);
+
+			if (this->_response.size() == 0)
+			{
+				std::cout << RED << "connection closed(fd " << it->first << ")" << NC << std::endl;
+				FD_CLR(it->first, &this->_currentfds);
+				close(it->first);
+				delete(it->second);
+				std::map<int, Request*>::iterator tmp = it;
+				it++;
+				this->_client_sock.erase(tmp);
+			}
+			continue;
+		}
+		it++;
+	}
 }
 
 void Server::Server_launch()
@@ -165,37 +242,39 @@ void Server::Server_launch()
 		Server_setSocket();
 		Server_setFd();
 
-		while (Server::server_is_alive)
+		int i = 0; // debug
+		while (Server::server_is_alive && i <= 50)
 		{
 			this->Server_select();
-
-			for (int i = 0; i <= this->_nfds; i++)
-			{
-				if (FD_ISSET(i, &this->_readfds))
-				{
-					if (this->_socket.find(i) != this->_socket.end())
-					{
-						std::map<int, sockaddr_in>::iterator it = this->_socket.find(i);
-						int client_socket = accept(it->first, NULL, NULL);
-						if (client_socket < 0 && errno != EAGAIN)
-						{
-							std::cerr << client_socket << "  " << EAGAIN << '\n';
-							std::cerr << RED << "Server error: " << NC << "Couldn't accept connection.\n";
-							std::cerr << std::strerror(errno);
-							exit(EXIT_FAILURE);
-						}
-						FD_SET(client_socket, &this->_currentfds);
-						if (client_socket > this->_nfds)
-							this->_nfds = client_socket;
-					}
-					else
-					{
-						this->Server_loopServ(i);
-						FD_CLR(i, &this->_currentfds);
-					}
-				}
-			}
-			// this->Server_loopServ();
-			// this->Server_loopClient();
+			this->Server_loopServ();
+			this->Server_loopClient();
+			// i++; // debug
 		}
+}
+
+
+// --------------- DEBUG --------------- //
+void Server::print_fds(const char *color)
+{
+	std::cout << color << "\nFD_SET in current:\n";
+	for (int i = 0; i <= this->_nfds; i++)
+	{
+		if (FD_ISSET(i, &this->_currentfds))
+			std::cout << i << ' ';
+	}
+	std::cout << '\n';
+		std::cout << "FD_SET in read:\n";
+	for (int i = 0; i <= this->_nfds; i++)
+	{
+		if (FD_ISSET(i, &this->_readfds))
+			std::cout << i << ' ';
+	}
+	std::cout << '\n';
+		std::cout << "FD_SET in write:\n";
+	for (int i = 0; i <= this->_nfds; i++)
+	{
+		if (FD_ISSET(i, &this->_writefds))
+			std::cout << i << ' ';
+	}
+	std::cout << "\n\n" << NC;
 }

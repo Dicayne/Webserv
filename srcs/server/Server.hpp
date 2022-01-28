@@ -6,7 +6,7 @@
 /*   By: vmoreau <vmoreau@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/13 19:18:32 by vmoreau           #+#    #+#             */
-/*   Updated: 2022/01/04 17:13:46 by vmoreau          ###   ########.fr       */
+/*   Updated: 2022/01/20 16:37:12 by vmoreau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,17 +30,20 @@ private:
 	std::vector< serv_block >		_servers;
 	confpars 						*_html;
 	std::map< int, sockaddr_in >	_socket;
-	std::vector< int >				_client_fd;
+	std::map< int, Request * >		_client_sock;
 	int								_rdy_fd;
+	std::vector< char >	_response;
 
 	void Server_setSocket();
 	void Server_setFd();
 	void Server_closeSocket(int socket);
 	void Server_closeAllSocket();
 	void Server_select();
-	void Server_loopServ(int fd);
+	void Server_loopServ();
 	void Server_loopClient();
+	void Server_Zero_all_set();
 
+	void print_fds(const char *color);
 public:
 	static int server_is_alive;
 	Server(/* args */);

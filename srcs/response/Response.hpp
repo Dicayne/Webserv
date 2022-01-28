@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Response.hpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mabriand <mabriand@student.42.fr>          +#+  +:+       +#+        */
+/*   By: vmoreau <vmoreau@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/16 15:24:45 by mabriand          #+#    #+#             */
-/*   Updated: 2022/01/06 11:19:09 by mabriand         ###   ########.fr       */
+/*   Updated: 2022/01/20 16:37:12 by vmoreau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,8 @@ class   Response
 		Response(Response& toCopy);
 		Response&	operator=(Response& toAssign);
 
-		std::string							_response;
+		std::vector< char >		_response;
+
 		std::map<std::string, std::string>	_stock;
 		std::map<std::string, std::string>	_mime;
 		std::map<int, std::string>			_messages;
@@ -30,15 +31,15 @@ class   Response
 
 		/*	Attributes corresponding to the fields of the HTTP request:
 		*/
-		std::string	_protocol_version;
-		std::string	_status;
-		std::string	_status_message;
-		std::string	_date;
-		std::string	_server;
-		std::string	_body;
-		std::string	_content_type;
-		std::string	_content_lenght; // Content-Lenght : ne doit pas dépasser le client body size max
-
+		std::string						_protocol_version;
+		std::string						_status;
+		std::string						_status_message;
+		std::string						_date;
+		std::string						_server;
+		std::vector< char >	_body;
+		std::string						_content_type;
+		std::string						_content_length; // Content-Lenght : ne doit pas dépasser le client body size max
+		std::string 					_selected_mime;
 
 	public:
 		Response();
@@ -50,6 +51,7 @@ class   Response
 		void		setProtocolVersion(const std::string& protocol_version);
 		void		setStatus(int status);
 		void		setStatusMessage(int status);
+		void		setLocation(std::string url);
 		void		setDate();
 		void		setServer();
 		void		setContentType(const std::string& content_type);
@@ -61,9 +63,9 @@ class   Response
 		void		buildMessages(int key, const std::string& mapped);
 		void		setMessagesMap();
 
+		void		fill_resp(const std::string& line);
 		void		buildPartResp(const std::string& key);
 		void		buildResponse();
-		void*		respond() const;
 
 		/*	All getters (one for each attribute corresponding to a field of the HTTP request):
 		*/
@@ -75,8 +77,10 @@ class   Response
 		const std::string&	getContentType() const;
 		const std::string&	getContentLenght() const;
 		const std::string&	getBody() const;
+		const std::string&	getMime() const;
 
 		const std::string&	getResponse() const;
+		const std::vector< char >& getVecResponse() const;
 };
 
 std::ostream&		operator<<(std::ostream& os, const Response& r);

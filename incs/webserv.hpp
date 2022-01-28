@@ -6,7 +6,7 @@
 /*   By: vmoreau <vmoreau@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/29 16:53:05 by vmoreau           #+#    #+#             */
-/*   Updated: 2022/01/04 15:31:36 by vmoreau          ###   ########.fr       */
+/*   Updated: 2022/01/12 18:01:01 by vmoreau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,8 +46,9 @@
 #define CONF_DEFAULT_PATH "./srcs/conf.d/used/default.conf"
 #define DEFAULT_ERR_400 "./srcs/html/error/400.html"
 #define DEFAULT_ERR_404 "./srcs/html/error/404.html"
-#define DEFAULT_ERR_40x "./srcs/html/error/40x.html"
+#define DEFAULT_ERR_4xx "./srcs/html/error/4xx.html"
 #define DEFAULT_ERR_500 "./srcs/html/error/500.html"
-#define DEFAULT_ERR_50x "./srcs/html/error/50x.html"
-
+#define DEFAULT_ERR_5xx "./srcs/html/error/5xx.html"
+#define DEFAULT_ROOT "srcs/html"
+#define DEFAULT_PATH "index.html"
 #endif

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   serv_block.cpp                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mabriand <mabriand@student.42.fr>          +#+  +:+       +#+        */
+/*   By: vmoreau <vmoreau@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/08 14:44:06 by vmoreau           #+#    #+#             */
-/*   Updated: 2021/12/17 14:43:06 by mabriand         ###   ########.fr       */
+/*   Updated: 2022/01/20 11:50:33 by vmoreau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,6 +55,11 @@ void serv_block::pars_serv(std::vector<std::string> block, std::string path, std
 			this->set_server_name(value);
 		else if (key.compare("client_max_body_size") == 0)
 			this->set_client_max_body_size(value);
+		else if (key.compare("root") == 0)
+			this->set_default_root(value);
+		else if (key.compare("path") == 0)
+			this->set_default_path(value);
+
 		i++;
 	}
 
@@ -76,7 +81,16 @@ void serv_block::pars_serv(std::vector<std::string> block, std::string path, std
 		this->_location.push_back(tmp);
 		// std::cout << '\n';
 	}
-
+	if (this->_default_root.size() == 0)
+	{
+		this->_default_root = DEFAULT_ROOT;
+		std::cout << YELLOW << "Warning: " << NC << " Default_root missing in " << this->_path << " default root set by default at " << DEFAULT_ROOT << '\n';
+	}
+	if (this->_default_path.size() == 0)
+	{
+		this->_default_path = DEFAULT_PATH;
+		std::cout << YELLOW << "Warning: " << NC << " Default_path missing in " << this->_path << " default path set by default at " << DEFAULT_PATH << '\n';
+	}
 	// // DEBUG
 	// std::cout << "Port: " << this->_port << "\n";
 	// std::cout << "Host: " << this->_host << "\n";
@@ -139,6 +153,20 @@ void serv_block::set_client_max_body_size(std::string value)
 			throw ConfFile(" Client Max Body Size \"" + c_m_b_s + "\" is not digit");
 
 	this->_client_max_body_size = atoi(c_m_b_s.c_str());
+}
+
+void serv_block::set_default_root(std::string value)
+{
+	std::string d_root(value.begin() + value.find_first_not_of(' '), value.end());
+
+	this->_default_root = d_root;
+}
+
+void serv_block::set_default_path(std::string value)
+{
+	std::string d_path(value.begin() + value.find_first_not_of(' '), value.end());
+
+	this->_default_path = d_path;
 }
 
 // ************** INTERNE FUNCTION PARS ************** //
