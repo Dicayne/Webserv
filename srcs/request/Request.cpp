@@ -6,7 +6,7 @@
 /*   By: mabriand <mabriand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/06 20:57:30 by mabriand          #+#    #+#             */
-/*   Updated: 2022/01/29 23:35:50 by mabriand         ###   ########.fr       */
+/*   Updated: 2022/01/30 00:02:06 by mabriand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -371,7 +371,7 @@ const std::string&	Request::getAcceptLanguage() const{ return(this->_accept_lang
 const std::string&	Request::getAcceptEncoding() const{ return (this->_accept_encoding); }
 const std::string&	Request::getConnection() const{ return(this->_connection); }
 const std::string&	Request::getReferer() const{ return(this->_referer); }
-const std::string&	Request::getBody() const{ return(this->_body); }
+const std::string&	Request::getBody() const{ return(this->_body); } // pb car c'est plus une string
 const std::string&	Request::get_queryString() const{ return(this->_queryString); }
 serv_block*	Request::getBlock() { return(this->_block); }
 const bool&	Request::is_request_ready() const { return (this->_request_ready); }
