@@ -6,7 +6,7 @@
 /*   By: mabriand <mabriand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/06 20:57:30 by mabriand          #+#    #+#             */
-/*   Updated: 2022/01/28 13:44:27 by mabriand         ###   ########.fr       */
+/*   Updated: 2022/01/29 21:47:19 by mabriand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -102,7 +102,7 @@ void				Request::parseBuf(std::string& buf)
 	this->setBody();
 	this->set_queryString();
 
-	std::cout << *this << std::endl;
+	// std::cout << *this << std::endl;
 
 	std::cout << GREEN << this->_url << NC << '\n';
 	this->treatUrl();

@@ -6,7 +6,7 @@
 /*   By: mabriand <mabriand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/11 16:40:07 by mabriand          #+#    #+#             */
-/*   Updated: 2022/01/29 21:23:17 by mabriand         ###   ########.fr       */
+/*   Updated: 2022/01/29 21:49:52 by mabriand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,6 +61,16 @@ void				CgiProcess::set_envVars()
 
 	return ;
 }
+void				CgiProcess::set_cgiBody(std::string	body)
+{
+	size_t i = 0;
+	while (i < body.size())
+	{
+		this->_cgi_body.push_back(body[i]);
+		++i;
+	}
+	return ;
+}
 void				CgiProcess::set_myEnv()
 {
 	size_t		size = this->_envVars.size();
@@ -106,6 +116,7 @@ const std::string	CgiProcess::get_Var(std::string var)
 		default: return ("");
 	}
 }
+std::vector< char >	CgiProcess::get_cgiBody(){ return (this->_cgi_body); }
 void				CgiProcess::clearEnv()
 {
 	if (this->_myEnv != NULL)
@@ -194,18 +205,13 @@ int					CgiProcess::exeCgiProgram()
 			newBody += buffer;
 		}
 		std::cout << BLUE << newBody << NC << std::endl;
-		size_t i = 0;
-		while (i < newBody.size())
-		{
-			this->_newBody.push_back(newBody[i]);
-			++i;
-		}
-		i = 0;
-		while (i < this->_newBody.size())
-		{
-			std::cout << this->_newBody[i];
-			++i;
-		}
+		this->set_cgiBody(newBody);
+		// size_t i = 0;
+		// while (i < this->_cgi_body.size())
+		// {
+		// 	std::cout << this->_cgi_body[i];
+		// 	++i;
+		// }
 	}
 	if (dup2(fd_backUp[0], 0) < 0)
 		return (1); //erreur;

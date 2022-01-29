@@ -6,7 +6,7 @@
 /*   By: mabriand <mabriand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/06 11:16:47 by mabriand          #+#    #+#             */
-/*   Updated: 2022/01/28 13:40:14 by mabriand         ###   ########.fr       */
+/*   Updated: 2022/01/29 22:27:07 by mabriand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -99,13 +99,14 @@ class   Request
 		const std::string&	getReferer() const;
 		const std::string&	getBody() const;
 		const std::string&	get_queryString() const;
-		serv_block*	getBlock();
-		const bool&	is_request_ready() const;
+		serv_block*			getBlock();
+		const bool&			is_request_ready() const;
 		/*
 		*/
 		const std::string&	returnProtocolVersion() const;
 		int					returnStatusCode() const;
 		const std::string&	returnUrl() const;
+		
 };
 
 std::ostream&		operator<<(std::ostream& os, const Request& r);

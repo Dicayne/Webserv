@@ -6,7 +6,7 @@
 /*   By: mabriand <mabriand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/11 16:34:41 by mabriand          #+#    #+#             */
-/*   Updated: 2022/01/29 21:22:26 by mabriand         ###   ########.fr       */
+/*   Updated: 2022/01/29 21:39:45 by mabriand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@ class   CgiProcess
 		Server						*_server;
 		std::vector<std::string>	_envVars;
 		char						**_myEnv;
-		std::vector< char >			_newBody;
+		std::vector< char >			_cgi_body;
 
 	public:
 		CgiProcess(Request *current_request, Server *current_server);
@@ -42,10 +42,11 @@ class   CgiProcess
 
 		void	set_myEnv();
 		void	set_envVars();
-		
+		void	set_cgiBody(std::string	body);
 
 	
 		const std::string	get_Var(std::string var);
+		std::vector< char >	get_cgiBody();
 		void				clearEnv();
 
 		

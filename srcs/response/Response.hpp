@@ -6,7 +6,7 @@
 /*   By: mabriand <mabriand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/16 15:24:45 by mabriand          #+#    #+#             */
-/*   Updated: 2022/01/28 13:12:23 by mabriand         ###   ########.fr       */
+/*   Updated: 2022/01/29 22:34:17 by mabriand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 
 #include "../incs/webserv.hpp"
 #include "../conf/serv_block.hpp"
+#include "../request/Request.hpp"
 
 class   Response
 {
@@ -36,14 +37,16 @@ class   Response
 		std::string						_status_message;
 		std::string						_date;
 		std::string						_server;
-		std::vector< char >	_body;
+		std::vector< char >				_body;
+		std::vector< char >				_cgi_body;
 		std::string						_content_type;
 		std::string						_content_length; // Content-Lenght : ne doit pas dépasser le client body size max
 		std::string 					_selected_mime;
 
 	public:
 		Response();
-		Response(const std::string& protocol_version, int status, const std::string& url, serv_block *block);
+		// Response(const std::string& protocol_version, int status, const std::string& url, serv_block *block);
+		Response(Request *current_request);
 		virtual ~Response();
 
 		/*	All setters (one for each attribute corresponding to a field of the HTTP request):
@@ -57,7 +60,7 @@ class   Response
 		void		setContentType(const std::string& content_type);
 		void		setContentLenght();
 		void		setBody(const std::string& body);
-
+		void		set_cgiBody(std::vector< char > body);
 		void		buildMime(const std::string& key, const std::string& mapped);
 		void		setMimeMap();
 		void		buildMessages(int key, const std::string& mapped);

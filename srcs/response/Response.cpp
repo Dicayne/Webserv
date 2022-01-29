@@ -6,34 +6,57 @@
 /*   By: mabriand <mabriand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/16 15:24:59 by mabriand          #+#    #+#             */
-/*   Updated: 2022/01/28 13:54:57 by mabriand         ###   ########.fr       */
+/*   Updated: 2022/01/29 22:33:45 by mabriand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "./Response.hpp"
+#include "../request/Request.hpp"
 
-Response::Response(const std::string& protocol_version, int status, const std::string& url, serv_block *block) : _block(block)
+Response::Response(Request *current_request) : _block(current_request->getBlock())
 {
 	// Independant from the parameters
 	this->setMimeMap();
 	this->setMessagesMap();
 
 	// Dependant from the parameters
-	this->setProtocolVersion(protocol_version);
-	this->setStatus(status);
-	this->setStatusMessage(status);
-	if (status == 300 )
-		this->setLocation(url);
+	this->setProtocolVersion(current_request->returnProtocolVersion());
+	this->setStatus(current_request->returnStatusCode());
+	this->setStatusMessage(current_request->returnStatusCode());
+	if (current_request->returnStatusCode() == 300 )
+		this->setLocation(current_request->returnUrl());
 	this->setDate();
 	this->setServer();
-	this->setBody(url);
-	this->setContentType(url);
+	this->setBody(current_request->returnUrl());
+	this->setContentType(current_request->returnUrl());
 	this->setContentLenght();
 
 	this->buildResponse();
 	return ;
 
 }
+// Response::Response(const std::string& protocol_version, int status, const std::string& url, serv_block *block) : _block(block)
+// {
+// 	// Independant from the parameters
+// 	this->setMimeMap();
+// 	this->setMessagesMap();
+
+// 	// Dependant from the parameters
+// 	this->setProtocolVersion(protocol_version);
+// 	this->setStatus(status);
+// 	this->setStatusMessage(status);
+// 	if (status == 300 )
+// 		this->setLocation(url);
+// 	this->setDate();
+// 	this->setServer();
+// 	this->setBody(url);
+// 	this->setContentType(url);
+// 	this->setContentLenght();
+
+// 	this->buildResponse();
+// 	return ;
+
+// }
 Response::~Response(){}
 
 void				Response::setProtocolVersion(const std::string& protocol_version)
@@ -137,6 +160,63 @@ void				Response::setBody(const std::string& url)
 	}
 
 	ms.close();
+	return ;
+}
+
+void				Response::set_cgiBody(std::vector< char > cgi_body)
+{
+	// size_t i = 0;
+	// while (i < this->_body.size())
+	// {
+	// 	std::cout << GREEN << this->_body[i] << NC;
+	// 	++i;
+	// }
+	// i = 0;
+	// while (i < cgi_body.size())
+	// {
+	// 	std::cout << RED << cgi_body[i] << NC;
+	// 	++i;
+	// }
+	// return ;
+
+	
+	// this->_body.erase(it_begin, ite_end);
+	// this->_body = cgi_body;
+	
+	std::vector<char>	header;
+	std::vector<char>	newBody;
+
+	size_t i = 0;
+	while (cgi_body[i] != '<')
+	{
+		header.push_back(cgi_body[i]);
+		++i;
+	}
+	while (i < cgi_body.size())
+	{
+		newBody.push_back(cgi_body[i]);
+		++i;
+	}
+
+	this->_body = newBody;	
+
+
+	// i = 0;
+	// std::cout << "STOCKED AS HEADER: \n\n" << NC;	
+	// while (i < header.size())
+	// {
+	// 	std::cout << RED << header[i] << NC;
+	// 	++i;	
+	// }
+	// i = 0;
+	// std::cout << "STOCKED AS BODY: \n\n" << NC;	
+	// while (i < newBody.size())
+	// {
+	// 	std::cout << RED << newBody[i] << NC;	
+	// 	++i;
+	// }
+
+	// this->_cgiResp = true;
 	return ;
 }
 
