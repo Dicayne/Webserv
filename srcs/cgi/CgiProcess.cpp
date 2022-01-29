@@ -6,7 +6,7 @@
 /*   By: mabriand <mabriand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/11 16:40:07 by mabriand          #+#    #+#             */
-/*   Updated: 2022/01/28 15:31:39 by mabriand         ###   ########.fr       */
+/*   Updated: 2022/01/29 21:23:17 by mabriand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -154,22 +154,18 @@ int					CgiProcess::exeCgiProgram()
 	{
 		std::cout << YELLOW << "FILS" << NC << std::endl;	
 		
-		dup2(fd_in, 0);
-		// if (dup2(fd_in, 0) < 0)
-        // {
-		// 	std::cout << YELLOW << "dup2(fd_in, 0) < 0" << NC << std::endl;	
-		// 	exit(EXIT_FAILURE);
-		// 	return (1);
-		// }  //erreur;
-		std::cout << YELLOW << "HERE ======================= 1\n" << NC << std::endl;
-    	// dup2(fd_out, 1);
-		// if (dup2(fd_out, 1) < 0)
-		// {
-		// 	std::cout << YELLOW << "dup2(fd_out, 1) < 0" << NC << std::endl;	
-		// 	exit(EXIT_FAILURE);
-		// 	return (1);
-		// }
-		std::cout << YELLOW << "HERE ======================= 2\n" << NC << std::endl;
+		if (dup2(fd_in, 0) < 0)
+        {
+			// std::cout << YELLOW << "dup2(fd_in, 0) < 0" << NC << std::endl;	
+			exit(EXIT_FAILURE);
+			return (1);
+		}
+		if (dup2(fd_out, 1) < 0)
+		{
+			// std::cout << YELLOW << "dup2(fd_out, 1) < 0" << NC << std::endl;	
+			exit(EXIT_FAILURE);
+			return (1);
+		}
 		std::cout << YELLOW << "in fils: testing execve" << NC << std::endl;
 		if (execve(argv[0], &argv[0], this->_myEnv) < 0)
         {
@@ -179,19 +175,10 @@ int					CgiProcess::exeCgiProgram()
 			// exit(EXIT_FAILURE);
 			return (-1);
 		}
-		else
-		{
-			std::cout << YELLOW << "execve SUCCEEDED" << NC << std::endl;
-			exit(EXIT_SUCCESS);
-			return (0);
-		}
 	}
 	else // processus père
 	{
 		std::cout << GREEN << "PARENT" << NC << std::endl;
-		// exit(EXIT_SUCCESS);
-		// return (0);
-
 		
 		char	buffer[4096] = {0};
 
@@ -200,16 +187,25 @@ int					CgiProcess::exeCgiProgram()
 	
 		std::string	newBody;
 		int ret = 1;
-		std::cout << GREEN << "HERE -------------------------1\n" << NC << std::endl;
 		while (ret > 0)
 		{
-			std::cout << GREEN << "HERE -------------------------2\n" << NC << std::endl;
 			memset(buffer, 0, 4096);
 			ret = read(fd_out, buffer,  4096 - 1);
-			newBody += buffer; // new body devient le body dans Response ??
+			newBody += buffer;
 		}
-		std::cout << GREEN << "HERE -------------------------3\n" << NC << std::endl;
 		std::cout << BLUE << newBody << NC << std::endl;
+		size_t i = 0;
+		while (i < newBody.size())
+		{
+			this->_newBody.push_back(newBody[i]);
+			++i;
+		}
+		i = 0;
+		while (i < this->_newBody.size())
+		{
+			std::cout << this->_newBody[i];
+			++i;
+		}
 	}
 	if (dup2(fd_backUp[0], 0) < 0)
 		return (1); //erreur;
