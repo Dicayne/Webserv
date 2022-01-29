@@ -6,32 +6,45 @@
 /*   By: mabriand <mabriand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/16 15:24:59 by mabriand          #+#    #+#             */
-/*   Updated: 2022/01/29 22:33:45 by mabriand         ###   ########.fr       */
+/*   Updated: 2022/01/29 23:49:59 by mabriand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "./Response.hpp"
 #include "../request/Request.hpp"
 
-Response::Response(Request *current_request) : _block(current_request->getBlock())
+Response::Response(Request *current_request, bool cgi, std::vector<char> cgiOutput) : _block(current_request->getBlock())
 {
+	// (void)cgiOutput;
+	// (void)cgi;
 	// Independant from the parameters
-	this->setMimeMap();
-	this->setMessagesMap();
+		this->setMimeMap();
+		this->setMessagesMap();
 
 	// Dependant from the parameters
-	this->setProtocolVersion(current_request->returnProtocolVersion());
-	this->setStatus(current_request->returnStatusCode());
-	this->setStatusMessage(current_request->returnStatusCode());
-	if (current_request->returnStatusCode() == 300 )
-		this->setLocation(current_request->returnUrl());
-	this->setDate();
-	this->setServer();
-	this->setBody(current_request->returnUrl());
-	this->setContentType(current_request->returnUrl());
-	this->setContentLenght();
+		this->setProtocolVersion(current_request->returnProtocolVersion());//
+		this->setStatus(current_request->returnStatusCode());
+		this->setStatusMessage(current_request->returnStatusCode());
+		if (current_request->returnStatusCode() == 300 )
+			this->setLocation(current_request->returnUrl());
+		this->setDate();
+		this->setServer();
+		if (cgi == false)
+		{
+			// std::cout << RED << "HERE 1\n" << NC;
+			this->setBody(current_request->returnUrl());
+			this->setContentType(current_request->returnUrl());//
+		}
+		else
+		{
+			// std::cout << RED << "HERE 2\n" << NC;
+			this->set_cgiOutput(cgiOutput);
+		}
+		// this->setContentType(current_request->returnUrl());//
+		this->setContentLenght();
 
-	this->buildResponse();
+		this->buildResponse();
+	
 	return ;
 
 }
@@ -162,61 +175,61 @@ void				Response::setBody(const std::string& url)
 	ms.close();
 	return ;
 }
-
-void				Response::set_cgiBody(std::vector< char > cgi_body)
+void				Response::set_newContentType(std::vector<char> header)
 {
-	// size_t i = 0;
-	// while (i < this->_body.size())
-	// {
-	// 	std::cout << GREEN << this->_body[i] << NC;
-	// 	++i;
-	// }
-	// i = 0;
-	// while (i < cgi_body.size())
-	// {
-	// 	std::cout << RED << cgi_body[i] << NC;
-	// 	++i;
-	// }
-	// return ;
+    std::string str(header.begin(), header.end());
+	
+	size_t pos = str.find_last_of("Content Type: ", str.size());
+	if (pos == std::string::npos)
+		return ;
+	std::string type(str.substr(pos, str.size() - pos));
+	this->_content_type = type;
 
+	std::pair<std::string, std::string> elem("Content-Type", this->_content_type);
+	this->_stock.insert(elem);
+	this->_selected_mime = type;
 	
-	// this->_body.erase(it_begin, ite_end);
-	// this->_body = cgi_body;
-	
-	std::vector<char>	header;
-	std::vector<char>	newBody;
+	return ;/////////////////
+}
+void				Response::set_cgiOutput(std::vector<char> cgi_output)
+{
+	std::vector<char>	head;
+	std::vector<char>	body;
 
 	size_t i = 0;
-	while (cgi_body[i] != '<')
+	while (cgi_output[i] != '<')
 	{
-		header.push_back(cgi_body[i]);
+		head.push_back(cgi_output[i]);
 		++i;
 	}
-	while (i < cgi_body.size())
+	while (i < cgi_output.size())
 	{
-		newBody.push_back(cgi_body[i]);
+		body.push_back(cgi_output[i]);
 		++i;
 	}
 
-	this->_body = newBody;	
-
+	std::cout << RED << "HERE 3\n" << NC;
+	this->_cgi_body = body;
+	this->_body = body;
+	this->_cgi_head = head;
+	this->set_newContentType(head);
+	
 
 	// i = 0;
 	// std::cout << "STOCKED AS HEADER: \n\n" << NC;	
-	// while (i < header.size())
+	// while (i < head.size())
 	// {
-	// 	std::cout << RED << header[i] << NC;
+	// 	std::cout << RED << head[i] << NC;
 	// 	++i;	
 	// }
 	// i = 0;
 	// std::cout << "STOCKED AS BODY: \n\n" << NC;	
-	// while (i < newBody.size())
+	// while (i < body.size())
 	// {
-	// 	std::cout << RED << newBody[i] << NC;	
+	// 	std::cout << RED << body[i] << NC;	
 	// 	++i;
 	// }
 
-	// this->_cgiResp = true;
 	return ;
 }
 
@@ -426,17 +439,18 @@ void				Response::buildResponse()
 	this->buildPartResp("Protocol-Version");
 	this->buildPartResp("Status");
 	this->buildPartResp("Status-Message");
+	std::cout << RED << "HERE 4\n" << NC;
 	if (this->_status.compare("300 ") == 0)
 		this->buildPartResp("Location");
 	this->buildPartResp("Date");
 	this->buildPartResp("Server");
-
+	std::cout << RED << "HERE 5\n" << NC;
 	fill_resp("Connection: keep-alive\r\n");
 	fill_resp("Keep-Alive: timeout=3\r\n");
-
+	std::cout << RED << "HERE 6\n" << NC;
 	this->buildPartResp("Content-Type");
 	this->buildPartResp("Content-Length");
-
+	std::cout << RED << "HERE 7\n" << NC;
 	this->fill_resp("\r\n");
 	this->_response.insert(this->_response.end(), this->_body.begin(), this->_body.end());
 

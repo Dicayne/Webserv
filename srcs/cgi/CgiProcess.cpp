@@ -6,7 +6,7 @@
 /*   By: mabriand <mabriand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/11 16:40:07 by mabriand          #+#    #+#             */
-/*   Updated: 2022/01/29 21:49:52 by mabriand         ###   ########.fr       */
+/*   Updated: 2022/01/29 23:34:30 by mabriand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,13 +18,13 @@ CgiProcess::CgiProcess(Request *current_request, Server *current_server) : _myEn
 	this->_server = current_server;
 	this->set_envVars();
 	this->set_myEnv();
-	int i = 0;
+	// int i = 0;
 	
-	while (this->_myEnv[i] != NULL)
-	{
-		std::cout << PURPLE << this->_myEnv[i] << std::endl;
-		++i;
-	}
+	// while (this->_myEnv[i] != NULL)
+	// {
+	// 	std::cout << PURPLE << this->_myEnv[i] << std::endl;
+	// 	++i;
+	// }
 	return ;
 }
 CgiProcess::~CgiProcess()
@@ -61,16 +61,26 @@ void				CgiProcess::set_envVars()
 
 	return ;
 }
-void				CgiProcess::set_cgiBody(std::string	body)
+void				CgiProcess::set_cgiOutput(std::string	body)
 {
 	size_t i = 0;
 	while (i < body.size())
 	{
-		this->_cgi_body.push_back(body[i]);
+		this->_cgi_output.push_back(body[i]);
 		++i;
 	}
 	return ;
 }
+// void				CgiProcess::set_cgiHead(std::string	head)
+// {
+// 	size_t i = 0;
+// 	while (i < head.size())
+// 	{
+// 		this->_cgi_head.push_back(head[i]);
+// 		++i;
+// 	}
+// 	return ;
+// }
 void				CgiProcess::set_myEnv()
 {
 	size_t		size = this->_envVars.size();
@@ -116,7 +126,8 @@ const std::string	CgiProcess::get_Var(std::string var)
 		default: return ("");
 	}
 }
-std::vector< char >	CgiProcess::get_cgiBody(){ return (this->_cgi_body); }
+std::vector< char >	CgiProcess::get_cgiOutput(){ return (this->_cgi_output); }
+// std::vector< char >	CgiProcess::get_cgiHead(){ return (this->_cgi_head); }
 void				CgiProcess::clearEnv()
 {
 	if (this->_myEnv != NULL)
@@ -158,12 +169,12 @@ int					CgiProcess::exeCgiProgram()
 	pid_t	pid = fork(); //je fork le processus parent cad le server
 	if (pid < 0)
 	{
-		std::cout << RED << "PID < 0" << NC << std::endl;
+		// std::cout << RED << "PID < 0" << NC << std::endl;
 		return (-1);//erreur 500 je crois
 	}
 	else if (pid == 0) // processus fils
 	{
-		std::cout << YELLOW << "FILS" << NC << std::endl;	
+		// std::cout << YELLOW << "FILS" << NC << std::endl;
 		
 		if (dup2(fd_in, 0) < 0)
         {
@@ -177,7 +188,6 @@ int					CgiProcess::exeCgiProgram()
 			exit(EXIT_FAILURE);
 			return (1);
 		}
-		std::cout << YELLOW << "in fils: testing execve" << NC << std::endl;
 		if (execve(argv[0], &argv[0], this->_myEnv) < 0)
         {
 			std::cout << YELLOW << "execve FAILED" << NC << std::endl;
@@ -189,7 +199,7 @@ int					CgiProcess::exeCgiProgram()
 	}
 	else // processus père
 	{
-		std::cout << GREEN << "PARENT" << NC << std::endl;
+		// std::cout << GREEN << "PARENT" << NC << std::endl;
 		
 		char	buffer[4096] = {0};
 
@@ -204,12 +214,12 @@ int					CgiProcess::exeCgiProgram()
 			ret = read(fd_out, buffer,  4096 - 1);
 			newBody += buffer;
 		}
-		std::cout << BLUE << newBody << NC << std::endl;
-		this->set_cgiBody(newBody);
+		// std::cout << BLUE << newBody << NC << std::endl;
+		this->set_cgiOutput(newBody);
 		// size_t i = 0;
-		// while (i < this->_cgi_body.size())
+		// while (i < this->_cgi_output.size())
 		// {
-		// 	std::cout << this->_cgi_body[i];
+		// 	std::cout << GREEN << this->_cgi_output[i] << NC;
 		// 	++i;
 		// }
 	}

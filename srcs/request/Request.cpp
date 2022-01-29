@@ -6,7 +6,7 @@
 /*   By: mabriand <mabriand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/06 20:57:30 by mabriand          #+#    #+#             */
-/*   Updated: 2022/01/29 21:47:19 by mabriand         ###   ########.fr       */
+/*   Updated: 2022/01/29 23:35:50 by mabriand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,7 @@ int					Request::parse()
 	std::string	buf = buffer;
 	this->_request = buf;
 
-	std::cout << PURPLE << ret << NC << "  " << std::strerror(errno) << '\n';
+	// std::cout << PURPLE << ret << NC << "  " << std::strerror(errno) << '\n';
 	this->parseBuf(buf);
 	buf.clear();
 	this->_request_ready = true;
@@ -104,9 +104,9 @@ void				Request::parseBuf(std::string& buf)
 
 	// std::cout << *this << std::endl;
 
-	std::cout << GREEN << this->_url << NC << '\n';
+	// std::cout << GREEN << this->_url << NC << '\n';
 	this->treatUrl();
-	std::cout << BLUE << this->_url << NC << '\n';
+	// std::cout << BLUE << this->_url << NC << '\n';
 
 	this->defineProtocolVersion();
 	this->defineStatusCode();

@@ -6,7 +6,7 @@
 /*   By: mabriand <mabriand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/06 11:16:47 by mabriand          #+#    #+#             */
-/*   Updated: 2022/01/29 22:27:07 by mabriand         ###   ########.fr       */
+/*   Updated: 2022/01/29 23:15:36 by mabriand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,6 +43,7 @@ class   Request
 		std::string	_queryString;
 		std::string _referer;
 		bool		_loc_referer;
+		
 		/*	Attributes corresponding to the parameters of the reponse's constructor that will be asked
 			when creating it to send it back to the client:
 		*/
