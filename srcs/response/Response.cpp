@@ -6,7 +6,7 @@
 /*   By: mabriand <mabriand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/16 15:24:59 by mabriand          #+#    #+#             */
-/*   Updated: 2022/01/30 00:49:46 by mabriand         ###   ########.fr       */
+/*   Updated: 2022/01/31 10:39:16 by mabriand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -209,25 +209,53 @@ void				Response::set_newContentType(std::vector<char> header)
 void				Response::set_cgiOutput(std::vector<char> cgi_output)
 {
 	std::vector<char>	head;
+	std::vector<char>	type;
 	std::vector<char>	body;
 
+	std::string str_output(cgi_output.begin(), cgi_output.end());
+
+	size_t pos;
+	while ((pos = str_output.find("\r")) != std::string::npos)
+		str_output.replace(pos, 1, "\n");
+	
+	pos = str_output.find_first_of("\n", 0);
+	std::string str_head(str_output.substr(0, pos));
+	while (str_output[pos] == '\n')
+		++pos;
+	str_output.erase(0, pos);
+	
+	pos = str_output.find_first_of("\n", 0);
+	std::string str_type(str_output.substr(0, pos));
+	while (str_output[pos] == '\n')
+		++pos;
+	str_output.erase(0, pos);
+
 	size_t i = 0;
-	while (cgi_output[i] != '<')
+	while (i < str_head.size())
 	{
-		head.push_back(cgi_output[i]);
+		head.push_back(str_head[i]);
 		++i;
 	}
-	while (i < cgi_output.size())
+	i = 0;
+	while (i < str_type.size())
 	{
-		body.push_back(cgi_output[i]);
+		type.push_back(str_type[i]);
+		++i;
+	}
+	i = 0;
+	while (i < str_output.size())
+	{
+		body.push_back(str_output[i]);
 		++i;
 	}
 
+
+	
 	std::cout << RED << "HERE 3\n" << NC;
 	this->_cgi_body = body;
 	this->_body = body;
 	this->_cgi_head = head;
-	this->set_newContentType(head);
+	this->set_newContentType(type);
 	
 
 	i = 0;
