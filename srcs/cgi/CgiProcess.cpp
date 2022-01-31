@@ -6,7 +6,7 @@
 /*   By: mabriand <mabriand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/11 16:40:07 by mabriand          #+#    #+#             */
-/*   Updated: 2022/01/29 23:34:30 by mabriand         ###   ########.fr       */
+/*   Updated: 2022/01/31 19:00:17 by mabriand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,13 +18,13 @@ CgiProcess::CgiProcess(Request *current_request, Server *current_server) : _myEn
 	this->_server = current_server;
 	this->set_envVars();
 	this->set_myEnv();
-	// int i = 0;
+	int i = 0;
 	
-	// while (this->_myEnv[i] != NULL)
-	// {
-	// 	std::cout << PURPLE << this->_myEnv[i] << std::endl;
-	// 	++i;
-	// }
+	while (this->_myEnv[i] != NULL)
+	{
+		std::cout << PURPLE << this->_myEnv[i] << std::endl;
+		++i;
+	}
 	return ;
 }
 CgiProcess::~CgiProcess()
@@ -235,9 +235,9 @@ int					CgiProcess::exeCgiProgram()
 	close(fd_backUp[0]);
 	close(fd_backUp[1]);
  	// return (0);
-	// for (size_t i = 0; this->_myEnv[i]; i++)
-	// 	delete[] this->_myEnv[i];
-	// delete[] this->_myEnv;
+	for (size_t i = 0; this->_myEnv[i]; i++)
+		delete[] this->_myEnv[i];
+	delete[] this->_myEnv;
 
 	if (!pid)
 		exit(0);

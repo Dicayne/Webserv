@@ -6,7 +6,7 @@
 /*   By: mabriand <mabriand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/06 11:16:47 by mabriand          #+#    #+#             */
-/*   Updated: 2022/01/29 23:15:36 by mabriand         ###   ########.fr       */
+/*   Updated: 2022/01/31 18:52:56 by mabriand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,7 +77,7 @@ class   Request
 		void		setAcceptEncoding();
 		void		setConnection();
 		void		setReferer();
-		void		setBody();
+		void		setBody(std::string buf);
 		void		set_queryString();
 		/*
 		*/
@@ -90,7 +90,7 @@ class   Request
 		const std::string&	getMethod() const;
 		const std::string&	getUrl() const;
 		const std::string&	get_baseUrl() const;
-		const std::string&	getProtocolVersion() const;
+		const std::string&	get_ProtocolVersion() const;
 		const std::string&	getHost() const;
 		const std::string&	getUserAgent() const;
 		const std::string&	getAccept() const;

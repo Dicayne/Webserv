@@ -6,7 +6,7 @@
 /*   By: mabriand <mabriand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/16 15:24:45 by mabriand          #+#    #+#             */
-/*   Updated: 2022/01/29 23:29:03 by mabriand         ###   ########.fr       */
+/*   Updated: 2022/01/31 10:47:16 by mabriand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,15 +76,15 @@ class   Response
 
 		/*	All getters (one for each attribute corresponding to a field of the HTTP request):
 		*/
-		const std::string&	getProtocolVersion() const;
-		const std::string&	getStatus() const;
-		const std::string&	getStatusMessage() const;
-		const std::string&	getDate() const;
-		const std::string&	getServer() const;
-		const std::string&	getContentType() const;
-		const std::string&	getContentLenght() const;
+		const std::string&	get_ProtocolVersion() const;
+		const std::string&	get_Status() const;
+		const std::string&	get_StatusMessage() const;
+		const std::string&	get_Date() const;
+		const std::string&	get_Server() const;
+		const std::string&	get_ContentType() const;
+		const std::string&	get_ContentLenght() const;
 		const std::string&	getBody() const;
-		const std::string&	getMime() const;
+		const std::string&	get_Mime() const;
 
 		const std::string&	getResponse() const;
 		const std::vector< char >& getVecResponse() const;

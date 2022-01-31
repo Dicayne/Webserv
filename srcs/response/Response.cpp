@@ -6,7 +6,7 @@
 /*   By: mabriand <mabriand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/16 15:24:59 by mabriand          #+#    #+#             */
-/*   Updated: 2022/01/31 10:39:16 by mabriand         ###   ########.fr       */
+/*   Updated: 2022/01/31 19:01:05 by mabriand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,8 +15,6 @@
 
 Response::Response(Request *current_request, bool cgi, std::vector<char> cgiOutput) : _block(current_request->getBlock())
 {
-	// (void)cgiOutput;
-	// (void)cgi;
 	// Independant from the parameters
 		this->setMimeMap();
 		this->setMessagesMap();
@@ -31,16 +29,11 @@ Response::Response(Request *current_request, bool cgi, std::vector<char> cgiOutp
 		this->setServer();
 		if (cgi == false)
 		{
-			// std::cout << RED << "HERE 1\n" << NC;
 			this->setBody(current_request->returnUrl());
 			this->setContentType(current_request->returnUrl());//
 		}
 		else
-		{
-			// std::cout << RED << "HERE 2\n" << NC;
 			this->set_cgiOutput(cgiOutput);
-		}
-		// this->setContentType(current_request->returnUrl());//
 		this->setContentLenght();
 
 		for (size_t i = 0; i < this->_body.size(); ++i)
@@ -52,28 +45,6 @@ Response::Response(Request *current_request, bool cgi, std::vector<char> cgiOutp
 	return ;
 
 }
-// Response::Response(const std::string& protocol_version, int status, const std::string& url, serv_block *block) : _block(block)
-// {
-// 	// Independant from the parameters
-// 	this->setMimeMap();
-// 	this->setMessagesMap();
-
-// 	// Dependant from the parameters
-// 	this->setProtocolVersion(protocol_version);
-// 	this->setStatus(status);
-// 	this->setStatusMessage(status);
-// 	if (status == 300 )
-// 		this->setLocation(url);
-// 	this->setDate();
-// 	this->setServer();
-// 	this->setBody(url);
-// 	this->setContentType(url);
-// 	this->setContentLenght();
-
-// 	this->buildResponse();
-// 	return ;
-
-// }
 Response::~Response(){}
 
 void				Response::setProtocolVersion(const std::string& protocol_version)
@@ -259,31 +230,32 @@ void				Response::set_cgiOutput(std::vector<char> cgi_output)
 	
 
 	i = 0;
-	std::cout << "STOCKED AS HEADER: \n\n" << NC;	
-	while (i < head.size())
-	{
-		std::cout << RED << head[i] << NC;
-		++i;	
-	}
-	i = 0;
-	std::cout << "STOCKED AS BODY: \n\n" << NC;	
-	while (i < this->_body.size())
-	{
-		std::cout << RED << this->_body[i] << NC;	
-		++i;
-	}
+	// std::cout << "STOCKED AS HEADER: \n\n" << NC;	
+	// while (i < head.size())
+	// {
+	// 	std::cout << RED << head[i] << NC;
+	// 	++i;	
+	// }
+	// std::cout << std::endl;
+	// i = 0;
+	// std::cout << "STOCKED AS BODY: \n\n" << NC;	
+	// while (i < this->_body.size())
+	// {
+	// 	std::cout << RED << this->_body[i] << NC;	
+	// 	++i;
+	// }
 
 	return ;
 }
 
-const std::string&	Response::getProtocolVersion() const{ return (this->_protocol_version); }
-const std::string&	Response::getStatus() const{ return (this->_status); }
-const std::string&	Response::getStatusMessage() const{ return (this->_status_message); }
-const std::string&	Response::getDate() const{ return (this->_date); }
-const std::string&	Response::getServer() const{ return (this->_server); }
-const std::string&	Response::getContentType() const{ return (this->_content_type); }
-const std::string&	Response::getContentLenght() const{ return (this->_content_length); }
-const std::string&  Response::getMime() const{ return (this->_selected_mime); }
+const std::string&	Response::get_ProtocolVersion() const{ return (this->_protocol_version); }
+const std::string&	Response::get_Status() const{ return (this->_status); }
+const std::string&	Response::get_StatusMessage() const{ return (this->_status_message); }
+const std::string&	Response::get_Date() const{ return (this->_date); }
+const std::string&	Response::get_Server() const{ return (this->_server); }
+const std::string&	Response::get_ContentType() const{ return (this->_content_type); }
+const std::string&	Response::get_ContentLenght() const{ return (this->_content_length); }
+const std::string&  Response::get_Mime() const{ return (this->_selected_mime); }
 //
 const std::vector< char >& Response::getVecResponse() const {return (this->_response); }
 
@@ -505,12 +477,12 @@ void				Response::buildResponse()
 }
 std::ostream&		operator<<(std::ostream& os, const Response& r)
 {
-	os << "[" << r.getProtocolVersion() << "]" << std::endl;
-	os << "[" << r.getStatus() << "]" << std::endl;
-	os << "[" << r.getStatusMessage() << "]" << std::endl;
-	os << "[" << r.getDate() << "]" << std::endl;
-	os << "[" << r.getServer() << "]" << std::endl;
-	os << "[" << r.getContentType() << "]" << std::endl;
-	os << "[" << r.getContentLenght() << "]" << std::endl;
+	os << "[" << r.get_ProtocolVersion() << "]" << std::endl;
+	os << "[" << r.get_Status() << "]" << std::endl;
+	os << "[" << r.get_StatusMessage() << "]" << std::endl;
+	os << "[" << r.get_Date() << "]" << std::endl;
+	os << "[" << r.get_Server() << "]" << std::endl;
+	os << "[" << r.get_ContentType() << "]" << std::endl;
+	os << "[" << r.get_ContentLenght() << "]" << std::endl;
 	return (os);
 }

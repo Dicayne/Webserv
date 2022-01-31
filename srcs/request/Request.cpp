@@ -6,7 +6,7 @@
 /*   By: mabriand <mabriand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/06 20:57:30 by mabriand          #+#    #+#             */
-/*   Updated: 2022/01/30 00:02:06 by mabriand         ###   ########.fr       */
+/*   Updated: 2022/01/31 19:04:42 by mabriand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -99,11 +99,16 @@ void				Request::parseBuf(std::string& buf)
 	this->setAcceptEncoding();
 	this->setConnection();
 	this->setReferer();
-	this->setBody();
+	
+	// std::cout << CYAN << buf << NC << std::endl;
+	this->setBody(buf);
+
+	std::cout << CYAN << this->_body << NC << std::endl;
 	this->set_queryString();
+	std::cout << PURPLE << this->_queryString << NC << std::endl;
 
-	// std::cout << *this << std::endl;
-
+	// std::cout << RED << *this << NC << std::endl;
+	
 	// std::cout << GREEN << this->_url << NC << '\n';
 	this->treatUrl();
 	// std::cout << BLUE << this->_url << NC << '\n';
@@ -290,25 +295,40 @@ void				Request::setReferer()
 		this->_referer = this->treat_referer(it->second);
 	return ;
 }
-void				Request::setBody()
+void				Request::setBody(std::string full_resp)
 {
-	std::map<std::string, std::string>::iterator	it = this->_stock.find("Body:");
-	if (it != this->_stock.end())
-		this->_body = it->second;
+	// std::map<std::string, std::string>::iterator	it = this->_stock.find("Body:");
+	// if (it != this->_stock.end())
+	// 	this->_body = it->second;
+	// if (this->_body.size() > (unsigned long)this->_block->get_client_max_body_size())
+	// 	this->_response_status_code = 400; // Pour le moment car je ne trouve pas s'il y a un code erreur précis
+	// return ;
+	
+	size_t pos = full_resp.find_last_of("\n");
+	std::string	tmp(full_resp.substr(pos + 1, full_resp.size() - (pos + 1)));
+	// std::cout << GREEN << tmp << NC << std::endl;
+	this->_body = tmp;
 	if (this->_body.size() > (unsigned long)this->_block->get_client_max_body_size())
 		this->_response_status_code = 400; // Pour le moment car je ne trouve pas s'il y a un code erreur précis
 	return ;
 }
 void				Request::set_queryString()
 {
-	size_t	i;
+	if (this->_method == "GET")
+	{	size_t	i;
 
-	i = this->_baseUrl.find_first_of('?');
-	if (i != std::string::npos)
-	{
-		this->_queryString.assign(this->_baseUrl, i + 1, std::string::npos);
-		// this->_baseUrl = this->_path.substr(0, i);
+		i = this->_baseUrl.find_first_of('?');
+		if (i != std::string::npos)
+		{
+			this->_queryString.assign(this->_baseUrl, i + 1, std::string::npos);
+			// this->_baseUrl = this->_path.substr(0, i);
+		}
 	}
+	else if (this->_method == "POST")
+	{
+		this->_queryString = this->_body;
+	}
+	std::cout << "here ????\n" << std::cout;
 	return ;
 }
 void				Request::defineProtocolVersion()
@@ -363,7 +383,7 @@ void		Request::defineUrl()
 const std::string&	Request::getMethod() const{ return (this->_method); }
 const std::string&	Request::getUrl() const{ return (this->_url); }
 const std::string&	Request::get_baseUrl() const{ return (this->_baseUrl); }
-const std::string&	Request::getProtocolVersion() const{ return (this->_protocol_version); }
+const std::string&	Request::get_ProtocolVersion() const{ return (this->_protocol_version); }
 const std::string&	Request::getHost() const{ return(this->_host); }
 const std::string&	Request::getUserAgent() const{ return(this->_user_agent); }
 const std::string&	Request::getAccept() const{ return(this->_accept); }
@@ -385,7 +405,7 @@ std::ostream&		operator<<(std::ostream& os, const Request& r)
 	os << "[" << r.getMethod() << "]" << std::endl;
 	os << "[" << r.getUrl() << "]" << std::endl;
 	os << "[" << r.get_baseUrl() << "]" << std::endl;
-	os << "[" << r.getProtocolVersion() << "]" << std::endl;
+	os << "[" << r.get_ProtocolVersion() << "]" << std::endl;
 	os << "[" << r.getHost() << "]" << std::endl;
 	os << "[" << r.getUserAgent() << "]" << std::endl;
 	os << "[" << r.getAccept() << "]" << std::endl;
