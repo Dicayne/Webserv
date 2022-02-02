@@ -6,7 +6,7 @@
 /*   By: mabriand <mabriand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/13 19:18:35 by vmoreau           #+#    #+#             */
-/*   Updated: 2022/01/31 18:57:42 by mabriand         ###   ########.fr       */
+/*   Updated: 2022/02/02 14:04:51 by mabriand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -205,20 +205,17 @@ void Server::Server_loopClient()
 			ret = it->second->parse();
 			if (ret >= 0 && it->second->is_request_ready() == true)
 			{
-				std::cout << CYAN << it->second << NC << std::endl;
+				std::cout << "\nRequest after parsing:\n";
+				std::cout << CYAN << *(it->second) << NC;
 				CgiProcess newProcess(it->second, this);
+				bool cgi = false;
 				if (newProcess.isCgiNeeded() == true || it->second->getMethod() == "POST")
 				{
-					
-					
-					std::cout << RED << "=========================================> CGI IS NEEDED" << std::endl;
+					std::cout << RED << "HERE" << NC << std::endl;
 					newProcess.exeCgiProgram();
-				}
-				bool cgi;
-				if (newProcess.isCgiNeeded() == true || it->second->getMethod() == "POST")
 					cgi = true;
-				else
-					cgi = false;
+				}
+				
 				Response	resp(it->second, cgi, newProcess.get_cgiOutput());
 				this->_response = resp.getVecResponse();
 			}

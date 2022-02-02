@@ -6,7 +6,7 @@
 /*   By: mabriand <mabriand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/16 15:24:45 by mabriand          #+#    #+#             */
-/*   Updated: 2022/01/31 10:47:16 by mabriand         ###   ########.fr       */
+/*   Updated: 2022/02/02 13:47:50 by mabriand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,6 +38,7 @@ class   Response
 		std::string						_date;
 		std::string						_server;
 		std::vector< char >				_body;
+		std::string						_bodyStr;
 		std::vector< char >				_cgi_output;
 		std::string						_content_type;
 		std::string						_content_length; // Content-Lenght : ne doit pas dépasser le client body size max
@@ -83,7 +84,8 @@ class   Response
 		const std::string&	get_Server() const;
 		const std::string&	get_ContentType() const;
 		const std::string&	get_ContentLenght() const;
-		const std::string&	getBody() const;
+		const std::string&	get_bodyStr() const;
+		const std::vector<char>&	getBody() const;
 		const std::string&	get_Mime() const;
 
 		const std::string&	getResponse() const;

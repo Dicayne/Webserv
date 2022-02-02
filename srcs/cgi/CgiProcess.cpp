@@ -6,7 +6,7 @@
 /*   By: mabriand <mabriand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/11 16:40:07 by mabriand          #+#    #+#             */
-/*   Updated: 2022/01/31 19:00:17 by mabriand         ###   ########.fr       */
+/*   Updated: 2022/02/02 15:12:27 by mabriand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,11 +20,14 @@ CgiProcess::CgiProcess(Request *current_request, Server *current_server) : _myEn
 	this->set_myEnv();
 	int i = 0;
 	
+	std::cout << "\nMyEnv after creation of CgiProcess:\n";
+	std::cout << PURPLE << "[\n" << NC;
 	while (this->_myEnv[i] != NULL)
 	{
-		std::cout << PURPLE << this->_myEnv[i] << std::endl;
+		std::cout << PURPLE << this->_myEnv[i] << NC << std::endl;
 		++i;
 	}
+	std::cout << PURPLE << "]" << NC;
 	return ;
 }
 CgiProcess::~CgiProcess()
@@ -61,7 +64,7 @@ void				CgiProcess::set_envVars()
 
 	return ;
 }
-void				CgiProcess::set_cgiOutput(std::string	body)
+void				CgiProcess::set_cgiOutput(std::string body)
 {
 	size_t i = 0;
 	while (i < body.size())
@@ -112,8 +115,11 @@ const std::string	CgiProcess::get_Var(std::string var)
 		case 0: 
 			if (this->_request->getMethod() == "GET")
 				return (std::to_string(this->_request->get_queryString().size())); //query string pareil ?
+			else if (this->_request->get_contentLength() != "")
+				return (this->_request->get_contentLength()); //query string pareil ?
 			return (std::to_string(this->_request->getBody().size())); //query string pareil ?
-		case 1: return (""); //Le type MIME du corps de la requête, ou null si le type n'est pas connu.
+		case 1:
+			return (this->_request->get_contentType()); //Le type MIME du corps de la requête, ou null si le type n'est pas connu.
 		case 2: return ("CGI/1.1"); // vu une technique sympa ou ça et case9 sont notés en #define : mieux
 		case 3: return (this->_request->get_baseUrl());
 		case 4: return (this->_request->getUrl());

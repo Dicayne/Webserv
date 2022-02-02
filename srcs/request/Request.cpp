@@ -6,7 +6,7 @@
 /*   By: mabriand <mabriand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/06 20:57:30 by mabriand          #+#    #+#             */
-/*   Updated: 2022/01/31 19:04:42 by mabriand         ###   ########.fr       */
+/*   Updated: 2022/02/02 15:12:35 by mabriand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,6 +43,7 @@ int					Request::parse()
 		return (ret);
 	std::string	buf = buffer;
 	this->_request = buf;
+	std::cout << RED << buf << "\n" << NC;
 
 	// std::cout << PURPLE << ret << NC << "  " << std::strerror(errno) << '\n';
 	this->parseBuf(buf);
@@ -100,18 +101,13 @@ void				Request::parseBuf(std::string& buf)
 	this->setConnection();
 	this->setReferer();
 	
-	// std::cout << CYAN << buf << NC << std::endl;
-	this->setBody(buf);
-
-	std::cout << CYAN << this->_body << NC << std::endl;
-	this->set_queryString();
-	std::cout << PURPLE << this->_queryString << NC << std::endl;
-
-	// std::cout << RED << *this << NC << std::endl;
+	this->set_contentLength();
+	this->set_contentType();
 	
-	// std::cout << GREEN << this->_url << NC << '\n';
+	this->setBody(buf);
+	this->set_queryString();
+	
 	this->treatUrl();
-	// std::cout << BLUE << this->_url << NC << '\n';
 
 	this->defineProtocolVersion();
 	this->defineStatusCode();
@@ -196,10 +192,8 @@ void				Request::treatUrl()
 				std::string tmp(tmp_url.begin(), tmp_url.begin() + it->get_path().size());
 				if (tmp == it->get_path())
 				{
-					std::cout << CYAN << this->_url << NC << '\n';
 					this->_url.erase(this->_url.begin(), this->_url.begin() + tmp.size());
 					this->_url.insert(0, "/" + it->get_root());
-					std::cout << CYAN << this->_url << NC << '\n';
 					changed = true;
 					break;
 				}
@@ -297,16 +291,8 @@ void				Request::setReferer()
 }
 void				Request::setBody(std::string full_resp)
 {
-	// std::map<std::string, std::string>::iterator	it = this->_stock.find("Body:");
-	// if (it != this->_stock.end())
-	// 	this->_body = it->second;
-	// if (this->_body.size() > (unsigned long)this->_block->get_client_max_body_size())
-	// 	this->_response_status_code = 400; // Pour le moment car je ne trouve pas s'il y a un code erreur précis
-	// return ;
-	
 	size_t pos = full_resp.find_last_of("\n");
 	std::string	tmp(full_resp.substr(pos + 1, full_resp.size() - (pos + 1)));
-	// std::cout << GREEN << tmp << NC << std::endl;
 	this->_body = tmp;
 	if (this->_body.size() > (unsigned long)this->_block->get_client_max_body_size())
 		this->_response_status_code = 400; // Pour le moment car je ne trouve pas s'il y a un code erreur précis
@@ -328,7 +314,22 @@ void				Request::set_queryString()
 	{
 		this->_queryString = this->_body;
 	}
-	std::cout << "here ????\n" << std::cout;
+	return ;
+}
+void				Request::set_contentLength()
+{
+	std::map<std::string, std::string>::iterator	it = this->_stock.find("Content-Length:");
+	if (it != this->_stock.end())
+		this->_content_length = it->second;
+	return ;
+}
+void				Request::set_contentType()
+{
+	std::map<std::string, std::string>::iterator	it = this->_stock.find("Content-Type:");
+	if (it != this->_stock.end())
+		this->_content_type = it->second;
+	else
+		this->_content_type = "";
 	return ;
 }
 void				Request::defineProtocolVersion()
@@ -380,40 +381,46 @@ void		Request::defineUrl()
 }
 /*	All getters (one for each attribute corresponding to a field of the HTTP _request):
 */
-const std::string&	Request::getMethod() const{ return (this->_method); }
-const std::string&	Request::getUrl() const{ return (this->_url); }
-const std::string&	Request::get_baseUrl() const{ return (this->_baseUrl); }
-const std::string&	Request::get_ProtocolVersion() const{ return (this->_protocol_version); }
-const std::string&	Request::getHost() const{ return(this->_host); }
-const std::string&	Request::getUserAgent() const{ return(this->_user_agent); }
-const std::string&	Request::getAccept() const{ return(this->_accept); }
-const std::string&	Request::getAcceptLanguage() const{ return(this->_accept_language); }
-const std::string&	Request::getAcceptEncoding() const{ return (this->_accept_encoding); }
-const std::string&	Request::getConnection() const{ return(this->_connection); }
-const std::string&	Request::getReferer() const{ return(this->_referer); }
-const std::string&	Request::getBody() const{ return(this->_body); } // pb car c'est plus une string
-const std::string&	Request::get_queryString() const{ return(this->_queryString); }
-serv_block*	Request::getBlock() { return(this->_block); }
-const bool&	Request::is_request_ready() const { return (this->_request_ready); }
+const std::string&			Request::getMethod() const{ return (this->_method); }
+const std::string&			Request::getUrl() const{ return (this->_url); }
+const std::string&			Request::get_baseUrl() const{ return (this->_baseUrl); }
+const std::string&			Request::get_ProtocolVersion() const{ return (this->_protocol_version); }
+const std::string&			Request::getHost() const{ return(this->_host); }
+const std::string&			Request::getUserAgent() const{ return(this->_user_agent); }
+const std::string&			Request::getAccept() const{ return(this->_accept); }
+const std::string&			Request::getAcceptLanguage() const{ return(this->_accept_language); }
+const std::string&			Request::getAcceptEncoding() const{ return (this->_accept_encoding); }
+const std::string&			Request::getConnection() const{ return(this->_connection); }
+const std::string&			Request::getReferer() const{ return(this->_referer); }
+const std::string&			Request::getBody() const{return(this->_body); }
+const std::string&			Request::get_queryString() const{ return(this->_queryString); }
+serv_block*					Request::getBlock() { return(this->_block); }
 
-const std::string&	Request::returnProtocolVersion() const{ return (this->_response_protocol_version); }
-const std::string&	Request::returnUrl() const{ return (this->_response_url); }
-int					Request::returnStatusCode() const{ return (this->_response_status_code); }
+const std::string&			Request::get_contentLength() const{ return(this->_content_length); }
+const std::string&			Request::get_contentType() const{return(this->_content_type); }
+
+const bool&					Request::is_request_ready() const { return (this->_request_ready); }
+
+const std::string&			Request::returnProtocolVersion() const{ return (this->_response_protocol_version); }
+const std::string&			Request::returnUrl() const{ return (this->_response_url); }
+int							Request::returnStatusCode() const{ return (this->_response_status_code); }
 
 std::ostream&		operator<<(std::ostream& os, const Request& r)
 {
-	os << "[" << r.getMethod() << "]" << std::endl;
-	os << "[" << r.getUrl() << "]" << std::endl;
-	os << "[" << r.get_baseUrl() << "]" << std::endl;
-	os << "[" << r.get_ProtocolVersion() << "]" << std::endl;
-	os << "[" << r.getHost() << "]" << std::endl;
-	os << "[" << r.getUserAgent() << "]" << std::endl;
-	os << "[" << r.getAccept() << "]" << std::endl;
-	os << "[" << r.getAcceptLanguage() << "]" << std::endl;
-	os << "[" << r.getAcceptEncoding() << "]" << std::endl;
-	os << "[" << r.getConnection() << "]" << std::endl;
-	os << "[" << r.getReferer() << "]" << std::endl;
-	os << "[" << r.getBody() << "]" << std::endl;
-	os << "[" << r.get_queryString() << "]" << std::endl;
+	os << "method: [" << r.getMethod() << "]" << std::endl;
+	os << "url: [" << r.getUrl() << "]" << std::endl;
+	os << "base url: [" << r.get_baseUrl() << "]" << std::endl;
+	os << "protocol version[" << r.get_ProtocolVersion() << "]" << std::endl;
+	os << "host [" << r.getHost() << "]" << std::endl;
+	os << "user agent[" << r.getUserAgent() << "]" << std::endl;
+	os << "accept [" << r.getAccept() << "]" << std::endl;
+	os << "accept language [" << r.getAcceptLanguage() << "]" << std::endl;
+	os << "accept encoding [" << r.getAcceptEncoding() << "]" << std::endl;
+	os << "connection [" << r.getConnection() << "]" << std::endl;
+	os << "referer [" << r.getReferer() << "]" << std::endl;
+	os << "body [" << r.getBody() << "]" << std::endl;
+	os << "query string [" << r.get_queryString() << "]" << std::endl;
+	os << "content length [" << r.get_contentLength() << "]" << std::endl;
+	os << "content type [" << r.get_contentType() << "]" << std::endl;
 	return (os);
 }

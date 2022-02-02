@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vmoreau <vmoreau@student.42.fr>            +#+  +:+       +#+        */
+/*   By: mabriand <mabriand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/29 16:52:54 by vmoreau           #+#    #+#             */
-/*   Updated: 2022/01/04 15:49:58 by vmoreau          ###   ########.fr       */
+/*   Updated: 2022/02/02 13:33:15 by mabriand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,6 +63,5 @@ int main(int ac, char **av)
 	}
 	else
 		std::cerr << RED << "ERROR: " << NC << "too many argument\n";
-	std::cout << "\n\nSSSHHHHHHUUUUUUUUUUUUUUUUUUUUU\n\n";
 	return (EXIT_SUCCESS);
 }

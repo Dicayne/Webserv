@@ -6,7 +6,7 @@
 /*   By: mabriand <mabriand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/16 15:24:59 by mabriand          #+#    #+#             */
-/*   Updated: 2022/01/31 19:01:05 by mabriand         ###   ########.fr       */
+/*   Updated: 2022/02/02 14:02:26 by mabriand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,12 +35,9 @@ Response::Response(Request *current_request, bool cgi, std::vector<char> cgiOutp
 		else
 			this->set_cgiOutput(cgiOutput);
 		this->setContentLenght();
-
-		for (size_t i = 0; i < this->_body.size(); ++i)
-		std::cout << GREEN << this->_body[i];
-
+	
 		this->buildResponse();
-		std::cout << YELLOW << *this;
+		std::cout << "\nResponse after creation and all setter called:\n"<< GREEN << *this << NC << "\n";
 	
 	return ;
 
@@ -148,26 +145,22 @@ void				Response::setBody(const std::string& url)
 	}
 
 	ms.close();
+
+	std::vector<char>::iterator	it = this->_body.begin();
+	std::vector<char>::iterator	ite = this->_body.begin();
+	std::string	tmp(it, ite);
+	this->_bodyStr = tmp;
 	return ;
 }
 void				Response::set_newContentType(std::vector<char> header)
 {
-	std::cout << YELLOW << "WTF" << NC << std::endl;
     std::string str(header.begin(), header.end());
-	std::cout << PURPLE << str << NC << std::endl;
 	
 	size_t pos = str.find_last_of(":", str.size());
-	std::cout << "char at pos " << pos << " : " << PURPLE << str[pos] << NC << std::endl;
 	if (pos == std::string::npos)
-	{
-		std::cout << CYAN << pos << NC << std::endl;
 		return ;
-	}
-	else
-		std::cout << CYAN << pos << std::endl;
 	
 	std::string type(str.substr(pos + 2, str.size() - (pos + 2)));
-	std::cout << BLUE << type << NC << std::endl;
 	
 	this->_content_type = type;
 
@@ -219,10 +212,6 @@ void				Response::set_cgiOutput(std::vector<char> cgi_output)
 		body.push_back(str_output[i]);
 		++i;
 	}
-
-
-	
-	std::cout << RED << "HERE 3\n" << NC;
 	this->_cgi_body = body;
 	this->_body = body;
 	this->_cgi_head = head;
@@ -255,6 +244,8 @@ const std::string&	Response::get_Date() const{ return (this->_date); }
 const std::string&	Response::get_Server() const{ return (this->_server); }
 const std::string&	Response::get_ContentType() const{ return (this->_content_type); }
 const std::string&	Response::get_ContentLenght() const{ return (this->_content_length); }
+const std::string&	Response::get_bodyStr() const{ return(this->_bodyStr); }
+const std::vector<char>&	Response::getBody() const{ return(this->_body); }
 const std::string&  Response::get_Mime() const{ return (this->_selected_mime); }
 //
 const std::vector< char >& Response::getVecResponse() const {return (this->_response); }
@@ -455,21 +446,17 @@ void				Response::buildResponse()
 	this->buildPartResp("Status");
 	this->buildPartResp("Status-Message");
 	
-	std::cout << RED << "HERE 4\n" << NC;
 	if (this->_status.compare("300 ") == 0)
 		this->buildPartResp("Location");
 	this->buildPartResp("Date");
 	this->buildPartResp("Server");
 	
-	std::cout << RED << "HERE 5\n" << NC;
 	fill_resp("Connection: keep-alive\r\n");
 	fill_resp("Keep-Alive: timeout=3\r\n");
 	
-	std::cout << RED << "HERE 6\n" << NC;
 	this->buildPartResp("Content-Type");
 	this->buildPartResp("Content-Length");
 	
-	std::cout << RED << "HERE 7\n" << NC;
 	this->fill_resp("\r\n");
 	this->_response.insert(this->_response.end(), this->_body.begin(), this->_body.end());
 
@@ -484,5 +471,7 @@ std::ostream&		operator<<(std::ostream& os, const Response& r)
 	os << "[" << r.get_Server() << "]" << std::endl;
 	os << "[" << r.get_ContentType() << "]" << std::endl;
 	os << "[" << r.get_ContentLenght() << "]" << std::endl;
+	os << "[" << r.get_bodyStr() << "]" << std::endl;
+		
 	return (os);
 }
