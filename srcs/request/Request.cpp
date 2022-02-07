@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Request.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vmoreau <vmoreau@student.42.fr>            +#+  +:+       +#+        */
+/*   By: mabriand <mabriand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/06 20:57:30 by mabriand          #+#    #+#             */
-/*   Updated: 2022/02/07 17:12:34 by vmoreau          ###   ########.fr       */
+/*   Updated: 2022/02/07 19:40:31 by mabriand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -256,6 +256,26 @@ void				Request::defineProtocolVersion()
 }
 void				Request::defineStatusCode()
 {
+	if (this->_method == "DELETE")
+	{
+		std::cout << YELLOW << "WE GON DELETE" << NC << std::endl;
+		struct stat buffer;
+    	if (stat(this->_url.c_str(), &buffer) == -1)
+        {
+			this->_response_status_code = 404;
+			return ;
+		}
+		std::cout << YELLOW << "IT DOES EXIST" << NC << std::endl;
+		if (remove (this->_url.c_str()) == 0)
+		{
+			this->_response_status_code = 200;
+		}
+		else
+		{
+			this->_response_status_code = 500;
+		}
+   	 	
+	}
 	if (this->_response_status_code != 0)
 		return ;
 
@@ -350,17 +370,17 @@ std::ostream&		operator<<(std::ostream& os, const Request& r)
 	os << "method: [" << r.getMethod() << "]" << std::endl;
 	os << "url: [" << r.getUrl() << "]" << std::endl;
 	os << "base url: [" << r.getBaseUrl() << "]" << std::endl;
-	os << "protocol version[" << r.getProtocolVersion() << "]" << std::endl;
-	os << "host [" << r.getHost() << "]" << std::endl;
-	os << "user agent[" << r.getUserAgent() << "]" << std::endl;
-	os << "accept [" << r.getAccept() << "]" << std::endl;
-	os << "accept language [" << r.getAcceptLanguage() << "]" << std::endl;
-	os << "accept encoding [" << r.getAcceptEncoding() << "]" << std::endl;
-	os << "connection [" << r.getConnection() << "]" << std::endl;
-	os << "referer [" << r.getReferer() << "]" << std::endl;
-	os << "body [" << r.getBody() << "]" << std::endl;
-	os << "query string [" << r.get_queryString() << "]" << std::endl;
-	os << "content length [" << r.get_contentLength() << "]" << std::endl;
-	os << "content type [" << r.get_contentType() << "]" << std::endl;
+	os << "protocol version :[" << r.getProtocolVersion() << "]" << std::endl;
+	os << "host :[" << r.getHost() << "]" << std::endl;
+	os << "user agent :[" << r.getUserAgent() << "]" << std::endl;
+	os << "accept :[" << r.getAccept() << "]" << std::endl;
+	os << "accept language :[" << r.getAcceptLanguage() << "]" << std::endl;
+	os << "accept encoding :[" << r.getAcceptEncoding() << "]" << std::endl;
+	os << "connection :[" << r.getConnection() << "]" << std::endl;
+	os << "referer :[" << r.getReferer() << "]" << std::endl;
+	os << "body :[" << r.getBody() << "]" << std::endl;
+	os << "query string :[" << r.get_queryString() << "]" << std::endl;
+	os << "content length :[" << r.get_contentLength() << "]" << std::endl;
+	os << "content type :[" << r.get_contentType() << "]" << std::endl;
 	return (os);
 }
