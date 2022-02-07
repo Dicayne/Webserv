@@ -6,7 +6,7 @@
 /*   By: vmoreau <vmoreau@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/08 14:44:09 by vmoreau           #+#    #+#             */
-/*   Updated: 2022/01/12 18:00:13 by vmoreau          ###   ########.fr       */
+/*   Updated: 2022/01/28 16:06:13 by vmoreau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@
 
 #include "loc_block.hpp"
 
-#define BODY_DEFAULT_SIZE 100000
+#define BODY_DEFAULT_SIZE 5000
 
 class serv_block
 {
@@ -37,6 +37,7 @@ private:
 	std::vector<loc_block>					_location;
 	std::string								_default_root;
 	std::string								_default_path;
+	bool									_autoindex;
 
 public:
 	serv_block();
@@ -51,6 +52,7 @@ public:
 	void set_client_max_body_size(std::string value);
 	void set_default_root(std::string value);
 	void set_default_path(std::string value);
+	void set_autoindex(std::string value);
 
 	// GETTER
 	std::string get_host() const					{ return (this->_host); }
@@ -62,6 +64,8 @@ public:
 	std::string get_default_root() const			{ return (this->_default_root); }
 	std::string get_default_path() const			{ return (this->_default_path); }
 	std::map<std::string, std::string> get_error_page() const	{ return (this->_error_page); }
+	bool get_autoindex() const 						{ return (this->_autoindex); }
+
 
 
 	// EXCEPTION

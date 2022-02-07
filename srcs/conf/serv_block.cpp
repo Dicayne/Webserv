@@ -6,14 +6,14 @@
 /*   By: vmoreau <vmoreau@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/08 14:44:06 by vmoreau           #+#    #+#             */
-/*   Updated: 2022/01/20 11:50:33 by vmoreau          ###   ########.fr       */
+/*   Updated: 2022/01/28 16:07:48 by vmoreau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "serv_block.hpp"
 
 
-serv_block::serv_block() : _path(CONF_DEFAULT_PATH), _port(-1), _client_max_body_size(-1)
+serv_block::serv_block() : _path(CONF_DEFAULT_PATH), _port(-1), _client_max_body_size(-1),  _autoindex(false)
 {
 	// std::cout << "Serv_Block construct\n";
 }
@@ -32,6 +32,7 @@ void serv_block::pars_serv(std::vector<std::string> block, std::string path, std
 	this->_sendfile = sendfile;
 	std::vector<std::string> tmp(this->_block);
 	size_t nb_loc = 0;
+	bool is_autoindex = false;
 
 	for (size_t i = 0; i < this->_block.size(); i++)
 		if (this->_block[i].compare("location") == 0)
@@ -42,7 +43,7 @@ void serv_block::pars_serv(std::vector<std::string> block, std::string path, std
 	tmp = this->separate_loc_block(tmp, nb_loc);
 
 	size_t i = 2;
-	while (i < tmp.size() - 1)
+	while (i < tmp.size() - 1)									// Pars all info in server block which not in location block
 	{
 		if (tmp[i].find_first_of(' ') == tmp[i].npos)
 			throw ConfFile(" Server block is wrongly formatted");
@@ -59,6 +60,11 @@ void serv_block::pars_serv(std::vector<std::string> block, std::string path, std
 			this->set_default_root(value);
 		else if (key.compare("path") == 0)
 			this->set_default_path(value);
+		else if (key.compare("autoindex") == 0)
+		{
+			is_autoindex = true;
+			this->set_autoindex(value);
+		}
 
 		i++;
 	}
@@ -73,7 +79,7 @@ void serv_block::pars_serv(std::vector<std::string> block, std::string path, std
 		std::cout << YELLOW << "Warning: " << NC << " Client_max_body_size is missing in ";
 		std::cout << this->_path << " client_max_body_size is set by default at " << BODY_DEFAULT_SIZE << '\n';
 	}
-	for (size_t i = 0; i < nb_loc; i++)
+	for (size_t i = 0; i < nb_loc; i++)							// Loop on all location block and pars them
 	{
 		loc_block tmp;
 
@@ -90,6 +96,11 @@ void serv_block::pars_serv(std::vector<std::string> block, std::string path, std
 	{
 		this->_default_path = DEFAULT_PATH;
 		std::cout << YELLOW << "Warning: " << NC << " Default_path missing in " << this->_path << " default path set by default at " << DEFAULT_PATH << '\n';
+	}
+	if (is_autoindex == false)
+	{
+		this->_autoindex = false;
+		std::cout << YELLOW << "Warning: " << NC << " Autoindex is missing in " << this->_path << " autoindex is set by default at off" << '\n';
 	}
 	// // DEBUG
 	// std::cout << "Port: " << this->_port << "\n";
@@ -167,6 +178,18 @@ void serv_block::set_default_path(std::string value)
 	std::string d_path(value.begin() + value.find_first_not_of(' '), value.end());
 
 	this->_default_path = d_path;
+}
+
+void serv_block::set_autoindex(std::string value)
+{
+	std::string auto_ind(value.begin() + value.find_first_not_of(' '), value.end());
+
+	if (auto_ind.compare("on") == 0)
+		this->_autoindex = true;
+	else if (auto_ind.compare("off") == 0)
+		this->_autoindex = false;
+	else
+		throw ConfFile(" Autoindex option is \"on\" or \"off\"");
 }
 
 // ************** INTERNE FUNCTION PARS ************** //

@@ -6,7 +6,7 @@
 #    By: vmoreau <vmoreau@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/11/29 16:52:41 by vmoreau           #+#    #+#              #
-#    Updated: 2022/01/06 15:53:20 by vmoreau          ###   ########.fr        #
+#    Updated: 2022/02/03 16:51:13 by vmoreau          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -31,11 +31,11 @@ WHITE = \033[0;37m
 SRCS += srcs/main.cpp
 
 # Conf
-SRCS += srcs/conf/confpars.cpp srcs/conf/serv_block.cpp srcs/conf/loc_block.cpp
+SRCS += srcs/conf/confpars.cpp		srcs/conf/serv_block.cpp				srcs/conf/loc_block.cpp
 # Request
-SRCS += srcs/request/Request.cpp
+SRCS += srcs/request/Request.cpp	srcs/request/Request_url.cpp			srcs/request/Request_referer.cpp
 # Response
-SRCS += srcs/response/Response.cpp
+SRCS += srcs/response/Response.cpp	srcs/response/Response_autoindex.cpp	srcs/response/Response_prepare.cpp
 # Server
 SRCS += srcs/server/Server.cpp
 ####################################BASIC######################################

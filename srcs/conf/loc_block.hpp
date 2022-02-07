@@ -6,7 +6,7 @@
 /*   By: vmoreau <vmoreau@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/08 14:44:20 by vmoreau           #+#    #+#             */
-/*   Updated: 2021/12/13 14:53:49 by vmoreau          ###   ########.fr       */
+/*   Updated: 2022/02/02 16:42:27 by vmoreau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,12 +27,12 @@ private:
 	std::string					_path;
 	std::string					_root;
 	std::vector<std::string>	_method_limit;
-	std::vector<std::string>	_index;
-	bool						_autoindex;
+	std::string					_index;
 
 public:
 	loc_block(/* args */);
 	~loc_block();
+	loc_block& operator= (const loc_block);
 
 	// PARSING
 	void pars_loc(std::vector<std::string> block, std::string path);
@@ -42,13 +42,11 @@ public:
 	void set_root(std::string value);
 	void set_method_limit(std::string value);
 	void set_index(std::string value);
-	void set_autoindex(std::string value);
 
 	// GETTER
 	std::string get_path() const 					{ return (this->_path); }
 	std::string get_root() const 					{ return (this->_root); }
-	bool get_autoindex() const 						{ return (this->_autoindex); }
-	std::vector<std::string>	get_index() const 	{ return (this->_index); }
+	std::string	get_index() const 					{ return (this->_index); }
 	std::vector<std::string>	get_method_limit() const { return (this->_method_limit); }
 
 	// EXCEPTION

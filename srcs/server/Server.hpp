@@ -6,7 +6,7 @@
 /*   By: vmoreau <vmoreau@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/13 19:18:32 by vmoreau           #+#    #+#             */
-/*   Updated: 2022/01/20 16:37:12 by vmoreau          ###   ########.fr       */
+/*   Updated: 2022/01/25 17:01:12 by vmoreau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,14 +36,15 @@ private:
 
 	void Server_setSocket();
 	void Server_setFd();
+	void Server_Zero_all_set();
 	void Server_closeSocket(int socket);
 	void Server_closeAllSocket();
 	void Server_select();
 	void Server_loopServ();
 	void Server_loopClient();
-	void Server_Zero_all_set();
 
 	void print_fds(const char *color);
+	void print_response(int n);
 public:
 	static int server_is_alive;
 	Server(/* args */);

@@ -6,7 +6,7 @@
 /*   By: vmoreau <vmoreau@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/07 16:02:13 by vmoreau           #+#    #+#             */
-/*   Updated: 2022/01/12 17:49:37 by vmoreau          ###   ########.fr       */
+/*   Updated: 2022/01/25 16:05:37 by vmoreau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,10 +73,14 @@ confpars::~confpars()
 void confpars::open_fc(const char *path)
 {
 	if (path != NULL)
+	{
 		this->_path = path;
-	this->_fc.open(this->_path.c_str());
-	if (this->_fc.is_open() == false)
-		throw FileNotFound(this->_path);
+		this->_fc.open(this->_path.c_str());
+		if (this->_fc.is_open() == false)
+			throw FileNotFound(this->_path);
+	}
+	else
+		FileNotFound("NULL");
 }
 
 void confpars::reopen_fc()
@@ -139,8 +143,8 @@ void confpars::pars_fc(std::ifstream &fc)
 	}
 	this->reopen_fc();
 
-	this->pars_http();
-	for (size_t i = 0; i < this->_server_block.size(); i++)
+	this->pars_http();											// Pars all information which not in server or location block
+	for (size_t i = 0; i < this->_server_block.size(); i++)		// Loop on all server block and pars them
 	{
 		serv_block tmp;
 
