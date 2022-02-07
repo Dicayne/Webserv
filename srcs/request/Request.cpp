@@ -6,7 +6,7 @@
 /*   By: vmoreau <vmoreau@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/06 20:57:30 by mabriand          #+#    #+#             */
-/*   Updated: 2022/02/07 13:43:17 by vmoreau          ###   ########.fr       */
+/*   Updated: 2022/02/07 17:12:34 by vmoreau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -107,7 +107,7 @@ void				Request::parseBuf(std::string& buf)
 	this->set_contentLength();
 	this->set_contentType();
 
-	this->setBody();
+	this->setBody(buf);
 	this->set_queryString();
 
 	this->treatUrl();
@@ -184,7 +184,7 @@ void				Request::setConnection()
 {
 	std::map<std::string, std::string>::iterator	it = this->_stock.find("Connection:");
 	if (it != this->_stock.end())
-		this->_body = it->second;
+		this->_connection = it->second;
 	return ;
 }
 void				Request::setReferer()
@@ -194,15 +194,27 @@ void				Request::setReferer()
 		this->_referer = this->treat_referer(it->second);
 	return ;
 }
-void				Request::setBody()
+
+// void				Request::setBody()
+// {
+// 	std::map<std::string, std::string>::iterator	it = this->_stock.find("Body:");
+// 	if (it != this->_stock.end())
+// 		this->_body = it->second;
+// 	if (this->_request.size() > (unsigned long)this->_block->get_client_max_body_size() && this->_referer.size() == 0)
+// 		this->_response_status_code = 413; // Pour le moment car je ne trouve pas s'il y a un code erreur précis
+// 	return ;
+// }
+
+void                Request::setBody(std::string& full_resp)
 {
-	std::map<std::string, std::string>::iterator	it = this->_stock.find("Body:");
-	if (it != this->_stock.end())
-		this->_body = it->second;
-	if (this->_request.size() > (unsigned long)this->_block->get_client_max_body_size() && this->_referer.size() == 0)
-		this->_response_status_code = 413; // Pour le moment car je ne trouve pas s'il y a un code erreur précis
-	return ;
+    size_t pos = full_resp.find_last_of("\n");
+    std::string    tmp(full_resp.substr(pos + 1, full_resp.size() - (pos + 1)));
+    this->_body = tmp;
+    if (this->_body.size() > (unsigned long)this->_block->get_client_max_body_size()) //&& this->_referer.size() == 0/)
+        this->_response_status_code = 413; // Pour le moment car je ne trouve pas s'il y a un code erreur précis
+    return ;
 }
+
 void				Request::set_queryString()
 {
 	if (this->_method == "GET")
