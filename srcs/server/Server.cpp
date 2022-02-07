@@ -6,11 +6,13 @@
 /*   By: vmoreau <vmoreau@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/13 19:18:35 by vmoreau           #+#    #+#             */
-/*   Updated: 2022/02/07 11:54:54 by vmoreau          ###   ########.fr       */
+/*   Updated: 2022/02/07 13:41:39 by vmoreau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "./Server.hpp"
+#include "../cgi/CgiProcess.hpp"
+#include "../response/Response.hpp"
 
 std::string ipToString(unsigned int ip)
 {
@@ -227,7 +229,18 @@ void Server::Server_loopClient()
 			ret = it->second->parse();
 			if (ret >= 0 && it->second->is_request_ready() == true)
 			{
-				Response	resp(*it->second, it->second->getBlock());
+				std::cout << "\nRequest after parsing:\n";
+				std::cout << CYAN << *(it->second) << NC;
+				CgiProcess newProcess(it->second, this);
+				bool cgi = false;
+				if (newProcess.isCgiNeeded() == true || it->second->getMethod() == "POST")
+				{
+					// std::cout << RED << "HERE" << NC << std::endl;
+					newProcess.exeCgiProgram();
+					cgi = true;
+				}
+
+				Response	resp(*it->second, it->second->getBlock(), cgi, newProcess.get_cgiOutput());
 				this->_response = resp.getVecResponse();
 			}
 		}

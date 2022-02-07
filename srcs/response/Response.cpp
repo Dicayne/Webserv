@@ -6,35 +6,45 @@
 /*   By: vmoreau <vmoreau@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/16 15:24:59 by mabriand          #+#    #+#             */
-/*   Updated: 2022/02/06 16:55:09 by vmoreau          ###   ########.fr       */
+/*   Updated: 2022/02/07 13:41:23 by vmoreau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "./Response.hpp"
+#include "../request/Request.hpp"
 
-Response::Response(const Request &req, serv_block *block) : _req(req), _block(block)
+Response::Response(const Request &req, serv_block *block, bool cgi, std::vector<char> cgiOutput) : _req(req), _block(block)
 {
 	this->_target_dir = this->_req.get_url_dir();
 
 	// Independant from the parameters
-	this->setMimeMap();
-	this->setMessagesMap();
+		this->setMimeMap();
+		this->setMessagesMap();
 
 	// Dependant from the parameters
-	this->setProtocolVersion(this->_req.returnProtocolVersion());
-	this->setStatus(this->_req.returnStatusCode());
-	this->setStatusMessage(this->_req.returnStatusCode());
-	if (this->_req.returnStatusCode() == 300 )
-		this->setLocation(this->_req.returnUrl());
-	this->setDate();
-	this->setServer();
-	this->setConnection();
-	this->setKeepAlive();
-	this->setBody(this->_req.returnUrl());
-	this->setContentType(this->_req.returnUrl());
-	this->setContentLenght();
+		this->setProtocolVersion(this->_req.returnProtocolVersion());
+		this->setStatus(this->_req.returnStatusCode());
+		this->setStatusMessage(this->_req.returnStatusCode());
+		if (this->_req.returnStatusCode() == 300 )
+			this->setLocation(this->_req.returnUrl());
+		this->setDate();
+		this->setServer();
+		this->setConnection();
+		this->setKeepAlive();
 
-	this->buildResponse();
+		if (cgi == false)
+		{
+			this->setBody(this->_req.returnUrl());
+			this->setContentType(this->_req.returnUrl());//
+		}
+		else
+			this->set_cgiOutput(cgiOutput);
+		this->setContentLenght();
+
+		this->buildResponse();
+		// std::cout << "\nResponse after creation and all setter called:\n"<< GREEN << *this << NC << "\n";
+
+	return ;
 
 }
 Response::~Response(){}
@@ -157,7 +167,7 @@ void				Response::setBody(const std::string& url)
 	std::string url_dir(tmp_url.begin(), tmp_url.begin() + tmp_url.find_last_of('/'));
 	bool path_exist = IsPathExist(url_dir);
 
-	std::cout << "URL_DIR: " << url_dir << '\n';
+	// std::cout << "URL_DIR: " << url_dir << '\n';
 	if (url_dir == ".")
 		path_exist = false;
 
@@ -182,20 +192,109 @@ void				Response::setBody(const std::string& url)
 			ms.seekg(0, std::ios_base::beg);
 			ms.read(&this->_body[0], fileSize);
 		}
-
 		ms.close();
 	}
+	std::vector<char>::iterator	it = this->_body.begin();
+	std::vector<char>::iterator	ite = this->_body.end();
+	std::string	tmp(it, ite);
+	this->_bodyStr = tmp;
+	return ;
+}
+void				Response::set_newContentType(std::vector<char> header)
+{
+    std::string str(header.begin(), header.end());
+
+	size_t pos = str.find_last_of(":", str.size());
+	if (pos == std::string::npos)
+		return ;
+
+	std::string type(str.substr(pos + 2, str.size() - (pos + 2)));
+
+	this->_content_type = type;
+
+	std::pair<std::string, std::string> elem("Content-Type", this->_content_type);
+	this->_stock.insert(elem);
+	this->_selected_mime = type;
+
+	return ;/////////////////
+}
+void				Response::set_cgiOutput(std::vector<char> cgi_output)
+{
+	std::vector<char>	head;
+	std::vector<char>	type;
+	std::vector<char>	body;
+
+	std::string str_output(cgi_output.begin(), cgi_output.end());
+
+	size_t pos;
+	while ((pos = str_output.find("\r")) != std::string::npos)
+		str_output.replace(pos, 1, "\n");
+
+	pos = str_output.find_first_of("\n", 0);
+	std::string str_head(str_output.substr(0, pos));
+	while (str_output[pos] == '\n')
+		++pos;
+	str_output.erase(0, pos);
+
+	pos = str_output.find_first_of("\n", 0);
+	std::string str_type(str_output.substr(0, pos));
+	while (str_output[pos] == '\n')
+		++pos;
+	str_output.erase(0, pos);
+
+	size_t i = 0;
+	while (i < str_head.size())
+	{
+		head.push_back(str_head[i]);
+		++i;
+	}
+	i = 0;
+	while (i < str_type.size())
+	{
+		type.push_back(str_type[i]);
+		++i;
+	}
+	i = 0;
+	while (i < str_output.size())
+	{
+		body.push_back(str_output[i]);
+		++i;
+	}
+	this->_cgi_body = body;
+	this->_body = body;
+	this->_cgi_head = head;
+	this->set_newContentType(type);
+
+
+	i = 0;
+	// std::cout << "STOCKED AS HEADER: \n\n" << NC;
+	// while (i < head.size())
+	// {
+	// 	std::cout << RED << head[i] << NC;
+	// 	++i;
+	// }
+	// std::cout << std::endl;
+	// i = 0;
+	// std::cout << "STOCKED AS BODY: \n\n" << NC;
+	// while (i < this->_body.size())
+	// {
+	// 	std::cout << RED << this->_body[i] << NC;
+	// 	++i;
+	// }
+
 	return ;
 }
 
-const std::string&	Response::getProtocolVersion() const{ return (this->_protocol_version); }
-const std::string&	Response::getStatus() const{ return (this->_status); }
-const std::string&	Response::getStatusMessage() const{ return (this->_status_message); }
-const std::string&	Response::getDate() const{ return (this->_date); }
-const std::string&	Response::getServer() const{ return (this->_server); }
-const std::string&	Response::getContentType() const{ return (this->_content_type); }
-const std::string&	Response::getContentLenght() const{ return (this->_content_length); }
-const std::string&  Response::getMime() const{ return (this->_selected_mime); }
+const std::string&	Response::get_ProtocolVersion() const{ return (this->_protocol_version); }
+const std::string&	Response::get_Status() const{ return (this->_status); }
+const std::string&	Response::get_StatusMessage() const{ return (this->_status_message); }
+const std::string&	Response::get_Date() const{ return (this->_date); }
+const std::string&	Response::get_Server() const{ return (this->_server); }
+const std::string&	Response::get_ContentType() const{ return (this->_content_type); }
+const std::string&	Response::get_ContentLenght() const{ return (this->_content_length); }
+const std::string&	Response::get_bodyStr() const{ return(this->_bodyStr); }
+const std::vector<char>&	Response::getBody() const{ return(this->_body); }
+const std::string&  Response::get_Mime() const{ return (this->_selected_mime); }
 //
 const std::vector< char >& Response::getVecResponse() const {return (this->_response); }
 
@@ -239,6 +338,7 @@ void				Response::buildResponse()
 	this->buildPartResp("Protocol-Version");
 	this->buildPartResp("Status");
 	this->buildPartResp("Status-Message");
+
 	if (this->_status.compare("300 ") == 0)
 		this->buildPartResp("Location");
 	this->buildPartResp("Date");
@@ -255,12 +355,14 @@ void				Response::buildResponse()
 }
 std::ostream&		operator<<(std::ostream& os, const Response& r)
 {
-	os << "[" << r.getProtocolVersion() << "]" << std::endl;
-	os << "[" << r.getStatus() << "]" << std::endl;
-	os << "[" << r.getStatusMessage() << "]" << std::endl;
-	os << "[" << r.getDate() << "]" << std::endl;
-	os << "[" << r.getServer() << "]" << std::endl;
-	os << "[" << r.getContentType() << "]" << std::endl;
-	os << "[" << r.getContentLenght() << "]" << std::endl;
+	os << "[" << r.get_ProtocolVersion() << "]" << std::endl;
+	os << "[" << r.get_Status() << "]" << std::endl;
+	os << "[" << r.get_StatusMessage() << "]" << std::endl;
+	os << "[" << r.get_Date() << "]" << std::endl;
+	os << "[" << r.get_Server() << "]" << std::endl;
+	os << "[" << r.get_ContentType() << "]" << std::endl;
+	os << "[" << r.get_ContentLenght() << "]" << std::endl;
+	os << "[" << r.get_bodyStr() << "]" << std::endl;
+
 	return (os);
 }

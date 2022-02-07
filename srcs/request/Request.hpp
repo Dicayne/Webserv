@@ -6,9 +6,10 @@
 /*   By: vmoreau <vmoreau@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/06 11:16:47 by mabriand          #+#    #+#             */
-/*   Updated: 2022/02/04 16:47:13 by vmoreau          ###   ########.fr       */
+/*   Updated: 2022/02/07 13:43:39 by vmoreau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+
 
 #ifndef REQUEST_HPP
 # define REQUEST_HPP
@@ -40,9 +41,13 @@ class   Request
 		std::string	_accept_encoding;
 		std::string	_connection;
 		std::string	_body;
+		std::string	_queryString;
 		std::string _referer;
 		bool		_err_referer;
 		bool		_url_dir;
+
+		std::string	_content_length;
+		std::string	_content_type;
 
 		/*	Attributes corresponding to the parameters of the reponse's constructor that will be asked
 			when creating it to send it back to the client:
@@ -101,6 +106,11 @@ class   Request
 		void		treatUrl_with_dir_referer();
 		void		treatUrl_with_full_referer();
 		void		treatUrl_with_err_referer(const std::string ref_code);
+
+		void		set_queryString();
+
+		void		set_contentLength();
+		void		set_contentType();
 		/*
 		*/
 		void		defineProtocolVersion();
@@ -127,11 +137,17 @@ class   Request
 		serv_block*	getBlock();
 		const bool&	is_request_ready() const;
 		const bool& get_url_dir() const;
+
+		const std::string&	get_queryString() const;
+
+		const std::string&		get_contentLength() const;
+		const std::string&		get_contentType() const;
 		/*
 		*/
 		const std::string&	returnProtocolVersion() const;
 		int					returnStatusCode() const;
 		const std::string&	returnUrl() const;
+
 };
 
 std::ostream&		operator<<(std::ostream& os, const Request& r);

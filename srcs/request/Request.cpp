@@ -6,7 +6,7 @@
 /*   By: vmoreau <vmoreau@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/06 20:57:30 by mabriand          #+#    #+#             */
-/*   Updated: 2022/02/05 15:55:54 by vmoreau          ###   ########.fr       */
+/*   Updated: 2022/02/07 13:43:17 by vmoreau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,7 @@ int					Request::parse()
 
 	// std::cout << PURPLE << ret << NC << "  " << std::strerror(errno) << '\n';
 
-	std::cout << PURPLE << this->_request << NC << '\n';
+	// std::cout << PURPLE << this->_request << NC << '\n';
 
 	this->parseBuf(buf);
 	buf.clear();
@@ -103,9 +103,12 @@ void				Request::parseBuf(std::string& buf)
 	this->setAcceptEncoding();
 	this->setConnection();
 	this->setReferer();
-	this->setBody();
 
-	// std::cout << *this << std::endl;
+	this->set_contentLength();
+	this->set_contentType();
+
+	this->setBody();
+	this->set_queryString();
 
 	this->treatUrl();
 
@@ -200,6 +203,40 @@ void				Request::setBody()
 		this->_response_status_code = 413; // Pour le moment car je ne trouve pas s'il y a un code erreur précis
 	return ;
 }
+void				Request::set_queryString()
+{
+	if (this->_method == "GET")
+	{	size_t	i;
+
+		i = this->_base_url.find_first_of('?');
+		if (i != std::string::npos)
+		{
+			this->_queryString.assign(this->_base_url, i + 1, std::string::npos);
+			// this->_base_url = this->_path.substr(0, i);
+		}
+	}
+	else if (this->_method == "POST")
+	{
+		this->_queryString = this->_body;
+	}
+	return ;
+}
+void				Request::set_contentLength()
+{
+	std::map<std::string, std::string>::iterator	it = this->_stock.find("Content-Length:");
+	if (it != this->_stock.end())
+		this->_content_length = it->second;
+	return ;
+}
+void				Request::set_contentType()
+{
+	std::map<std::string, std::string>::iterator	it = this->_stock.find("Content-Type:");
+	if (it != this->_stock.end())
+		this->_content_type = it->second;
+	else
+		this->_content_type = "";
+	return ;
+}
 void				Request::defineProtocolVersion()
 {
 	this->_response_protocol_version = this->_protocol_version;
@@ -220,7 +257,6 @@ void				Request::defineStatusCode()
 		this->_response_status_code = 404;
 	ms.close();
 
-	std::cout << this->_url << " PASS " << this->_response_status_code <<  "\n";
 	return ;
 }
 
@@ -293,18 +329,26 @@ const std::string&	Request::returnProtocolVersion() const{ return (this->_respon
 const std::string&	Request::returnUrl() const{ return (this->_response_url); }
 int					Request::returnStatusCode() const{ return (this->_response_status_code); }
 
+const std::string&			Request::get_queryString() const{ return(this->_queryString); }
+const std::string&			Request::get_contentLength() const{ return(this->_content_length); }
+const std::string&			Request::get_contentType() const{return(this->_content_type); }
+
 std::ostream&		operator<<(std::ostream& os, const Request& r)
 {
-	os << "[" << r.getMethod() << "]" << std::endl;
-	os << "[" << r.getUrl() << "]" << std::endl;
-	os << "[" << r.getProtocolVersion() << "]" << std::endl;
-	os << "[" << r.getHost() << "]" << std::endl;
-	os << "[" << r.getUserAgent() << "]" << std::endl;
-	os << "[" << r.getAccept() << "]" << std::endl;
-	os << "[" << r.getAcceptLanguage() << "]" << std::endl;
-	os << "[" << r.getAcceptEncoding() << "]" << std::endl;
-	os << "[" << r.getConnection() << "]" << std::endl;
-	os << "[" << r.getReferer() << "]" << std::endl;
-	os << "[" << r.getBody() << "]" << std::endl;
+	os << "method: [" << r.getMethod() << "]" << std::endl;
+	os << "url: [" << r.getUrl() << "]" << std::endl;
+	os << "base url: [" << r.getBaseUrl() << "]" << std::endl;
+	os << "protocol version[" << r.getProtocolVersion() << "]" << std::endl;
+	os << "host [" << r.getHost() << "]" << std::endl;
+	os << "user agent[" << r.getUserAgent() << "]" << std::endl;
+	os << "accept [" << r.getAccept() << "]" << std::endl;
+	os << "accept language [" << r.getAcceptLanguage() << "]" << std::endl;
+	os << "accept encoding [" << r.getAcceptEncoding() << "]" << std::endl;
+	os << "connection [" << r.getConnection() << "]" << std::endl;
+	os << "referer [" << r.getReferer() << "]" << std::endl;
+	os << "body [" << r.getBody() << "]" << std::endl;
+	os << "query string [" << r.get_queryString() << "]" << std::endl;
+	os << "content length [" << r.get_contentLength() << "]" << std::endl;
+	os << "content type [" << r.get_contentType() << "]" << std::endl;
 	return (os);
 }

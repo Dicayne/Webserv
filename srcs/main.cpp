@@ -6,7 +6,7 @@
 /*   By: vmoreau <vmoreau@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/29 16:52:54 by vmoreau           #+#    #+#             */
-/*   Updated: 2022/01/25 16:05:39 by vmoreau          ###   ########.fr       */
+/*   Updated: 2022/02/07 12:50:30 by vmoreau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,6 +65,8 @@ int main(int ac, char **av)
 	}
 	else
 		std::cerr << RED << "ERROR: " << NC << "too many argument\n";
+
 	std::cout << "\n\nSERVER ENDED\n\n";
+
 	return (EXIT_SUCCESS);
 }
