@@ -6,7 +6,7 @@
 /*   By: vmoreau <vmoreau@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/08 14:44:18 by vmoreau           #+#    #+#             */
-/*   Updated: 2021/12/10 20:01:37 by vmoreau          ###   ########.fr       */
+/*   Updated: 2022/02/02 16:43:25 by vmoreau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,12 +24,24 @@ bool check_method(std::string method)
 	return (false);
 }
 
-loc_block::loc_block(/* args */) : _autoindex(false)
+loc_block::loc_block(/* args */)
 {
 }
 
 loc_block::~loc_block()
 {
+}
+
+loc_block& loc_block::operator=(const loc_block cpy)
+{
+	this->_block = cpy._block;
+	this->_path_conf = cpy._path_conf;
+	this->_path = cpy._path;
+	this->_root = cpy._root;
+	this->_method_limit = cpy._method_limit;
+	this->_index = cpy._index;
+
+	return (*this);
 }
 
 // ********************* PARSING ********************* //
@@ -40,9 +52,8 @@ void loc_block::pars_loc(std::vector<std::string> block, std::string path)
 	this->_path_conf = path;
 	size_t i = 2;
 	std::vector<std::string> tmp(this->_block);
-	bool is_autoindex = false;
 
-	while (i < tmp.size() - 1)
+	while (i < tmp.size() - 1)									// Pars all info in location block
 	{
 		if (tmp[i].find_first_of(' ') == tmp[i].npos)
 			throw ConfFile(" Server block is wrongly formatted");
@@ -57,11 +68,7 @@ void loc_block::pars_loc(std::vector<std::string> block, std::string path)
 			this->set_method_limit(value);
 		else if (key.compare("index") == 0)
 			this->set_index(value);
-		else if (key.compare("autoindex") == 0)
-		{
-			is_autoindex = true;
-			this->set_autoindex(value);
-		}
+
 		i++;
 	}
 
@@ -81,12 +88,6 @@ void loc_block::pars_loc(std::vector<std::string> block, std::string path)
 		std::cout << YELLOW << "Warning: " << NC << " Method_limit is missing in ";
 		std::cout << this->_path_conf << " method_limit is set by default at GET, POST, DELETE, HEAD" << '\n';
 	}
-	if (is_autoindex == false)
-	{
-		this->_autoindex = false;
-		std::cout << YELLOW << "Warning: " << NC << " Autoindex is missing in " << this->_path_conf << " autoindex is set by default at off" << '\n';
-	}
-
 }
 
 // ********************* SETTER ********************** //
@@ -138,35 +139,6 @@ void loc_block::set_index(std::string value)
 {
 	std::string index(value.begin() + value.find_first_not_of(' '), value.end());
 
-	int last_space_pos = -1;
-
-	for (size_t i = 0; i < index.size(); i++)
-	{
-		if (index[i] == ' ' || index[i] == ',')
-		{
-			std::string tmp(index.begin() + last_space_pos + 1, index.begin() + i);
-			this->_index.push_back(tmp);
-			while (index[i + 1] == ' ' || index[i + 1] == ',')
-				i++;
-			last_space_pos = i;
-		}
-		if (i + 1 == index.size())
-		{
-			std::string tmp(index.begin() + last_space_pos + 1, index.begin() + i + 1);
-			this->_index.push_back(tmp);
-		}
-	}
-}
-
-void loc_block::set_autoindex(std::string value)
-{
-	std::string auto_ind(value.begin() + value.find_first_not_of(' '), value.end());
-
-	if (auto_ind.compare("on") == 0)
-		this->_autoindex = true;
-	else if (auto_ind.compare("off") == 0)
-		this->_autoindex = false;
-	else
-		throw ConfFile(" Autoindex option is \"on\" or \"off\"");
+	this->_index = index;
 }
 

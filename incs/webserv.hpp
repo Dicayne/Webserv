@@ -6,7 +6,7 @@
 /*   By: vmoreau <vmoreau@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/29 16:53:05 by vmoreau           #+#    #+#             */
-/*   Updated: 2022/01/12 18:01:01 by vmoreau          ###   ########.fr       */
+/*   Updated: 2022/02/04 16:52:32 by vmoreau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,6 +38,10 @@
 // #include <sys/types.h>
 // #include <netinet/in.h>
 
+#include <sys/types.h>
+#include <sys/dir.h>
+#include <dirent.h>
+#include "sys/stat.h"
 
 // *UTILS* //
 

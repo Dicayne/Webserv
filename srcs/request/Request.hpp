@@ -6,9 +6,10 @@
 /*   By: vmoreau <vmoreau@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/06 11:16:47 by mabriand          #+#    #+#             */
-/*   Updated: 2022/01/18 15:25:01 by vmoreau          ###   ########.fr       */
+/*   Updated: 2022/02/07 13:43:39 by vmoreau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+
 
 #ifndef REQUEST_HPP
 # define REQUEST_HPP
@@ -31,6 +32,7 @@ class   Request
 		*/
 		std::string	_method;
 		std::string	_url;
+		std::string _base_url;
 		std::string	_protocol_version;
 		std::string	_host;
 		std::string	_user_agent;
@@ -39,8 +41,14 @@ class   Request
 		std::string	_accept_encoding;
 		std::string	_connection;
 		std::string	_body;
+		std::string	_queryString;
 		std::string _referer;
-		bool		_loc_referer;
+		bool		_err_referer;
+		bool		_url_dir;
+
+		std::string	_content_length;
+		std::string	_content_type;
+
 		/*	Attributes corresponding to the parameters of the reponse's constructor that will be asked
 			when creating it to send it back to the client:
 		*/
@@ -52,7 +60,9 @@ class   Request
 	public:
 		Request(int socket, serv_block *block);
 		~Request();
-		/*	Some utils needed to extract information from the constructor's parameter 'buf' and to
+
+		/*
+			Some utils needed to extract information from the constructor's parameter 'buf' and to
 			return some when the appropriate functions are called.
 		*/
 		std::string	extractInfo(std::string& line) const;// const std::string& --> pour le retour ?
@@ -60,12 +70,12 @@ class   Request
 		void		buildMap(std::string& buf);
 		void		parseBuf(std::string& buf);
 		int			parse();
-		/*	All setters (one for each attribute i.e. a field of the HTTP request):
+
+		/*
+			All setters (one for each attribute i.e. a field of the HTTP request):
 		*/
 		void		setMethod(std::string& buf);
 		void		setUrl(std::string& buf);
-		void		treatUrl();
-		std::string treat_referer(std::string ref);
 		void		setProtocolVersion(std::string& buf);
 		void		setHost();
 		void		setUserAgent();
@@ -75,16 +85,46 @@ class   Request
 		void		setConnection();
 		void		setReferer();
 		void		setBody();
+
+		/*
+			Processing URL
+		*/
+		// Utils
+		std::vector<loc_block>::iterator	location_found(std::string url, std::vector<loc_block> *loc);
+		bool		is_url_dir(std::string url);
+		bool		is_referer_error(std::string *ref_code);
+		bool		is_referer_autoindex(std::string url);
+
+		// Processing
+		void		treatUrl();
+		std::string	treat_void_url();
+		std::string	treat_dir_url(const std::string url);
+		std::string	treat_full_url(const std::string url);
+
+		void		treatUrl_with_referer();
+		void		treatUrl_with_void_referer();
+		void		treatUrl_with_dir_referer();
+		void		treatUrl_with_full_referer();
+		void		treatUrl_with_err_referer(const std::string ref_code);
+
+		void		set_queryString();
+
+		void		set_contentLength();
+		void		set_contentType();
 		/*
 		*/
 		void		defineProtocolVersion();
 		void		defineStatusCode();
 		void		defineUrl();
-		loc_block	*find_loc_block(std::string url);
-		/*	All getters (one for each attribute i.e. a field of the HTTP request):
+		std::string	treat_referer(std::string ref);
+
+
+		/*
+			All getters (one for each attribute i.e. a field of the HTTP request):
 		*/
 		const std::string&	getMethod() const;
 		const std::string&	getUrl() const;
+		const std::string&	getBaseUrl() const;
 		const std::string&	getProtocolVersion() const;
 		const std::string&	getHost() const;
 		const std::string&	getUserAgent() const;
@@ -96,11 +136,18 @@ class   Request
 		const std::string&	getBody() const;
 		serv_block*	getBlock();
 		const bool&	is_request_ready() const;
+		const bool& get_url_dir() const;
+
+		const std::string&	get_queryString() const;
+
+		const std::string&		get_contentLength() const;
+		const std::string&		get_contentType() const;
 		/*
 		*/
 		const std::string&	returnProtocolVersion() const;
 		int					returnStatusCode() const;
 		const std::string&	returnUrl() const;
+
 };
 
 std::ostream&		operator<<(std::ostream& os, const Request& r);

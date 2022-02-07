@@ -6,7 +6,7 @@
 /*   By: vmoreau <vmoreau@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/06 20:57:30 by mabriand          #+#    #+#             */
-/*   Updated: 2022/01/19 14:08:25 by vmoreau          ###   ########.fr       */
+/*   Updated: 2022/02/07 13:43:17 by vmoreau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,10 @@ int					Request::parse()
 	std::string	buf = buffer;
 	this->_request = buf;
 
-	std::cout << PURPLE << ret << NC << "  " << std::strerror(errno) << '\n';
+	// std::cout << PURPLE << ret << NC << "  " << std::strerror(errno) << '\n';
+
+	// std::cout << PURPLE << this->_request << NC << '\n';
+
 	this->parseBuf(buf);
 	buf.clear();
 	this->_request_ready = true;
@@ -76,7 +79,8 @@ void				Request::buildMap(std::string& line)
 void				Request::parseBuf(std::string& buf)
 {
 	this->_response_status_code = 0;
-
+	this->_err_referer = false;
+	this->_url_dir = false;
 	size_t pos;
 	while ((pos = buf.find("\r")) != std::string::npos)
 		buf.replace(pos, 1, "\n");
@@ -99,17 +103,20 @@ void				Request::parseBuf(std::string& buf)
 	this->setAcceptEncoding();
 	this->setConnection();
 	this->setReferer();
+
+	this->set_contentLength();
+	this->set_contentType();
+
 	this->setBody();
+	this->set_queryString();
 
-	std::cout << *this << std::endl;
-
-	std::cout << GREEN << this->_url << NC << '\n';
 	this->treatUrl();
-	std::cout << BLUE << this->_url << NC << '\n';
 
 	this->defineProtocolVersion();
 	this->defineStatusCode();
 	this->defineUrl();
+
+	std::cout << CYAN << "URL Send-> " << this->_response_url << " " << this->_response_status_code <<  NC << '\n';
 
 	return ;
 }
@@ -125,112 +132,11 @@ void				Request::setMethod(std::string& line)
 	return ;
 }
 
-loc_block			*Request::find_loc_block(std::string url)
-{
-	std::vector< loc_block > tmp_loc = this->_block->get_location();
-	std::string tmp_url = url;
-
-	for (std::vector< loc_block >::iterator it = tmp_loc.begin(); it != tmp_loc.end(); it++)
-	{
-		if (url[url.size() - 1] == '/')
-			tmp_url.pop_back();
-		if (tmp_url == it->get_path())
-			return(&(*it));
-	}
-	return (NULL);
-}
-
-std::string			Request::treat_referer(std::string ref)
-{
-	std::string ret = ref;
-	ret.erase(ret.begin(), ret.begin() + 7);
-
-	if (ret.size() > this->_block->get_host().size())
-	{
-		std::string tmp(ret.begin(), ret.begin() + this->_block->get_host().size());
-		if (tmp.compare(this->_block->get_host()) == 0)
-			ret.erase(ret.begin() , ret.begin() + tmp.size() + 1);
-	}
-
-	std::string port = std::to_string(this->_block->get_port());
-
-	if (ret.size() > port.size())
-	{
-		std::string tmp(ret.begin(), ret.begin() + port.size());
-		if (tmp.compare(port) == 0)
-			ret.erase(ret.begin() , ret.begin() + tmp.size());
-	}
-	loc_block *loc = find_loc_block(ret);
-	if (loc != NULL)
-	{
-		if (this->_url.size() > ret.size())
-		{
-			std::string tmp(this->_url.begin(), this->_url.begin() + ret.size());
-			if (ret == tmp)
-				this->_url.erase(this->_url.begin(), this->_url.begin() + tmp.size() - 1);
-		}
-		ret = "/" + loc->get_root();
-		this->_loc_referer = true;
-	}
-	return (ret);
-}
-
-void				Request::treatUrl()
-{
-	std::vector< loc_block > tmp = this->_block->get_location();
-	std::string tmp_url = this->_url;
-	bool changed = false;
-
-	if (_loc_referer == false)
-	{
-		for (std::vector< loc_block >::iterator it = tmp.begin(); it != tmp.end(); it++)
-		{
-			if (tmp_url.size() > it->get_path().size())
-			{
-				std::string tmp(tmp_url.begin(), tmp_url.begin() + it->get_path().size());
-				if (tmp == it->get_path())
-				{
-					std::cout << CYAN << this->_url << NC << '\n';
-					this->_url.erase(this->_url.begin(), this->_url.begin() + tmp.size());
-					this->_url.insert(0, "/" + it->get_root());
-					std::cout << CYAN << this->_url << NC << '\n';
-					changed = true;
-					break;
-				}
-			}
-			if (tmp_url[tmp_url.size() - 1] == '/')
-				tmp_url.pop_back();
-			if (tmp_url == it->get_path())
-			{
-				this->_url = "/" + it->get_root() + "/" + it->get_index()[0];
-				changed = true;
-				break;
-			}
-		}
-		if (changed == false)
-		{
-			tmp_url.clear();
-			tmp_url = "/" + this->_block->get_default_root() + "/";
-			if (this->_url.compare("/") != 0)
-				tmp_url += this->_url;
-			else
-				tmp_url += this->_block->get_default_path();
-			this->_url.clear();
-			this->_url = tmp_url;
-		}
-	}
-	else
-	{
-		this->_url = this->_referer + tmp_url;
-	}
-	this->_url.insert(0, 1, '.');
-}
-
 void				Request::setUrl(std::string& line)
 {
-	this->_url = this->extractInfo(line);
+	this->_base_url = this->extractInfo(line);
 
-	if (this->_url.size() > 512) // In order to have a small url to pass to provoque the error.
+	if (this->_base_url.size() > 512) // In order to have a small url to pass to provoque the error.
 		this->_response_status_code = 414;
 	return ;
 }
@@ -293,8 +199,42 @@ void				Request::setBody()
 	std::map<std::string, std::string>::iterator	it = this->_stock.find("Body:");
 	if (it != this->_stock.end())
 		this->_body = it->second;
-	if (this->_body.size() > (unsigned long)this->_block->get_client_max_body_size())
-		this->_response_status_code = 400; // Pour le moment car je ne trouve pas s'il y a un code erreur précis
+	if (this->_request.size() > (unsigned long)this->_block->get_client_max_body_size() && this->_referer.size() == 0)
+		this->_response_status_code = 413; // Pour le moment car je ne trouve pas s'il y a un code erreur précis
+	return ;
+}
+void				Request::set_queryString()
+{
+	if (this->_method == "GET")
+	{	size_t	i;
+
+		i = this->_base_url.find_first_of('?');
+		if (i != std::string::npos)
+		{
+			this->_queryString.assign(this->_base_url, i + 1, std::string::npos);
+			// this->_base_url = this->_path.substr(0, i);
+		}
+	}
+	else if (this->_method == "POST")
+	{
+		this->_queryString = this->_body;
+	}
+	return ;
+}
+void				Request::set_contentLength()
+{
+	std::map<std::string, std::string>::iterator	it = this->_stock.find("Content-Length:");
+	if (it != this->_stock.end())
+		this->_content_length = it->second;
+	return ;
+}
+void				Request::set_contentType()
+{
+	std::map<std::string, std::string>::iterator	it = this->_stock.find("Content-Type:");
+	if (it != this->_stock.end())
+		this->_content_type = it->second;
+	else
+		this->_content_type = "";
 	return ;
 }
 void				Request::defineProtocolVersion()
@@ -344,10 +284,35 @@ void		Request::defineUrl()
 	}
 	return ;
 }
+
+std::string			Request::treat_referer(std::string ref)
+{
+	std::string ret = ref;
+	ret.erase(ret.begin(), ret.begin() + 7);
+
+	std::string host = this->_block->get_host();
+	if (ret.size() > host.size())
+	{
+		std::string tmp(ret.begin(), ret.begin() + host.size());
+		if (tmp.compare(host) == 0)
+			ret.erase(ret.begin() , ret.begin() + tmp.size() + 1);
+	}
+
+	std::string port = std::to_string(this->_block->get_port());
+	if (ret.size() > port.size())
+	{
+		std::string tmp(ret.begin(), ret.begin() + port.size());
+		if (tmp.compare(port) == 0)
+			ret.erase(ret.begin() , ret.begin() + tmp.size());
+	}
+	return (ret);
+}
+
 /*	All getters (one for each attribute corresponding to a field of the HTTP _request):
 */
 const std::string&	Request::getMethod() const{ return (this->_method); }
 const std::string&	Request::getUrl() const{ return (this->_url); }
+const std::string&	Request::getBaseUrl() const { return (this->_base_url); }
 const std::string&	Request::getProtocolVersion() const{ return (this->_protocol_version); }
 const std::string&	Request::getHost() const{ return(this->_host); }
 const std::string&	Request::getUserAgent() const{ return(this->_user_agent); }
@@ -359,23 +324,31 @@ const std::string&	Request::getReferer() const{ return(this->_referer); }
 const std::string&	Request::getBody() const{ return(this->_body); }
 serv_block*	Request::getBlock() { return(this->_block); }
 const bool&	Request::is_request_ready() const { return (this->_request_ready); }
-
+const bool& Request::get_url_dir() const { return (this->_url_dir); }
 const std::string&	Request::returnProtocolVersion() const{ return (this->_response_protocol_version); }
 const std::string&	Request::returnUrl() const{ return (this->_response_url); }
 int					Request::returnStatusCode() const{ return (this->_response_status_code); }
 
+const std::string&			Request::get_queryString() const{ return(this->_queryString); }
+const std::string&			Request::get_contentLength() const{ return(this->_content_length); }
+const std::string&			Request::get_contentType() const{return(this->_content_type); }
+
 std::ostream&		operator<<(std::ostream& os, const Request& r)
 {
-	os << "[" << r.getMethod() << "]" << std::endl;
-	os << "[" << r.getUrl() << "]" << std::endl;
-	os << "[" << r.getProtocolVersion() << "]" << std::endl;
-	os << "[" << r.getHost() << "]" << std::endl;
-	os << "[" << r.getUserAgent() << "]" << std::endl;
-	os << "[" << r.getAccept() << "]" << std::endl;
-	os << "[" << r.getAcceptLanguage() << "]" << std::endl;
-	os << "[" << r.getAcceptEncoding() << "]" << std::endl;
-	os << "[" << r.getConnection() << "]" << std::endl;
-	os << "[" << r.getReferer() << "]" << std::endl;
-	os << "[" << r.getBody() << "]" << std::endl;
+	os << "method: [" << r.getMethod() << "]" << std::endl;
+	os << "url: [" << r.getUrl() << "]" << std::endl;
+	os << "base url: [" << r.getBaseUrl() << "]" << std::endl;
+	os << "protocol version[" << r.getProtocolVersion() << "]" << std::endl;
+	os << "host [" << r.getHost() << "]" << std::endl;
+	os << "user agent[" << r.getUserAgent() << "]" << std::endl;
+	os << "accept [" << r.getAccept() << "]" << std::endl;
+	os << "accept language [" << r.getAcceptLanguage() << "]" << std::endl;
+	os << "accept encoding [" << r.getAcceptEncoding() << "]" << std::endl;
+	os << "connection [" << r.getConnection() << "]" << std::endl;
+	os << "referer [" << r.getReferer() << "]" << std::endl;
+	os << "body [" << r.getBody() << "]" << std::endl;
+	os << "query string [" << r.get_queryString() << "]" << std::endl;
+	os << "content length [" << r.get_contentLength() << "]" << std::endl;
+	os << "content type [" << r.get_contentType() << "]" << std::endl;
 	return (os);
 }
