@@ -6,7 +6,7 @@
 /*   By: vmoreau <vmoreau@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/06 11:16:47 by mabriand          #+#    #+#             */
-/*   Updated: 2022/02/07 13:43:39 by vmoreau          ###   ########.fr       */
+/*   Updated: 2022/02/07 17:11:13 by vmoreau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,7 +84,7 @@ class   Request
 		void		setAcceptEncoding();
 		void		setConnection();
 		void		setReferer();
-		void		setBody();
+		void		setBody(std::string& full_resp);
 
 		/*
 			Processing URL

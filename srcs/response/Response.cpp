@@ -6,7 +6,7 @@
 /*   By: vmoreau <vmoreau@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/16 15:24:59 by mabriand          #+#    #+#             */
-/*   Updated: 2022/02/07 13:41:23 by vmoreau          ###   ########.fr       */
+/*   Updated: 2022/02/07 17:02:10 by vmoreau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -175,9 +175,7 @@ void				Response::setBody(const std::string& url)
 	{
 		std::string test = build_autoindex_body(url_dir.c_str());
 		for (size_t i = 0; i < test.size(); i++)
-		{
 			this->_body.push_back(test[i]);
-		}
 	}
 	else
 	{
