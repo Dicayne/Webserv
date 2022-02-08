@@ -6,7 +6,7 @@
 /*   By: vmoreau <vmoreau@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/08 14:44:06 by vmoreau           #+#    #+#             */
-/*   Updated: 2022/01/28 16:07:48 by vmoreau          ###   ########.fr       */
+/*   Updated: 2022/02/08 14:56:22 by vmoreau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,6 +87,8 @@ void serv_block::pars_serv(std::vector<std::string> block, std::string path, std
 		this->_location.push_back(tmp);
 		// std::cout << '\n';
 	}
+	sort_location_block();
+
 	if (this->_default_root.size() == 0)
 	{
 		this->_default_root = DEFAULT_ROOT;
@@ -285,4 +287,14 @@ void serv_block::check_host(std::string value)
 	}
 	if (nb_dot != 0)
 		throw ConfFile( " Host \"" + value + "\" is wrongly formmated (exemple: 127.0.0.1)");
+}
+
+bool comp(loc_block a, loc_block b)
+{
+	return (a.get_path() > b.get_path());
+}
+
+void serv_block::sort_location_block()
+{
+	std::sort(this->_location.begin(), this->_location.end(), comp);
 }

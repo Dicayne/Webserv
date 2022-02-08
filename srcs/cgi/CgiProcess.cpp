@@ -6,7 +6,7 @@
 /*   By: vmoreau <vmoreau@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/11 16:40:07 by mabriand          #+#    #+#             */
-/*   Updated: 2022/02/07 13:38:15 by vmoreau          ###   ########.fr       */
+/*   Updated: 2022/02/08 15:22:11 by vmoreau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -164,7 +164,8 @@ int					CgiProcess::exeCgiProgram()
 	write(fd_in, this->_request->getBody().c_str(),  this->_request->getBody().size());
 	lseek(fd_in, 0, SEEK_SET);
 
-	std::string	cgi_path = "/usr/local/bin/php-cgi";
+	std::string	cgi_path = this->_server->get_conf()->get_cgi_path();
+
 	// std::string cgi_file = "./html/info.php";
 
 	char * argv[3] = {

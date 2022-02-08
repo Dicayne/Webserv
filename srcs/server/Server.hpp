@@ -6,7 +6,7 @@
 /*   By: vmoreau <vmoreau@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/13 19:18:32 by vmoreau           #+#    #+#             */
-/*   Updated: 2022/02/07 13:11:31 by vmoreau          ###   ########.fr       */
+/*   Updated: 2022/02/08 15:19:58 by vmoreau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,6 +52,8 @@ public:
 
 	void Server_init(confpars *html, std::vector< serv_block > serv);
 	void Server_launch();
+
+	confpars	*get_conf() { return (this->_html); }
 
 	class ServerError : public std::exception
 	{

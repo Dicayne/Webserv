@@ -6,7 +6,7 @@
 /*   By: vmoreau <vmoreau@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/02/03 16:50:40 by vmoreau           #+#    #+#             */
-/*   Updated: 2022/02/05 17:25:06 by vmoreau          ###   ########.fr       */
+/*   Updated: 2022/02/08 15:01:03 by vmoreau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -124,7 +124,10 @@ void		Request::treatUrl_with_dir_referer()
 			tmp.assign(this->_base_url.begin() + it2->get_path().size(), this->_base_url.end());
 		else
 			tmp = this->_base_url;
-		ret += "/" + it->get_root() + tmp;
+		ret += "/" + it->get_root();
+		if (it->get_root().back() != '/')
+			ret += "/";
+		ret += tmp;
 		if (this->is_url_dir(this->_base_url) == true)
 			ret += "/" +  it->get_index();
 	}
@@ -155,7 +158,10 @@ void		Request::treatUrl_with_full_referer()
 			tmp.assign(this->_base_url.begin() + it2->get_path().size(), this->_base_url.end());
 		else
 			tmp = this->_base_url;
-		ret += "/" + it->get_root() + tmp;
+		ret += "/" + it->get_root();
+		if (it->get_root().back() != '/')
+			ret += "/";
+		ret += tmp;
 	}
 	else
 	{

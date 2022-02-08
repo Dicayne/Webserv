@@ -6,7 +6,7 @@
 /*   By: vmoreau <vmoreau@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/07 16:02:13 by vmoreau           #+#    #+#             */
-/*   Updated: 2022/01/25 16:05:37 by vmoreau          ###   ########.fr       */
+/*   Updated: 2022/02/08 15:58:08 by vmoreau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -130,6 +130,13 @@ void confpars::set_error_page(std::string value)
 	this->_error_page.insert(std::make_pair(code_err, path_err));
 }
 
+void confpars::set_cgi_path(std::string value)
+{
+	std::string val(value.begin() + value.find_first_not_of(" "), value.end());
+
+	this->_cgi_path = val;
+}
+
 // ******************** PARSING ********************** //
 
 void confpars::pars_fc(std::ifstream &fc)
@@ -151,7 +158,8 @@ void confpars::pars_fc(std::ifstream &fc)
 		tmp.pars_serv(this->_server_block[i], this->_path, this->_error_page, this->_sendfile);
 		this->_server.push_back(tmp);
 	}
-
+	if (this->server_port_unique() == false)
+		throw ConfFile("Servers Port Duplicate in " + this->_path);
 }
 
 void confpars::pars_http()
@@ -187,6 +195,8 @@ void confpars::pars_http()
 		}
 		else if (key.compare("error_page") == 0)
 			this->set_error_page(value);
+		else if (key.compare("cgi_path") == 0)
+			this->set_cgi_path(value);
 		i++;
 	}
 	if (is_sendfile == false)
@@ -201,10 +211,13 @@ void confpars::pars_http()
 		this->_error_page.insert(std::make_pair("500", DEFAULT_ERR_500));
 		this->_error_page.insert(std::make_pair("5xx", DEFAULT_ERR_5xx));
 	}
+	if (this->_cgi_path.empty() == true)
+		throw ConfFile("No cgi_path found in " + this->_path);
 	// DEBUG //
 	// std::cout << std::boolalpha << this->_sendfile << '\n';
 	// for (std::map<std::string, std::string>::iterator it = this->_error_page.begin(); it != this->_error_page.end(); it++)
 	// 	std::cout << it->first << "-> \"" << it->second << "\"\n";
+	// std::cout << this->_cgi_path << '\n';
 }
 
 // ************** INTERNE FUNCTION PARS ************** //
@@ -260,4 +273,17 @@ std::vector<std::string> confpars::separate_server_block(std::vector<std::string
 		throw ConfFile(this->_path + " Server block \"{\" Missing\n");
 
 	return (ret);
+}
+
+bool confpars::server_port_unique()
+{
+	for (std::vector<serv_block>::iterator it = this->_server.begin(); it != this->_server.end(); it++)
+	{
+		for (std::vector<serv_block>::iterator it2 = it + 1; it2 != this->_server.end(); it2++)
+		{
+			if (it->get_port() == it2->get_port())
+				return (false);
+		}
+	}
+	return (true);
 }

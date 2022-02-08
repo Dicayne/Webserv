@@ -6,7 +6,7 @@
 /*   By: vmoreau <vmoreau@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/02/02 15:35:49 by vmoreau           #+#    #+#             */
-/*   Updated: 2022/02/07 11:57:10 by vmoreau          ###   ########.fr       */
+/*   Updated: 2022/02/08 14:24:24 by vmoreau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,29 +65,32 @@ std::string			Response::getLink(std::string const &dirEntry, std::string const &
 		block += "\t\t\t<td><div class=\"center\">File</div></td>\n";
 
 // ---------- DATE LINE ---------- //
-// 	block += "\t\t\t<td><div class=\"center\">";
+	block += "\t\t\t<td><div class=\"center\">";
 
-// 	struct stat result;
+	struct stat result;
 
-// 	std::string tmp_url = this->_req.getUrl();
-// 	std::string url_dir(tmp_url.begin(), tmp_url.begin() + tmp_url.find_last_of('/'));
-// 	char formated_date[18];
-// 	url_dir += dir_entry;
+	std::string tmp_url = this->_req.getUrl();
+	std::string url_dir(tmp_url.begin(), tmp_url.begin() + tmp_url.find_last_of('/'));
+	char formated_date[18];
 
-// 	stat(url_dir.c_str(), &result);
-// 	std::tm *ptm = std::localtime(&result.st_mtime);
-// 	std::strftime(formated_date, 18, "%d-%b-%Y %H:%M", ptm);
-// 	std::string date = formated_date;
+	if (url_dir.back() != '/')
+		url_dir += "/";
+	url_dir += dir_entry;
 
-// 	block += date + "</div></td>\n";
+	stat(url_dir.c_str(), &result);
+	std::tm *ptm = std::localtime(&result.st_mtime);
+	std::strftime(formated_date, 18, "%d-%b-%Y %H:%M", ptm);
+	std::string date = formated_date;
 
-// // ---------- SIZE LINE ---------- //
-// 	block += "\t\t\t<td><div class=\"center\">";
+	block += date + "</div></td>\n";
 
-// 	std::string size;
+// ---------- SIZE LINE ---------- //
+	block += "\t\t\t<td><div class=\"center\">";
 
-// 	ss << result.st_size;
-// 	block += ss.str() + " B</div></td>\n\t\t</tr>";
+	std::string size;
+
+	ss << result.st_size;
+	block += ss.str() + " B</div></td>\n\t\t</tr>";
 
 
 	if (dir_entry == "." || dir_entry == "..")

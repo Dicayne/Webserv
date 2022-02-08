@@ -6,7 +6,7 @@
 /*   By: vmoreau <vmoreau@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/08 14:44:09 by vmoreau           #+#    #+#             */
-/*   Updated: 2022/01/28 16:06:13 by vmoreau          ###   ########.fr       */
+/*   Updated: 2022/02/08 14:56:14 by vmoreau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -119,6 +119,7 @@ private:
 	std::vector<std::string> save_loc_block(std::vector<std::string> tmp, size_t *pos);
 	std::vector<std::string> separate_loc_block(std::vector<std::string> tmp, size_t nb_loc);
 	void check_host(std::string value);
+	void sort_location_block();
 };
 
 #endif
