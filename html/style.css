@@ -1,3 +1,4 @@
+
 *{
 	transition: all 0.6s;
 }
@@ -8,8 +9,14 @@ html {
 
 body{
 	font-family: 'Lato', sans-serif;
-	color: rgb(51, 109, 177);
+	color: rgb(57, 192, 63);
 	margin: 0;
+}
+
+#img_42{
+	width: 200px;
+	height: 200px;
+	position: absolute;
 }
 
 #main{

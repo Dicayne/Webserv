@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Response.cpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mabriand <mabriand@student.42.fr>          +#+  +:+       +#+        */
+/*   By: vmoreau <vmoreau@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/16 15:24:59 by mabriand          #+#    #+#             */
-/*   Updated: 2022/02/07 19:51:00 by mabriand         ###   ########.fr       */
+/*   Updated: 2022/02/08 16:37:17 by vmoreau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,14 +36,14 @@ Response::Response(const Request &req, serv_block *block, bool cgi, std::vector<
 		{
 			this->setBody(this->_req.returnUrl());
 			this->setContentType(this->_req.returnUrl());//
-			std::cout << "no cgi" << std::cout;
+			// std::cout << "no cgi" << std::cout;
 		}
 		else
 			this->set_cgiOutput(cgiOutput);
 		this->setContentLenght();
 
 		this->buildResponse();
-		std::cout << RED << *this << NC << std::cout;
+		// std::cout << RED << *this << NC << std::cout;
 		// std::cout << "\nResponse after creation and all setter called:\n"<< GREEN << *this << NC << "\n";
 
 	return ;
@@ -85,7 +85,7 @@ void				Response::setLocation(std::string url)
 {
 	std::string location(url.begin(), url.begin() + url.find_last_of('/'));
 
-	std::cout << RED << location << NC << '\n';
+	// std::cout << RED << location << NC << '\n';
 	std::pair<std::string, std::string> elem("Location", location);
 	this->_stock.insert(elem);
 

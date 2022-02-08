@@ -6,7 +6,7 @@
 /*   By: vmoreau <vmoreau@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/29 16:53:05 by vmoreau           #+#    #+#             */
-/*   Updated: 2022/02/04 16:52:32 by vmoreau          ###   ########.fr       */
+/*   Updated: 2022/02/08 16:34:09 by vmoreau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,12 +47,12 @@
 
 #include "color.hpp"
 
-#define CONF_DEFAULT_PATH "./srcs/conf.d/used/default.conf"
-#define DEFAULT_ERR_400 "./srcs/html/error/400.html"
-#define DEFAULT_ERR_404 "./srcs/html/error/404.html"
-#define DEFAULT_ERR_4xx "./srcs/html/error/4xx.html"
-#define DEFAULT_ERR_500 "./srcs/html/error/500.html"
-#define DEFAULT_ERR_5xx "./srcs/html/error/5xx.html"
-#define DEFAULT_ROOT "srcs/html"
+#define CONF_DEFAULT_PATH "./conf.d/used/default.conf"
+#define DEFAULT_ERR_400 "./html/error/400.html"
+#define DEFAULT_ERR_404 "./html/error/404.html"
+#define DEFAULT_ERR_4xx "./html/error/4xx.html"
+#define DEFAULT_ERR_500 "./html/error/500.html"
+#define DEFAULT_ERR_5xx "./html/error/5xx.html"
+#define DEFAULT_ROOT "html"
 #define DEFAULT_PATH "index.html"
 #endif
