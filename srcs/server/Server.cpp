@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vmoreau <vmoreau@student.42.fr>            +#+  +:+       +#+        */
+/*   By: mabriand <mabriand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/13 19:18:35 by vmoreau           #+#    #+#             */
-/*   Updated: 2022/02/07 13:41:39 by vmoreau          ###   ########.fr       */
+/*   Updated: 2022/02/07 19:44:44 by mabriand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -235,11 +235,9 @@ void Server::Server_loopClient()
 				bool cgi = false;
 				if (newProcess.isCgiNeeded() == true || it->second->getMethod() == "POST")
 				{
-					// std::cout << RED << "HERE" << NC << std::endl;
 					newProcess.exeCgiProgram();
 					cgi = true;
 				}
-
 				Response	resp(*it->second, it->second->getBlock(), cgi, newProcess.get_cgiOutput());
 				this->_response = resp.getVecResponse();
 			}
