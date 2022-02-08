@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Request.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mabriand <mabriand@student.42.fr>          +#+  +:+       +#+        */
+/*   By: vmoreau <vmoreau@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/06 20:57:30 by mabriand          #+#    #+#             */
-/*   Updated: 2022/02/08 15:05:28 by vmoreau          ###   ########.fr       */
+/*   Updated: 2022/02/08 16:40:20 by vmoreau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -267,7 +267,7 @@ void				Request::defineStatusCode()
 		{
 			this->_response_status_code = 500;
 		}
-   	 	
+
 	}
 	if (this->_response_status_code != 0)
 		return ;
@@ -315,10 +315,8 @@ std::string			Request::treat_referer(std::string ref)
 	std::string ret = ref;
 	std::string localhost("localhost");
 
-	std::cout << "1: " << ret << '\n';
 	ret.erase(ret.begin(), ret.begin() + 7);
 
-	std::cout << "2: " << ret << '\n';
 	std::string host = this->_block->get_host();
 	if (ret.size() > host.size())
 	{
@@ -329,7 +327,6 @@ std::string			Request::treat_referer(std::string ref)
 		else if (tmp2.compare(localhost) == 0)
 			ret.erase(ret.begin() , ret.begin() + tmp2.size() + 1);
 	}
-	std::cout << "3: " << ret << '\n';
 	std::string port = std::to_string(this->_block->get_port());
 	if (ret.size() > port.size())
 	{
@@ -337,7 +334,6 @@ std::string			Request::treat_referer(std::string ref)
 		if (tmp.compare(port) == 0)
 			ret.erase(ret.begin() , ret.begin() + tmp.size());
 	}
-	std::cout << "4: " << ret << '\n';
 	return (ret);
 }
 
@@ -368,20 +364,20 @@ const std::string&			Request::get_contentType() const{return(this->_content_type
 
 std::ostream&		operator<<(std::ostream& os, const Request& r)
 {
-	os << "method: [" << r.getMethod() << "]" << std::endl;
-	os << "url: [" << r.getUrl() << "]" << std::endl;
-	os << "base url: [" << r.getBaseUrl() << "]" << std::endl;
-	os << "protocol version :[" << r.getProtocolVersion() << "]" << std::endl;
-	os << "host :[" << r.getHost() << "]" << std::endl;
-	os << "user agent :[" << r.getUserAgent() << "]" << std::endl;
-	os << "accept :[" << r.getAccept() << "]" << std::endl;
-	os << "accept language :[" << r.getAcceptLanguage() << "]" << std::endl;
-	os << "accept encoding :[" << r.getAcceptEncoding() << "]" << std::endl;
-	os << "connection :[" << r.getConnection() << "]" << std::endl;
-	os << "referer :[" << r.getReferer() << "]" << std::endl;
-	os << "body :[" << r.getBody() << "]" << std::endl;
-	os << "query string :[" << r.get_queryString() << "]" << std::endl;
-	os << "content length :[" << r.get_contentLength() << "]" << std::endl;
-	os << "content type :[" << r.get_contentType() << "]" << std::endl;
+	os << "METHOD: [" << r.getMethod() << "]" << std::endl;
+	os << "PROCESSED URL: [" << r.getUrl() << "]" << std::endl;
+	os << "REQUESTED URL: [" << r.getBaseUrl() << "]" << std::endl;
+	os << "PROTOCOLE VERSION :[" << r.getProtocolVersion() << "]" << std::endl;
+	os << "HOST :[" << r.getHost() << "]" << std::endl;
+	os << "USER AGENT :[" << r.getUserAgent() << "]" << std::endl;
+	os << "ACCEPT :[" << r.getAccept() << "]" << std::endl;
+	os << "ACCEPT LANGUAGE :[" << r.getAcceptLanguage() << "]" << std::endl;
+	os << "ACCEPT ENCODING :[" << r.getAcceptEncoding() << "]" << std::endl;
+	os << "CONNECTION :[" << r.getConnection() << "]" << std::endl;
+	os << "REFERER :[" << r.getReferer() << "]" << std::endl;
+	os << "BODY :[" << r.getBody() << "]" << std::endl;
+	os << "QUERY STRING :[" << r.get_queryString() << "]" << std::endl;
+	os << "CONTENT LENGTH :[" << r.get_contentLength() << "]" << std::endl;
+	os << "CONTENT TYPE :[" << r.get_contentType() << "]" << std::endl;
 	return (os);
 }
