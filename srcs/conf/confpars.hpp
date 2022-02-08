@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   confpars.hpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mabriand <mabriand@student.42.fr>          +#+  +:+       +#+        */
+/*   By: vmoreau <vmoreau@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/07 15:55:46 by vmoreau           #+#    #+#             */
-/*   Updated: 2021/12/16 17:48:35 by mabriand         ###   ########.fr       */
+/*   Updated: 2022/02/08 15:51:36 by vmoreau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,6 +31,7 @@ private:
 	bool						_sendfile;
 	std::vector<serv_block>		_server;
 	std::map<std::string, std::string>		_error_page;
+	std::string					_cgi_path;
 
 public:
 	confpars();
@@ -46,11 +47,13 @@ public:
 	std::ifstream &get_fd()						{ return (this->_fc); }
 	bool get_sendfile() const 					{ return (this->_sendfile); }
 	std::vector<serv_block> get_server() const	{ return (this->_server); }
-	std::map<std::string, std::string> get_error_page() const { return (this->_error_page); };
+	std::map<std::string, std::string> get_error_page() const { return (this->_error_page); }
+	std::string get_cgi_path() const			{ return (this->_cgi_path); }
 
 	// SETTER
 	void set_sendfile(std::string value);
 	void set_error_page(std::string value);
+	void set_cgi_path(std::string value);
 
 	// PARSING
 	void pars_fc(std::ifstream &fc);
@@ -107,6 +110,7 @@ public:
 	private:
 		std::vector<std::string> separate_server_block(std::vector<std::string> tmp, size_t nb_serv);
 		std::vector<std::string> save_server_block(std::vector<std::string> tmp, size_t *pos);
+		bool server_port_unique();
 };
 
 #endif

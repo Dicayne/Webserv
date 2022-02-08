@@ -6,7 +6,7 @@
 /*   By: mabriand <mabriand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/06 20:57:30 by mabriand          #+#    #+#             */
-/*   Updated: 2022/02/07 19:40:31 by mabriand         ###   ########.fr       */
+/*   Updated: 2022/02/08 15:05:28 by vmoreau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -195,24 +195,17 @@ void				Request::setReferer()
 	return ;
 }
 
-// void				Request::setBody()
-// {
-// 	std::map<std::string, std::string>::iterator	it = this->_stock.find("Body:");
-// 	if (it != this->_stock.end())
-// 		this->_body = it->second;
-// 	if (this->_request.size() > (unsigned long)this->_block->get_client_max_body_size() && this->_referer.size() == 0)
-// 		this->_response_status_code = 413; // Pour le moment car je ne trouve pas s'il y a un code erreur précis
-// 	return ;
-// }
-
-void                Request::setBody(std::string& full_resp)
+void				Request::setBody(std::string& full_resp)
 {
-    size_t pos = full_resp.find_last_of("\n");
-    std::string    tmp(full_resp.substr(pos + 1, full_resp.size() - (pos + 1)));
-    this->_body = tmp;
-    if (this->_body.size() > (unsigned long)this->_block->get_client_max_body_size()) //&& this->_referer.size() == 0/)
-        this->_response_status_code = 413; // Pour le moment car je ne trouve pas s'il y a un code erreur précis
-    return ;
+	size_t pos = full_resp.find_last_of("\n");
+	std::string	tmp(full_resp.substr(pos + 1, full_resp.size() - (pos + 1)));
+
+	this->_body = tmp;
+	std::cout << this->_body.size() << '\n';
+	if (this->_request.size() > (unsigned long)this->_block->get_client_max_body_size() && this->_referer.size() == 0)
+		this->_response_status_code = 413; // Pour le moment car je ne trouve pas s'il y a un code erreur précis
+
+	return ;
 }
 
 void				Request::set_queryString()
@@ -320,16 +313,23 @@ void		Request::defineUrl()
 std::string			Request::treat_referer(std::string ref)
 {
 	std::string ret = ref;
+	std::string localhost("localhost");
+
+	std::cout << "1: " << ret << '\n';
 	ret.erase(ret.begin(), ret.begin() + 7);
 
+	std::cout << "2: " << ret << '\n';
 	std::string host = this->_block->get_host();
 	if (ret.size() > host.size())
 	{
 		std::string tmp(ret.begin(), ret.begin() + host.size());
+		std::string tmp2(ret.begin(), ret.begin() + localhost.size());
 		if (tmp.compare(host) == 0)
 			ret.erase(ret.begin() , ret.begin() + tmp.size() + 1);
+		else if (tmp2.compare(localhost) == 0)
+			ret.erase(ret.begin() , ret.begin() + tmp2.size() + 1);
 	}
-
+	std::cout << "3: " << ret << '\n';
 	std::string port = std::to_string(this->_block->get_port());
 	if (ret.size() > port.size())
 	{
@@ -337,6 +337,7 @@ std::string			Request::treat_referer(std::string ref)
 		if (tmp.compare(port) == 0)
 			ret.erase(ret.begin() , ret.begin() + tmp.size());
 	}
+	std::cout << "4: " << ret << '\n';
 	return (ret);
 }
 
