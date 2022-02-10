@@ -6,11 +6,33 @@
 /*   By: vmoreau <vmoreau@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/06 20:57:30 by mabriand          #+#    #+#             */
-/*   Updated: 2022/02/08 16:40:20 by vmoreau          ###   ########.fr       */
+/*   Updated: 2022/02/09 15:18:28 by vmoreau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "./Request.hpp"
+
+std::string		trim_double_slash(std::string line)
+{
+	std::string ret;
+	int i = 0;
+
+	while (line[i] != '\0')
+	{
+		if (line[i] + 1 != '\0')
+		{
+			if (line[i] == '/')
+			{
+				if (line[i + 1] != '/')
+					ret.push_back(line[i]);
+			}
+			else
+				ret.push_back(line[i]);
+		}
+		i++;
+	}
+	return (ret);
+}
 
 Request::Request(int socket, serv_block *block)  :  _socket(socket), _block(block)
 {
@@ -46,7 +68,7 @@ int					Request::parse()
 
 	// std::cout << PURPLE << ret << NC << "  " << std::strerror(errno) << '\n';
 
-	// std::cout << PURPLE << this->_request << NC << '\n';
+	std::cout << PURPLE << this->_request << NC << '\n';
 
 	this->parseBuf(buf);
 	buf.clear();
@@ -111,6 +133,9 @@ void				Request::parseBuf(std::string& buf)
 	this->set_queryString();
 
 	this->treatUrl();
+	this->_url = trim_double_slash(this->_url);
+
+	std::cout << YELLOW << "\nURL Processed-> " << this->_url << NC << '\n';
 
 	this->defineProtocolVersion();
 	this->defineStatusCode();
@@ -201,7 +226,7 @@ void				Request::setBody(std::string& full_resp)
 	std::string	tmp(full_resp.substr(pos + 1, full_resp.size() - (pos + 1)));
 
 	this->_body = tmp;
-	std::cout << this->_body.size() << '\n';
+	// std::cout << this->_body.size() << '\n';
 	if (this->_request.size() > (unsigned long)this->_block->get_client_max_body_size() && this->_referer.size() == 0)
 		this->_response_status_code = 413; // Pour le moment car je ne trouve pas s'il y a un code erreur précis
 

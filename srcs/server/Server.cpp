@@ -6,7 +6,7 @@
 /*   By: vmoreau <vmoreau@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/13 19:18:35 by vmoreau           #+#    #+#             */
-/*   Updated: 2022/02/08 16:35:31 by vmoreau          ###   ########.fr       */
+/*   Updated: 2022/02/08 16:59:54 by vmoreau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -229,8 +229,8 @@ void Server::Server_loopClient()
 			ret = it->second->parse();
 			if (ret >= 0 && it->second->is_request_ready() == true)
 			{
-				std::cout << "\nRequest after parsing:\n";
-				std::cout << CYAN << *(it->second) << NC;
+				// std::cout << "\nRequest after parsing:\n";
+				// std::cout << CYAN << *(it->second) << NC;
 				CgiProcess newProcess(it->second, this);
 				bool cgi = false;
 				if (newProcess.isCgiNeeded() == true || it->second->getMethod() == "POST")

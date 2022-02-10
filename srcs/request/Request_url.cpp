@@ -6,7 +6,7 @@
 /*   By: vmoreau <vmoreau@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/02/02 15:59:47 by vmoreau           #+#    #+#             */
-/*   Updated: 2022/02/03 18:32:21 by vmoreau          ###   ########.fr       */
+/*   Updated: 2022/02/09 14:33:04 by vmoreau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,8 +59,6 @@ void		Request::treatUrl()
 	}
 	else
 		this->treatUrl_with_referer();
-
-	std::cout << YELLOW << "\nURL Processed-> " << this->_url << NC << '\n';
 }
 
 /*

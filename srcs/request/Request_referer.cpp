@@ -6,11 +6,24 @@
 /*   By: vmoreau <vmoreau@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/02/03 16:50:40 by vmoreau           #+#    #+#             */
-/*   Updated: 2022/02/08 15:01:03 by vmoreau          ###   ########.fr       */
+/*   Updated: 2022/02/10 01:50:56 by vmoreau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Request.hpp"
+
+/*
+	---------------------- UTILS ----------------------
+*/
+
+std::string trim_loc_ref(std::string ref, std::string loc_path)
+{
+	std::string ret(ref.begin() + loc_path.size(), ref.end());
+
+	if (ret.back() != '/')
+		ret.push_back('/');
+	return ret;
+}
 
 bool IsRefPathExist(const std::string &s)
 {
@@ -62,9 +75,14 @@ bool		Request::is_referer_error(std::string *ref_code)
 	return (*ref_code == "404" ? true : false);
 }
 
+/*
+	---------------------- PROCESSING ----------------------
+*/
+
 void		Request::treatUrl_with_referer()
 {
-	// std::cout << RED << "Referer-> " << this->_referer << NC << "\n\n";
+	std::cout << RED << "Referer-> " << this->_referer << NC << "\n\n";
+
 	std::string ref_code;
 	bool err_ref = is_referer_error(&ref_code);
 
@@ -73,13 +91,9 @@ void		Request::treatUrl_with_referer()
 	else if (this->_referer == "/")
 		this->treatUrl_with_void_referer();
 	else if (is_url_dir(this->_referer) == true)
-	{
 		this->treatUrl_with_dir_referer();
-	}
 	else
-	{
 		this->treatUrl_with_full_referer();
-	}
 }
 
 void		Request::treatUrl_with_void_referer()
@@ -117,11 +131,21 @@ void		Request::treatUrl_with_dir_referer()
 
 	if (it != loc.end())
 	{
-		// std::cout << "PASS REF DIR IF\n";
+		std::cout << "PASS REF DIR IF\n";
+
+		std::string ref_trim_loc = trim_loc_ref(this->_referer, it->get_path());
 
 		std::string tmp;
-		if (it2 != loc.end())
-			tmp.assign(this->_base_url.begin() + it2->get_path().size(), this->_base_url.end());
+		if (it2 != loc.end() && it->get_path() == it2->get_path())
+		{
+			if (this->_referer.back() != '/' && !is_url_dir(this->_base_url))
+			{
+				tmp += ref_trim_loc;
+				tmp.insert(tmp.end(), this->_base_url.begin() + this->_base_url.find_last_of('/'), this->_base_url.end());
+			}
+			else
+				tmp.assign(this->_base_url.begin() + it2->get_path().size(), this->_base_url.end());
+		}
 		else
 			tmp = this->_base_url;
 		ret += "/" + it->get_root();
@@ -130,10 +154,11 @@ void		Request::treatUrl_with_dir_referer()
 		ret += tmp;
 		if (this->is_url_dir(this->_base_url) == true)
 			ret += "/" +  it->get_index();
+		std::cout << BLUE << tmp << NC << '\n';
 	}
 	else
 	{
-		// std::cout << "PASS REF DIR ELSE\n";
+		std::cout << "PASS REF DIR ELSE\n";
 
 		ret +=  "/" + this->_block->get_default_root() + this->_base_url;
 		if (this->is_url_dir(this->_base_url) == true)
@@ -151,7 +176,7 @@ void		Request::treatUrl_with_full_referer()
 
 	if (it != loc.end())
 	{
-		// std::cout << "PASS REF FULL IF\n";
+		std::cout << "PASS REF FULL IF\n";
 
 		std::string tmp;
 		if (it2 != loc.end())
@@ -165,7 +190,7 @@ void		Request::treatUrl_with_full_referer()
 	}
 	else
 	{
-		// std::cout << "PASS REF FULL ELSE\n";
+		std::cout << "PASS REF FULL ELSE\n";
 
 		ret +=  "/" + this->_block->get_default_root() + this->_base_url;
 	}
