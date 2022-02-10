@@ -6,11 +6,33 @@
 /*   By: mabriand <mabriand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/06 20:57:30 by mabriand          #+#    #+#             */
-/*   Updated: 2022/02/10 17:06:32 by mabriand         ###   ########.fr       */
+/*   Updated: 2022/02/09 15:18:28 by vmoreau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "./Request.hpp"
+
+std::string		trim_double_slash(std::string line)
+{
+	std::string ret;
+	int i = 0;
+
+	while (line[i] != '\0')
+	{
+		if (line[i] + 1 != '\0')
+		{
+			if (line[i] == '/')
+			{
+				if (line[i + 1] != '/')
+					ret.push_back(line[i]);
+			}
+			else
+				ret.push_back(line[i]);
+		}
+		i++;
+	}
+	return (ret);
+}
 
 Request::Request(int socket, serv_block *block)  :  _socket(socket), _block(block)
 {
@@ -342,6 +364,9 @@ void				Request::parseBuf(std::string& buf)
 	this->set_queryString();
 
 	this->treatUrl();
+	this->_url = trim_double_slash(this->_url);
+
+	std::cout << YELLOW << "\nURL Processed-> " << this->_url << NC << '\n';
 
 	this->defineProtocolVersion();
 	this->defineStatusCode();
