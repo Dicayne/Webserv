@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vmoreau <vmoreau@student.42.fr>            +#+  +:+       +#+        */
+/*   By: mabriand <mabriand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/13 19:18:35 by vmoreau           #+#    #+#             */
-/*   Updated: 2022/02/08 16:35:31 by vmoreau          ###   ########.fr       */
+/*   Updated: 2022/02/10 16:30:17 by mabriand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -226,10 +226,25 @@ void Server::Server_loopClient()
 		int ret = 0;
 		if (FD_ISSET(it->first, &this->_readfds))
 		{
-			ret = it->second->parse();
-			if (ret >= 0 && it->second->is_request_ready() == true)
+			while (it->second->is_request_ready() == false)
 			{
-				std::cout << "\nRequest after parsing:\n";
+				ret = it->second->parse();
+			// 	std::cout << CYAN << " --------------> HERE 3: ret = " << ret << NC << std::endl;
+			// 	std::cout << CYAN << " --------------> HERE 4: is_request_ready() = " << it->second->is_request_ready() << NC << std::endl;
+			}
+			// std::cout << PURPLE << " --------------> HERE 5" << NC << std::endl;
+			// std::cout << PURPLE << " --------------> ret = " << ret << NC << std::endl;
+			// std::cout << PURPLE << " --------------> ready = " <<  it->second->is_request_ready() << NC << std::endl;
+			if (/*ret >= 0 && */it->second->is_request_ready() == true)
+			{
+				// this->_request = buf;
+				std::string buf = it->second->getRequest();
+				it->second->parseBuf(buf);
+				buf.clear();
+				// this->_request_ready = true;
+				// return (ret);
+	
+				// std::cout << "\nRequest after parsing:\n";
 				std::cout << CYAN << *(it->second) << NC;
 				CgiProcess newProcess(it->second, this);
 				bool cgi = false;

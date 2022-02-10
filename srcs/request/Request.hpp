@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Request.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vmoreau <vmoreau@student.42.fr>            +#+  +:+       +#+        */
+/*   By: mabriand <mabriand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/06 11:16:47 by mabriand          #+#    #+#             */
-/*   Updated: 2022/02/07 17:11:13 by vmoreau          ###   ########.fr       */
+/*   Updated: 2022/02/10 11:48:56 by mabriand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,8 @@
 
 #include "../incs/webserv.hpp"
 #include "../conf/serv_block.hpp"
+
+#define BUF_SIZE 65536
 
 class   Request
 {
@@ -137,6 +139,7 @@ class   Request
 		serv_block*	getBlock();
 		const bool&	is_request_ready() const;
 		const bool& get_url_dir() const;
+		const std::string&	getRequest() const;
 
 		const std::string&	get_queryString() const;
 

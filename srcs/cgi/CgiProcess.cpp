@@ -6,7 +6,7 @@
 /*   By: mabriand <mabriand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/11 16:40:07 by mabriand          #+#    #+#             */
-/*   Updated: 2022/02/08 15:22:11 by vmoreau          ###   ########.fr       */
+/*   Updated: 2022/02/10 17:14:40 by mabriand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,6 +60,11 @@ void				CgiProcess::set_envVars()
 	this->_envVars.push_back("SCRIPT_FILENAME");
 	this->_envVars.push_back("SERVER_PROTOCOL");
 	this->_envVars.push_back("SERVER_PORT");
+	this->_envVars.push_back("UPLOAD_DIR");
+	this->_envVars.push_back("DOCUMENT_ROOT");
+	this->_envVars.push_back("HTTP_CONTENT_TYPE");
+	
+	
 	// this->_envVars.push_back("");
 
 	return ;
@@ -94,6 +99,7 @@ void				CgiProcess::set_myEnv()
 	{
 		std::string tmp = this->_envVars[i] + "=" + this->get_Var(this->_envVars[i]);
 		this->_myEnv[i] = strdup(tmp.c_str());
+		std::cout << this->_myEnv[i] << std::endl;
 	}
 	this->_myEnv[size] = NULL;
 }
@@ -129,6 +135,9 @@ const std::string	CgiProcess::get_Var(std::string var)
 		case 8: return (this->_request->getUrl());
 		case 9: return ("HTTP/1.1");
 		case 10: return (std::to_string(this->_request->getBlock()->get_port()));
+		case 11: return ("uploads/");
+		case 12: return ("/Users/marie/Desktop/Webserv-4");
+		case 13: return (this->_request->get_contentType());
 		default: return ("");
 	}
 }
