@@ -1,19 +1,22 @@
+<!DOCTYPE html>
 <html lang="en">
 <head>
-   
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Webserv</title>
 </head>
-<body style="background-color: lightgrey; color: red;">
+<body>
+    <h1>Formulaire d'upload</h1>
+    <form action="./get_upload.php" method="post" enctype="multipart/form-data">
+        <div>
+            <label for="file">Sélectionner le fichier à envoyer</label>
+            <input type="file" id="file" name="file">
+        </div>
+        <div>
+            <input type="submit" name="submit" value="Enter">
+        </div>
+    </form>
 
-<h1>Uploading images using PHP-CGI</h1>
-
-
-<div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%;">
-
-   <form action="get_upload.php" method="POST" enctype="multipart/form-data">
-         <input type="file" name="image" />
-         <input type="submit"/>
-      </form>
-
-</div>
+    <p>BB & JN Webserv</p>
 </body>
 </html>
