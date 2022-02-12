@@ -6,7 +6,7 @@
 /*   By: vmoreau <vmoreau@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/02/02 15:59:47 by vmoreau           #+#    #+#             */
-/*   Updated: 2022/02/09 14:33:04 by vmoreau          ###   ########.fr       */
+/*   Updated: 2022/02/11 23:13:04 by vmoreau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,6 +40,27 @@ bool		Request::is_url_dir(std::string url)
 	return (pos == url.npos);
 }
 
+bool		Request::is_method_available(std::string url)
+{
+	std::vector<loc_block> loc = this->_block->get_location();
+	std::string ret;
+
+	std::vector<loc_block>::iterator it = location_found(url, &loc);
+
+	if (it != loc.end())
+	{
+		std::vector<std::string> vec_method = it->get_method_limit();
+		for (std::vector<std::string>::iterator it2 = vec_method.begin(); it2 != vec_method.end(); it2++)
+		{
+			if (*it2 == this->_method)
+				return (true);
+		}
+	}
+	else if (this->_method == "GET" || this->_method == "POST" || this->_method == "DELETE")
+		return (true);
+
+	return (false);
+}
 /*
 	---------------------- PROCESSING ----------------------
 */
@@ -50,6 +71,8 @@ void		Request::treatUrl()
 
 	if (this->_referer.empty() == true)
 	{
+		if (this->is_method_available(this->_base_url) == false)
+			this->_response_status_code = 405;
 		if (this->_base_url == "/")
 			this->_url += this->treat_void_url();
 		else if (this->_url_dir == true)

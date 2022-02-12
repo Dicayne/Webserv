@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Request.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mabriand <mabriand@student.42.fr>          +#+  +:+       +#+        */
+/*   By: vmoreau <vmoreau@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/06 11:16:47 by mabriand          #+#    #+#             */
-/*   Updated: 2022/02/10 11:48:56 by mabriand         ###   ########.fr       */
+/*   Updated: 2022/02/12 15:10:11 by vmoreau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,6 +59,7 @@ class   Request
 		std::string	_response_url;
 
 		bool _request_ready;
+		bool _connexion_end;
 	public:
 		Request(int socket, serv_block *block);
 		~Request();
@@ -87,15 +88,16 @@ class   Request
 		void		setConnection();
 		void		setReferer();
 		void		setBody(std::string& full_resp);
-
+		void		setError(int code);
 		/*
 			Processing URL
 		*/
 		// Utils
 		std::vector<loc_block>::iterator	location_found(std::string url, std::vector<loc_block> *loc);
 		bool		is_url_dir(std::string url);
-		bool		is_referer_error(std::string *ref_code);
+		bool		is_referer_error(std::string *ref_code, bool *ref_autoindex);
 		bool		is_referer_autoindex(std::string url);
+		bool		is_method_available(std::string url);
 
 		// Processing
 		void		treatUrl();
@@ -124,6 +126,7 @@ class   Request
 		/*
 			All getters (one for each attribute i.e. a field of the HTTP request):
 		*/
+		int	get_socket() {return this->_socket; }
 		const std::string&	getMethod() const;
 		const std::string&	getUrl() const;
 		const std::string&	getBaseUrl() const;
@@ -138,6 +141,7 @@ class   Request
 		const std::string&	getBody() const;
 		serv_block*	getBlock();
 		const bool&	is_request_ready() const;
+		const bool&	is_connection_end() const { return this->_connexion_end; }
 		const bool& get_url_dir() const;
 		const std::string&	getRequest() const;
 

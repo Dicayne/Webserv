@@ -6,7 +6,7 @@
 /*   By: vmoreau <vmoreau@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/02/03 16:50:40 by vmoreau           #+#    #+#             */
-/*   Updated: 2022/02/10 01:50:56 by vmoreau          ###   ########.fr       */
+/*   Updated: 2022/02/12 17:06:04 by vmoreau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,8 +44,22 @@ bool		Request::is_referer_autoindex(std::string url)
 	return (false);
 }
 
-bool		Request::is_referer_error(std::string *ref_code)
+bool		Request::is_referer_error(std::string *ref_code, bool *ref_autoindex)
 {
+	std::string tmp_url(this->_base_url.begin(), this->_base_url.begin() + this->_base_url.find_last_of('/'));
+
+	if (tmp_url.front() == '/')
+		tmp_url.erase(tmp_url.begin());
+
+	if (tmp_url.empty() == false)
+	{
+		if (tmp_url == "$ERROR$")
+		{
+			*ref_code = "400";
+			return (true);
+		}
+	}
+
 	std::string test_url = ".";
 	bool url_dir = is_url_dir(this->_referer);
 
@@ -70,7 +84,10 @@ bool		Request::is_referer_error(std::string *ref_code)
 	if (*ref_code == "404" && url_dir == true)
 	{
 		if (is_referer_autoindex(test_url) == true)
+		{
 			*ref_code = "200";
+			*ref_autoindex = true;
+		}
 	}
 	return (*ref_code == "404" ? true : false);
 }
@@ -84,7 +101,11 @@ void		Request::treatUrl_with_referer()
 	std::cout << RED << "Referer-> " << this->_referer << NC << "\n\n";
 
 	std::string ref_code;
-	bool err_ref = is_referer_error(&ref_code);
+	bool ref_autoindex = false;
+	bool err_ref = is_referer_error(&ref_code, &ref_autoindex);
+
+	if (this->is_method_available(this->_base_url) == false)
+			this->_response_status_code = 405;
 
 	if (err_ref)
 		this->treatUrl_with_err_referer(ref_code);
@@ -131,7 +152,7 @@ void		Request::treatUrl_with_dir_referer()
 
 	if (it != loc.end())
 	{
-		std::cout << "PASS REF DIR IF\n";
+		// std::cout << "PASS REF DIR IF\n";
 
 		std::string ref_trim_loc = trim_loc_ref(this->_referer, it->get_path());
 
@@ -158,7 +179,7 @@ void		Request::treatUrl_with_dir_referer()
 	}
 	else
 	{
-		std::cout << "PASS REF DIR ELSE\n";
+		// std::cout << "PASS REF DIR ELSE\n";
 
 		ret +=  "/" + this->_block->get_default_root() + this->_base_url;
 		if (this->is_url_dir(this->_base_url) == true)
@@ -176,7 +197,7 @@ void		Request::treatUrl_with_full_referer()
 
 	if (it != loc.end())
 	{
-		std::cout << "PASS REF FULL IF\n";
+		// std::cout << "PASS REF FULL IF\n";
 
 		std::string tmp;
 		if (it2 != loc.end())
@@ -190,16 +211,31 @@ void		Request::treatUrl_with_full_referer()
 	}
 	else
 	{
-		std::cout << "PASS REF FULL ELSE\n";
+		// std::cout << "PASS REF FULL ELSE\n";
 
 		ret +=  "/" + this->_block->get_default_root() + this->_base_url;
 	}
 	this->_url += ret;
 }
 
+bool		error_tag_found(std::string url)
+{
+	std::string tmp_url(url.begin(), url.begin() + url.find_last_of('/'));
+
+	if (tmp_url.front() == '/')
+		tmp_url.erase(tmp_url.begin());
+
+	if (tmp_url.empty() == false)
+	{
+		if (tmp_url == "$ERROR$")
+			return (true);
+	}
+	return (false);
+}
+
 void		Request::treatUrl_with_err_referer(const std::string ref_code)
 {
-	// std::cout << "ERR REFERER PROCESSING !\n";
+	std::cout << "ERR REFERER PROCESSING !\n";
 
 	std::map<std::string, std::string> error_page_stocked = this->_block->get_error_page();
 	std::map<std::string, std::string>::iterator	it = error_page_stocked.find(ref_code);
@@ -214,8 +250,12 @@ void		Request::treatUrl_with_err_referer(const std::string ref_code)
 		error_page = error_page_stocked.find("5xx")->second;
 
 	std::string path(error_page.begin(), error_page.begin() + error_page.find_last_of('/'));
-	std::string file(this->_base_url.begin() + this->_base_url.find_last_of('/'), this->_base_url.end());
+	std::string file;
 
+	if (error_tag_found(this->_base_url) == true)
+		file.assign(this->_base_url.begin() + this->_base_url.find_last_of('/'), this->_base_url.end());
+	else
+		file = this->_base_url;
 	this->_url = path + file;
 
 }

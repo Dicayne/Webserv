@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mabriand <mabriand@student.42.fr>          +#+  +:+       +#+        */
+/*   By: vmoreau <vmoreau@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/13 19:18:35 by vmoreau           #+#    #+#             */
-/*   Updated: 2022/02/08 16:59:54 by vmoreau          ###   ########.fr       */
+/*   Updated: 2022/02/12 17:43:04 by vmoreau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -227,31 +227,36 @@ void Server::Server_loopClient()
 		if (FD_ISSET(it->first, &this->_readfds))
 		{
 			while (it->second->is_request_ready() == false)
-			{
 				ret = it->second->parse();
-			// 	std::cout << CYAN << " --------------> HERE 3: ret = " << ret << NC << std::endl;
-			// 	std::cout << CYAN << " --------------> HERE 4: is_request_ready() = " << it->second->is_request_ready() << NC << std::endl;
-			}
-			// std::cout << PURPLE << " --------------> HERE 5" << NC << std::endl;
-			// std::cout << PURPLE << " --------------> ret = " << ret << NC << std::endl;
-			// std::cout << PURPLE << " --------------> ready = " <<  it->second->is_request_ready() << NC << std::endl;
-			if (/*ret >= 0 && */it->second->is_request_ready() == true)
+
+			if (it->second->is_request_ready() == true && it->second->is_connection_end() == false)
 			{
-				// this->_request = buf;
 				std::string buf = it->second->getRequest();
 				it->second->parseBuf(buf);
 				buf.clear();
-				// this->_request_ready = true;
-				// return (ret);
-	
+
 				// std::cout << "\nRequest after parsing:\n";
-				std::cout << CYAN << *(it->second) << NC;
+				// std::cout << CYAN << *(it->second) << NC;
 				CgiProcess newProcess(it->second, this);
 				bool cgi = false;
 				if (newProcess.isCgiNeeded() == true || it->second->getMethod() == "POST")
 				{
-					newProcess.exeCgiProgram();
-					cgi = true;
+					if (it->second->returnStatusCode() < 400)
+					{
+						newProcess.exeCgiProgram();
+						if (newProcess.get_cgiOutput().empty() == true)
+							it->second->setError(500);
+						else
+						{
+							std::vector<char> toto = newProcess.get_cgiOutput();
+							for (std::vector<char>::iterator it = toto.begin(); it != toto.end(); it++)
+							{
+								std::cout << *it;
+							}
+							std::cout << '\n';
+							cgi = true;
+						}
+					}
 				}
 				Response	resp(*it->second, it->second->getBlock(), cgi, newProcess.get_cgiOutput());
 				this->_response = resp.getVecResponse();
@@ -339,7 +344,9 @@ void Server::print_response(int n)
 	int size = n;
 	if (size == -1)
 		size = this->_response.size();
+
 	std::vector<char> tmp_resp(this->_response.begin(), this->_response.begin() + size);
+
 	for (std::vector<char>::iterator it = tmp_resp.begin(); it != tmp_resp.end(); it++)
 		std::cout << BLUE << *it;
 	std::cout << NC << '\n';

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Request.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mabriand <mabriand@student.42.fr>          +#+  +:+       +#+        */
+/*   By: vmoreau <vmoreau@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/06 20:57:30 by mabriand          #+#    #+#             */
-/*   Updated: 2022/02/09 15:18:28 by vmoreau          ###   ########.fr       */
+/*   Updated: 2022/02/12 15:12:00 by vmoreau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,6 +37,7 @@ std::string		trim_double_slash(std::string line)
 Request::Request(int socket, serv_block *block)  :  _socket(socket), _block(block)
 {
 	this->_request_ready = false;
+	this->_connexion_end = false;
 }
 
 Request::~Request(){}
@@ -58,253 +59,38 @@ std::string			Request::extractInfo(std::string& line) const
 
 int					Request::parse()
 {
-	///////////////////////// JULIEN ET BASILE
-	// long int ret;
-    // std::vector<unsigned char> buf(BUF_SIZE + 1);
-    // ret = recv(this->fd, &buf[0], BUF_SIZE, MSG_DONTWAIT);
-    // if (ret > 0)
-    // {
-    //     buf.resize(ret);
-    //     if (ret == 5 && buf == Request::ctrl_c)
-    //         this->end_of_connection = true;
-    //     this->buffer.insert(this->buffer.end(), buf.begin(), buf.begin() + ret);
-    // }
-    // if (ret == 0)
-    //     this->end_of_connection = true;
-
-	///////////////////////// VICTOR ET MOI
-	// char buffer[65537] = {0};
-	// int ret = recv(this->_socket, buffer, 65536, MSG_DONTWAIT);
-
-	// if (ret <= 0)
-	// 	return (ret);
-	// std::string	buf = buffer;
-	// this->_request = buf;
-	// this->parseBuf(buf);
-	// buf.clear();
-	// this->_request_ready = true;
-	// return (ret);
-
-	///////////////////////////////////////////////////////////////////////////////
 	std::vector<unsigned char> vec;
 	vec.push_back('\xFF');
-    vec.push_back('\xF4');
-    vec.push_back('\xFF');
-    vec.push_back('\xFD');
-    vec.push_back('\x06');
-	
+	vec.push_back('\xF4');
+	vec.push_back('\xFF');
+	vec.push_back('\xFD');
+	vec.push_back('\x06');
+
 	// std::cout << BLUE << " --------------> HERE 1 " << NC << std::endl;
-	
+
 	long int 	ret;
 	std::string	buf;
-    std::vector<unsigned char> buffer(BUF_SIZE + 1);
-    ret = recv(this->_socket, &buffer[0], BUF_SIZE, MSG_DONTWAIT);
-    if (ret > 0)
-    {
+	std::vector<unsigned char> buffer(BUF_SIZE + 1);
+	ret = recv(this->_socket, &buffer[0], BUF_SIZE, MSG_DONTWAIT);
+	if (ret > 0)
+	{
 		// for (int i = 0; i < ret; i++)
 		// 	std::cout << RED << buffer[i] << NC;
 		// std::cout << BLUE << " --------------> HERE 2: ret > 0 " << NC << std::endl;
-        buffer.resize(ret);
-        if (ret == 5 && buffer == vec)
-            this->_request_ready = true;
-        buf.insert(buf.end(), buffer.begin(), buffer.begin() + ret);
+		buffer.resize(ret);
+		if (ret == 5 && buffer == vec)
+			this->_request_ready = true;
+		buf.insert(buf.end(), buffer.begin(), buffer.begin() + ret);
 		// std::cout << YELLOW << buf << NC << std::endl;
 		this->_request += buf;
-		// std::cout << GREEN << this->_request << NC << std::endl;
-    }
-    else
+		std::cout << GREEN << this->_request << NC << std::endl;
+	}
+	else
 	{
 		// std::cout << BLUE << " --------------> HERE 2: ret <= 0 " << NC << std::endl;
-        this->_request_ready = true;
+		this->_request_ready = true;
 	}
 	return (ret);
-
-	
-	// std::vector<unsigned char> vec;
-	// vec.push_back('\xFF');
-    // vec.push_back('\xF4');
-    // vec.push_back('\xFF');
-    // vec.push_back('\xFD');
-    // vec.push_back('\x06');
-	
-	// // char buffer1[65537] = {0};
-	// std::vector<unsigned char> buffer1(BUF_SIZE + 1);
-	// int ret;
-	// std::string	buf;
-	
-	// ret = recv(this->_socket, &buffer1[0], 65536, MSG_DONTWAIT);
-	// for (int i = 0; i < ret; i++)
-	// 		std::cout << RED << buffer1[i] << NC;
-	// if (ret <= 0)
-	// 	return (ret);
-	// else
-	// 	buf.insert(buf.end(), buffer1.begin(), buffer1.end());;
-
-	// char buffer2[65537] = {0};
-	// std::vector<unsigned char> buffer2(BUF_SIZE + 1);
-	// ret = recv(this->_socket, &buffer2[0], 65536, MSG_DONTWAIT);
-	// for (int i = 0; i < ret; i++)
-	// 		std::cout << CYAN << buffer2[i] << NC;		
-	// if (ret <= 0)
-	// 	return (ret);
-	// else
-	// 	buf.insert(buf.end(), buffer2.begin(), buffer2.end());
-
-
-
-	
-	// this->_request = buf;
-	// this->parseBuf(buf);
-	// buf.clear();
-	// this->_request_ready = true;
-	
-	// return (ret);
-
-
-	
-	// std::vector<unsigned char> vec;
-	// vec.push_back('\xFF');
-    // vec.push_back('\xF4');
-    // vec.push_back('\xFF');
-    // vec.push_back('\xFD');
-    // vec.push_back('\x06');
-	
-	// bool		end = false;
-	// std::string	buffer;
-	// long int 	ret;
-    // std::vector<unsigned char> buf(BUF_SIZE + 1);
-    // ret = 0;
-	// while (end == false)
-    // {
-	// 	ret = recv(this->_socket, &buf[0], BUF_SIZE, MSG_DONTWAIT);
-	// 	std::cout << "RET 1:" << RED << ret << NC;
-    //     if (ret < 0)
-	// 		break ;
-	// 	buf.resize(ret);
-    //     if (ret == 5 && buf == vec)
-    //         end = true;
-	// 	std::cout << PURPLE << "yolo" << NC << std::endl;
-    //     buffer.insert(buffer.end(), buf.begin(), buf.begin() + ret);
-	// 	std::cout << PURPLE << "yolo 2" << NC << std::endl;
-	// 	if (ret == 0)
-	// 	{
-	// 		std::cout << PURPLE << "yolo 2bis" << NC << std::endl;
-    //     	end = true;
-	// 	}
-	// 	else if (ret <= 0)
-	// 	{
-	// 		std::cout << PURPLE << "yolo 2ter" << NC << std::endl;
-	// 		return (ret);
-	// 	}
-	// 	else if (ret > 0)
-	// 		std::cout << PURPLE << "yolo 2QUATRO" << NC << std::endl;
-	// }
-	// std::cout << PURPLE << "yolo 3" << NC << std::endl;
-	// this->_request = buffer;
-	// std::cout << PURPLE << "yolo 4" << NC << std::endl;
-	// this->parseBuf(buffer);
-	// buffer.clear();
-	// this->_request_ready = true;
-	// return (ret);
-
-	// char buffer[65537] = {0};
-	// int ret = recv(this->_socket, buffer, 65536, MSG_DONTWAIT);
-
-	// if (ret <= 0)
-	// 	return (ret);
-	// std::string	buf = buffer;
-	// this->_request = buf;
-	// this->parseBuf(buf);
-	// buf.clear();
-	// this->_request_ready = true;
-	// return (ret);
-
-
-
-	// char buffer[65537] = {0};
-	// std::vector<unsigned char> buffer(65537);
-	// int ret = recv(this->_socket, &buffer[0], 65536, MSG_DONTWAIT);
-	// std::cout << "ret de recv: " << YELLOW << ret << NC << std::endl;
-	// for (int i = 0; i < ret; i++)
-	// 	std::cout << RED << buffer[i] << NC;
-	// if (ret <= 0)
-	// 	return (ret);
-	// std::string	buf(buffer.begin(), buffer.end());
-	// while (ret > 0)
-	// {
-	// 	std::cout << CYAN << "HERE 1" << std::endl;
-	// 	buffer.clear();
-	// 	std::cout << CYAN << "HERE 2" << std::endl;
-	// 	ret = recv(this->_socket, &buffer[0], 65536, MSG_DONTWAIT);
-	// 	std::cout << "ret de recv: " << YELLOW << ret << NC << std::endl;
-	// 	std::cout << PURPLE << "YOLO :" << std::endl;
-	// 	for (int i = 0; i < ret; i++)
-	// 		std::cout << RED << buffer[i] << NC;
-	// 	std::cout << CYAN << "HERE 3" << std::endl;
-		
-	// 	std::string	tmp(buffer.begin(), buffer.end());
-	// 	buf += tmp;
-	// 	std::cout << CYAN << "HERE 4" << std::endl;
-	// }
-	// std::string	buf = buffer;
-	// std::string	buf(buffer.begin(), buffer.end());
-	// std::cout << CYAN << "HERE 5" << std::endl;
-	// this->_request = buf;
-	// this->parseBuf(buf);
-	// buf.clear();
-	// this->_request_ready = true;
-	// return (ret);
-
-
-
-	
-	// char		buffer[65537] = {0};
-	// std::vector<unsigned char> buffer(65537);
-	// bool		end = false;
-	// std::string	buf;
-	// long int	ret;
-	// std::vector<unsigned char> vec;
-	// vec.push_back('\xFF');
-    // vec.push_back('\xF4');
-    // vec.push_back('\xFF');
-    // vec.push_back('\xFD');
-    // vec.push_back('\x06');
-
-	// while (end == false)
-	// {
-	// 	std::cout << YELLOW << ret << NC << std::endl;
-	// 	// ret = recv(this->_socket, &buffer[0], 65536, MSG_DONTWAIT);
-	// 	ret = recv(this->_socket, buffer, 65536, MSG_DONTWAIT);
-	// 	std::cout << RED << buffer << NC << std::endl;
-
-
-	// 	// for (size_t i = 0; i < buffer.size(); i++)
-	// 	// 	std::cout << RED << buffer[i] << NC << std::endl;
-	// 	if (ret > 0)
-	// 	{
-	// 		std::cout << YELLOW << "ret > 0" << NC << std::endl;
-	// 		// if (ret == 5 && buffer == vec)
-	// 		// 	end = true;
-	// 		// buf.insert(buf.end(), buffer.begin(), buffer.begin() + ret);
-	// 		// std::cout << RED << buf << NC << std::endl;
-	// 	}
-	// 	else if (ret == 0)
-	// 	{
-	// 		std::cout << YELLOW << "ret = 0" << NC << std::endl;
-	// 		end = true;
-	// 		break ;
-	// 	}
-	// 	else if (ret < 0)
-	// 	{
-	// 		std::cout << YELLOW << "ret < 0" << NC << std::endl;
-	// 		break ;
-	// 	}
-	// }
-	// this->_request = buf;
-	// this->parseBuf(buf);
-	// buf.clear();
-	// this->_request_ready = true;
-	// return (ret);
 }
 
 std::string			Request::extractMapped(std::string& line) const
@@ -374,6 +160,7 @@ void				Request::parseBuf(std::string& buf)
 
 	std::cout << CYAN << "URL Send-> " << this->_response_url << " " << this->_response_status_code <<  NC << '\n';
 
+	this->_connexion_end = true;
 	return ;
 }
 /*	All setters (one for each attribute corresponding to a field of the HTTP _request):
@@ -383,8 +170,6 @@ void				Request::parseBuf(std::string& buf)
 void				Request::setMethod(std::string& line)
 {
 	this->_method = this->extractInfo(line);
-	if (this->_method.compare("GET") != 0 && this->_method.compare("POST") != 0 && this->_method.compare("DELETE"))
-		_response_status_code = 405;
 	return ;
 }
 
@@ -456,18 +241,18 @@ void				Request::setBody(std::string& full_resp)
 	size_t pos = full_resp.find("------WebKitFormBoundary");
 	if (pos != std::string::npos)
 	{
-		std::cout << BLUE << "YAAAAAAAAAAAAAAAAAA\n" << NC << std::endl;
+		// std::cout << BLUE << "YAAAAAAAAAAAAAAAAAA\n" << NC << std::endl;
 		std::string	tmp(full_resp.substr(pos + 1, full_resp.size() - (pos + 1)));
 		this->_body = tmp;
 	}
 	else
 	{
-		std::cout << BLUE << "WTFFFFFFFFFFFFFFFFFFF\n" << NC << std::endl;
+		// std::cout << BLUE << "WTFFFFFFFFFFFFFFFFFFF\n" << NC << std::endl;
 		pos = full_resp.find_last_of("\n");
 		std::string	tmp(full_resp.substr(pos + 1, full_resp.size() - (pos + 1)));
 		this->_body = tmp;
 	}
-	std::cout << this->_body.size() << '\n';
+	// std::cout << this->_body.size() << '\n';
 	if (this->_request.size() > (unsigned long)this->_block->get_client_max_body_size() && this->_referer.size() == 0)
 		this->_response_status_code = 413; // Pour le moment car je ne trouve pas s'il y a un code erreur précis
 
@@ -508,6 +293,27 @@ void				Request::set_contentType()
 		this->_content_type = "";
 	return ;
 }
+
+void		Request::setError(int code)
+{
+	this->_response_status_code = code;
+	std::stringstream	out;
+	std::string			str;
+
+	out << this->_response_status_code;
+	str = out.str();
+
+	std::map<std::string, std::string> error_page_stocked = this->_block->get_error_page();
+	std::map<std::string, std::string>::iterator	it = error_page_stocked.find(str);
+
+	if (it != error_page_stocked.end())
+		this->_response_url = it->second;
+	else if (str[0] == '4')
+		this->_response_url = error_page_stocked.find("4xx")->second;
+	else if (str[0] == '5')
+		this->_response_url = error_page_stocked.find("5xx")->second;
+}
+
 void				Request::defineProtocolVersion()
 {
 	this->_response_protocol_version = this->_protocol_version;
@@ -517,14 +323,14 @@ void				Request::defineStatusCode()
 {
 	if (this->_method == "DELETE")
 	{
-		std::cout << YELLOW << "WE GON DELETE" << NC << std::endl;
+		// std::cout << YELLOW << "WE GON DELETE" << NC << std::endl;
 		struct stat buffer;
-    	if (stat(this->_url.c_str(), &buffer) == -1)
-        {
+		if (stat(this->_url.c_str(), &buffer) == -1)
+		{
 			this->_response_status_code = 404;
 			return ;
 		}
-		std::cout << YELLOW << "IT DOES EXIST" << NC << std::endl;
+		// std::cout << YELLOW << "IT DOES EXIST" << NC << std::endl;
 		if (remove (this->_url.c_str()) == 0)
 		{
 			this->_response_status_code = 200;
