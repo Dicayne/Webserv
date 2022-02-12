@@ -2,7 +2,11 @@
 $uploaddir = $_SERVER['DOCUMENT_ROOT'] . "/" . getenv('UPLOAD_DIR');
 $uploadfile = $uploaddir . "/" . basename($_FILES['file']['name']);
 
-print(basename($_FILES['file']['name']));
+echo("------------------------------------------------<br>");
+print_r($_FILES);
+echo "<br>";
+print_r($_POST);
+echo("<br>------------------------------------------------");
 
 if (!is_dir($uploaddir))
     mkdir($uploaddir, 0775);
@@ -33,6 +37,12 @@ switch($fileError) {
         $error = "All went successfully !";
         break;
 }
+echo("------------------------------------------------<br>");
+print_r($_FILES);
+echo "<br>";
+print_r($_POST);
+echo("<br>------------------------------------------------");
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -42,9 +52,10 @@ switch($fileError) {
     <title>Document</title>
 </head>
 <body>
-    <p><strong><?= $message . ": " . $_FILES['file']['name'] ?></strong></p>
+    <!-- <p><strong><?= $message . ": " . $_FILES['file']['name'] ?></strong></p>
     <p>Il est de type: <strong><?= $_FILES['file']['type'] ?></strong></p>
     <p>Et a une taille de: <strong><?= $_FILES['file']['size'] ?></strong></p>
-    <p>Error: <strong><?= $error ?></strong></p>
+    <p>Error: <strong><?= $error ?></strong></p> -->
 </body>
 </html>
+

@@ -6,7 +6,7 @@
 /*   By: vmoreau <vmoreau@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/16 15:24:59 by mabriand          #+#    #+#             */
-/*   Updated: 2022/02/08 16:37:17 by vmoreau          ###   ########.fr       */
+/*   Updated: 2022/02/12 16:31:03 by vmoreau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,7 +43,7 @@ Response::Response(const Request &req, serv_block *block, bool cgi, std::vector<
 		this->setContentLenght();
 
 		this->buildResponse();
-		// std::cout << RED << *this << NC << std::cout;
+		// std::cout << RED << *this << NC << std::endl;
 		// std::cout << "\nResponse after creation and all setter called:\n"<< GREEN << *this << NC << "\n";
 
 	return ;
@@ -169,7 +169,6 @@ void				Response::setBody(const std::string& url)
 	std::string url_dir(tmp_url.begin(), tmp_url.begin() + tmp_url.find_last_of('/'));
 	bool path_exist = IsPathExist(url_dir);
 
-	// std::cout << "URL_DIR: " << url_dir << '\n';
 	if (url_dir == ".")
 		path_exist = false;
 
@@ -178,6 +177,7 @@ void				Response::setBody(const std::string& url)
 		std::string test = build_autoindex_body(url_dir.c_str());
 		for (size_t i = 0; i < test.size(); i++)
 			this->_body.push_back(test[i]);
+		this->_stock["Status"] = "200 ";
 	}
 	else
 	{
@@ -216,7 +216,7 @@ void				Response::set_newContentType(std::vector<char> header)
 	this->_stock.insert(elem);
 	this->_selected_mime = type;
 
-	return ;/////////////////
+	return ;
 }
 void				Response::set_cgiOutput(std::vector<char> cgi_output)
 {
