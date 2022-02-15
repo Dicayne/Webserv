@@ -3,64 +3,75 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: vmoreau <vmoreau@student.42.fr>            +#+  +:+       +#+         #
+#    By: mabriand <mabriand@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/11/29 16:52:41 by vmoreau           #+#    #+#              #
-#    Updated: 2022/02/15 02:57:44 by vmoreau          ###   ########.fr        #
+#    Updated: 2022/02/15 14:45:54 by mabriand         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
-NAME = Serv
+NAME	=	webserv
 
-####################################COLOR######################################
-#----------------reset----------------#
-NC = \033[0m
+#################################1## COLORS ####################################
+#--------------------------------RESET-#
+NC 		=	\033[0m
 
-#-----------Regular Colors------------#
-BLACK = \033[0;30m
-RED = \033[0;31m
-GREEN = \033[32m
-YELLOW = \033[33;33m
-BLUE = \033[0;34m
-PURPLE = \033[35m
-CYAN = \033[1;36m
-WHITE = \033[0;37m
+#------------------------------REGULAR-#
+BLACK	=	\033[0;30m
+RED		=	\033[0;31m
+GREEN	=	\033[32m
+YELLOW	=	\033[33;33m
+BLUE	=	\033[0;34m
+PURPLE	=	\033[35m
+CYAN	=	\033[1;36m
+WHITE	=	\033[0;37m
 
-################################COMMON  SOURCES################################
+#################################### PATHS #####################################
+CONF	=	srcs/conf/
+REQ		=	srcs/request/
+RESP	=	srcs/response/
+SERV	=	srcs/server/
+CGI		=	srcs/cgi/
 
-SRCS += srcs/main.cpp
+#################################### SOURCES ###################################
+SRCS	+=	srcs/main.cpp
 
-# Conf
-SRCS += srcs/conf/confpars.cpp		srcs/conf/serv_block.cpp				srcs/conf/loc_block.cpp
-# Request
-SRCS += srcs/request/Request.cpp	srcs/request/Request_url.cpp			srcs/request/Request_referer.cpp		srcs/request/Request_setter.cpp
-# Response
-SRCS += srcs/response/Response.cpp	srcs/response/Response_autoindex.cpp	srcs/response/Response_prepare.cpp
-# Server
-SRCS += srcs/server/Server.cpp
-# CGI
-SRCS += srcs/cgi/CgiProcess.cpp
-####################################BASIC######################################
+#------------------------CONFIGURATION-#
+SRCS	+=	$(CONF)confpars.cpp			$(CONF)serv_block.cpp\
+			$(CONF)loc_block.cpp
 
-CFLAGS = -Wall -Werror -Wextra -std=c++98
+#------------------------------REQUEST-#
+SRCS	+=	$(REQ)Request.cpp			$(REQ)Request_referer.cpp\
+			$(REQ)Request_url.cpp		$(REQ)Request_setter.cpp
 
-CFLAGS += -g3 -fsanitize=address
+#-----------------------------RESPONSE-#
+SRCS	+=	$(RESP)Response.cpp			$(RESP)Response_autoindex.cpp\
+			$(RESP)Response_prepare.cpp
 
-CC = clang++
+#-------------------------------SERVER-#
+SRCS	+=	$(SERV)Server.cpp
 
-INC = incs/
+#----------------------------------CGI-#
+SRCS	+=	$(CGI)CgiProcess.cpp
 
-HEADER = $(INC)
+#################################### BASICS ####################################
+CFLAGS	=	-Wall -Werror -Wextra -std=c++98
 
-OBJ = $(SRCS:.cpp=.o)
+CFLAGS	+=	-g3 -fsanitize=address
 
-#####################################RULE######################################
+CC		=	clang++
 
+INC		=	incs/
+
+HEADER	=	$(INC)
+
+OBJ		=	$(SRCS:.cpp=.o)
+
+#################################### RULES #####################################
 all : $(NAME)
 
 $(NAME) : echoCW $(OBJ) echoOK echoCS
 	$(CC) $(CFLAGS) -o $@ $(OBJ)
-
 
 %.o: %.cpp $(HEADER)
 	$(CC) -c $(CFLAGS) -I $(INC) $< -o $@
@@ -75,10 +86,9 @@ fclean : clean echoFCLEAN
 re : fclean all
 
 test : $(NAME)
-	./Serv
+	./webserv
 
-####################################ECHO######################################
-
+##################################### ECHO #####################################
 echoCW:
 	echo "$(YELLOW)===> Compiling Webserv$(NC)"
 echoOK:
@@ -89,6 +99,7 @@ echoCLEAN :
 	echo "$(PURPLE)===> Cleanning OBJ$(NC)"
 echoFCLEAN :
 	echo "$(PURPLE)===> Cleanning Execs$(NC)"
+
 
 
 .PHONY : all clean fclean re
