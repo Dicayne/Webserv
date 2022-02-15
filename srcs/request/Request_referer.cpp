@@ -6,7 +6,7 @@
 /*   By: vmoreau <vmoreau@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/02/03 16:50:40 by vmoreau           #+#    #+#             */
-/*   Updated: 2022/02/12 17:06:04 by vmoreau          ###   ########.fr       */
+/*   Updated: 2022/02/15 03:43:08 by vmoreau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -104,8 +104,9 @@ void		Request::treatUrl_with_referer()
 	bool ref_autoindex = false;
 	bool err_ref = is_referer_error(&ref_code, &ref_autoindex);
 
-	if (this->is_method_available(this->_base_url) == false)
-			this->_response_status_code = 405;
+	if (ref_autoindex == true)
+		if (this->is_method_available(this->_base_url) == false)
+				this->_response_status_code = 405;
 
 	if (err_ref)
 		this->treatUrl_with_err_referer(ref_code);
@@ -175,7 +176,7 @@ void		Request::treatUrl_with_dir_referer()
 		ret += tmp;
 		if (this->is_url_dir(this->_base_url) == true)
 			ret += "/" +  it->get_index();
-		std::cout << BLUE << tmp << NC << '\n';
+		// std::cout << BLUE << tmp << NC << '\n';
 	}
 	else
 	{
@@ -255,7 +256,17 @@ void		Request::treatUrl_with_err_referer(const std::string ref_code)
 	if (error_tag_found(this->_base_url) == true)
 		file.assign(this->_base_url.begin() + this->_base_url.find_last_of('/'), this->_base_url.end());
 	else
-		file = this->_base_url;
+	{
+		std::vector<loc_block> loc = this->_block->get_location();
+		std::vector<loc_block>::iterator it = location_found(this->_base_url, &loc);
+		std::string url_file;
+
+		if (it != loc.end())
+			url_file.assign(this->_base_url.begin() + it->get_path().size(), this->_base_url.end());
+		else
+			url_file = this->_base_url;
+		file = "/" + url_file;
+	}
 	this->_url = path + file;
 
 }

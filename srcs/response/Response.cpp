@@ -6,7 +6,7 @@
 /*   By: vmoreau <vmoreau@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/16 15:24:59 by mabriand          #+#    #+#             */
-/*   Updated: 2022/02/12 16:31:03 by vmoreau          ###   ########.fr       */
+/*   Updated: 2022/02/15 03:52:13 by vmoreau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -93,7 +93,7 @@ void				Response::setLocation(std::string url)
 }
 void				Response::setDate()
 {
-    std::time_t result = std::time(nullptr);
+	std::time_t result = std::time(nullptr);
 	std::string date(std::asctime(std::localtime(&result)));
 	date.pop_back();
 
@@ -202,7 +202,7 @@ void				Response::setBody(const std::string& url)
 }
 void				Response::set_newContentType(std::vector<char> header)
 {
-    std::string str(header.begin(), header.end());
+	std::string str(header.begin(), header.end());
 
 	size_t pos = str.find_last_of(":", str.size());
 	if (pos == std::string::npos)
@@ -267,21 +267,6 @@ void				Response::set_cgiOutput(std::vector<char> cgi_output)
 
 
 	i = 0;
-	// std::cout << "STOCKED AS HEADER: \n\n" << NC;
-	// while (i < head.size())
-	// {
-	// 	std::cout << RED << head[i] << NC;
-	// 	++i;
-	// }
-	// std::cout << std::endl;
-	// i = 0;
-	// std::cout << "STOCKED AS BODY: \n\n" << NC;
-	// while (i < this->_body.size())
-	// {
-	// 	std::cout << RED << this->_body[i] << NC;
-	// 	++i;
-	// }
-
 	return ;
 }
 

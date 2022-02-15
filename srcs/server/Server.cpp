@@ -6,7 +6,7 @@
 /*   By: vmoreau <vmoreau@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/13 19:18:35 by vmoreau           #+#    #+#             */
-/*   Updated: 2022/02/12 17:43:04 by vmoreau          ###   ########.fr       */
+/*   Updated: 2022/02/15 03:29:16 by vmoreau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -231,34 +231,34 @@ void Server::Server_loopClient()
 
 			if (it->second->is_request_ready() == true && it->second->is_connection_end() == false)
 			{
-				std::string buf = it->second->getRequest();
-				it->second->parseBuf(buf);
-				buf.clear();
+				it->second->parseBuf();
 
-				// std::cout << "\nRequest after parsing:\n";
-				// std::cout << CYAN << *(it->second) << NC;
+				std::cout << "\nRequest after parsing:\n";
+				std::cout << CYAN << *(it->second) << NC;
+
 				CgiProcess newProcess(it->second, this);
-				bool cgi = false;
-				if (newProcess.isCgiNeeded() == true || it->second->getMethod() == "POST")
+				bool is_cgi_needed = false;
+				try
 				{
-					if (it->second->returnStatusCode() < 400)
+					if (newProcess.isCgiNeeded() == true || it->second->getMethod() == "POST")
 					{
-						newProcess.exeCgiProgram();
-						if (newProcess.get_cgiOutput().empty() == true)
-							it->second->setError(500);
-						else
+						newProcess.init();
+						if (it->second->returnStatusCode() < 400)
 						{
-							std::vector<char> toto = newProcess.get_cgiOutput();
-							for (std::vector<char>::iterator it = toto.begin(); it != toto.end(); it++)
-							{
-								std::cout << *it;
-							}
-							std::cout << '\n';
-							cgi = true;
+							if (newProcess.exeCgiProgram() == -1 || newProcess.get_cgiOutput().empty() == true)
+								it->second->setError(500);
+							else
+								is_cgi_needed = true;
 						}
-					}
 				}
-				Response	resp(*it->second, it->second->getBlock(), cgi, newProcess.get_cgiOutput());
+				}
+				catch(const std::exception& e)
+				{
+					it->second->setError(500);
+					std::cerr << RED << "ERROR: " << NC << e.what() << '\n';
+				}
+
+				Response	resp(*it->second, it->second->getBlock(), is_cgi_needed, newProcess.get_cgiOutput());
 				this->_response = resp.getVecResponse();
 			}
 		}

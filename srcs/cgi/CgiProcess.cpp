@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   CgiProcess.cpp                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mabriand <mabriand@student.42.fr>          +#+  +:+       +#+        */
+/*   By: vmoreau <vmoreau@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/11 16:40:07 by mabriand          #+#    #+#             */
-/*   Updated: 2022/02/10 17:14:40 by mabriand         ###   ########.fr       */
+/*   Updated: 2022/02/15 03:54:27 by vmoreau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,59 +16,64 @@ CgiProcess::CgiProcess(Request *current_request, Server *current_server) : _myEn
 {
 	this->_request = current_request;
 	this->_server = current_server;
-	this->set_envVars();
-	this->set_myEnv();
-	int i = 0;
-
-	// std::cout << "\nMyEnv after creation of CgiProcess:\n";
-	// std::cout << PURPLE << "[\n" << NC;
-	while (this->_myEnv[i] != NULL)
-	{
-		// std::cout << PURPLE << this->_myEnv[i] << NC << std::endl;
-		++i;
-	}
-	// std::cout << PURPLE << "]" << NC;
-	return ;
 }
 CgiProcess::~CgiProcess()
 {
-	// this->clearEnv();
-	return ;
+	this->clearEnv();
 }
-bool     			CgiProcess::isCgiNeeded()
+
+void				CgiProcess::init()
+{
+	this->set_envVars();
+	this->set_myEnv();
+
+	int i = 0;
+
+	while (this->_myEnv[i] != NULL)
+		++i;
+}
+
+bool				CgiProcess::isCgiNeeded()
 {
 	std::string	temp = this->_request->getUrl();
 	size_t		size = temp.size();
 	size_t		idx = temp.find_last_of(".", size);
 	std::string ext(temp.substr(idx, size - idx));
+
 	if (idx == std::string::npos)
 		return (false);
 	else if (ext.compare(".php") != 0)
 		return (false);
 	return (true);
 }
+
 void				CgiProcess::set_envVars()
 {
-	this->_envVars.push_back("CONTENT_LENGTH");
-	this->_envVars.push_back("CONTENT_TYPE");
-	this->_envVars.push_back("GATEWAY_INTERFACE");
-	this->_envVars.push_back("PATH_INFO");
-	this->_envVars.push_back("PATH_TRANSLATED");
-	this->_envVars.push_back("QUERY_STRING");
-	this->_envVars.push_back("REDIRECT_STATUS");
-	this->_envVars.push_back("REQUEST_METHOD");
-	this->_envVars.push_back("SCRIPT_FILENAME");
-	this->_envVars.push_back("SERVER_PROTOCOL");
-	this->_envVars.push_back("SERVER_PORT");
-	this->_envVars.push_back("UPLOAD_DIR");
-	this->_envVars.push_back("DOCUMENT_ROOT");
-	this->_envVars.push_back("HTTP_CONTENT_TYPE");
-	
-	
-	// this->_envVars.push_back("");
-
-	return ;
+	this->_env_map["REDIRECT_STATUS"]	=	"200"; //for php-cgi
+	if (this->_request->getMethod() == "GET")
+		this->_env_map["CONTENT_LENGTH"]=	std::to_string(this->_request->get_queryString().size()); //query string pareil ?
+	else if (this->_request->get_contentLength() != "")
+		this->_env_map["CONTENT_LENGTH"]=	this->_request->get_contentLength(); //query string pareil ?
+	else
+		this->_env_map["CONTENT_LENGTH"]=	std::to_string(this->_request->getBody().size()); //query string pareil ?	=	iToString(this->_req.body_size);	// content-length de la requete
+	this->_env_map["CONTENT_TYPE"]		=	this->_request->get_contentType();	// content-type de la requete (POST)
+	this->_env_map["GATEWAY_INTERFACE"]	=	"CGI/1.1";	// version du CGI qu'utilise le server
+	this->_env_map["PATH_INFO"]			=	this->_request->getBaseUrl();	// derniere partie de l'URI apres le host
+	this->_env_map["PATH_TRANSLATED"]	=	this->_request->getUrl();	// adresse reelle du script (idem PATH_INFO pour nous)
+	this->_env_map["QUERY_STRING"]		=	this->_request->get_queryString();	// Contient tout ce qui suit le « ? » dans l'URL envoyée par le client.
+	this->_env_map["REMOTE_ADDR"]		=	this->_request->getBlock()->get_host();	// adress ip du client
+	this->_env_map["REQUEST_METHOD"]	=	this->_request->getMethod();	// GET ou POST ou ...
+	this->_env_map["REQUEST_URI"]		=	this->_request->getBaseUrl(); // --> For the 42 tester
+	this->_env_map["SCRIPT_NAME"]		=	this->_request->getUrl();	// full path du fichier de script
+	this->_env_map["SCRIPT_FILENAME"]	=	this->_request->getUrl();	// full path du fichier de script
+	this->_env_map["SERVER_NAME"]		=	this->_request->getBlock()->get_host();	// DNS ou IP du server (hostname)
+	this->_env_map["SERVER_PORT"]		=	std::to_string(this->_request->getBlock()->get_port());	// port ayant reçu la requête
+	this->_env_map["SERVER_PROTOCOL"]	=	this->_request->getProtocolVersion();	// protocol HTTP (toujours HTTP/1.1 ?)
+	this->_env_map["SERVER_SOFTWARE"]	=	"Serv";
+	this->_env_map["UPLOAD_DIR"]		=	"uploads/";
+	this->_env_map["DOCUMENT_ROOT"]		=	this->get_cwd();  //for php-cgi
 }
+
 void				CgiProcess::set_cgiOutput(std::string body)
 {
 	size_t i = 0;
@@ -77,72 +82,38 @@ void				CgiProcess::set_cgiOutput(std::string body)
 		this->_cgi_output.push_back(body[i]);
 		++i;
 	}
-	return ;
 }
-// void				CgiProcess::set_cgiHead(std::string	head)
-// {
-// 	size_t i = 0;
-// 	while (i < head.size())
-// 	{
-// 		this->_cgi_head.push_back(head[i]);
-// 		++i;
-// 	}
-// 	return ;
-// }
+
+std::string			CgiProcess::get_cwd(void)
+{
+	char cwd[256];
+
+	if (getcwd(cwd, sizeof(cwd)) == NULL)
+		return (std::string("./"));
+	else
+		return (std::string(cwd));
+}
+
 void				CgiProcess::set_myEnv()
 {
-	size_t		size = this->_envVars.size();
+	size_t		size = this->_env_map.size();
+	int			i = 0;
 	this->_myEnv = (char **)malloc(sizeof(char *) * (size + 1));
 	if (!this->_myEnv)
-		return ; // doit renvoyer une erreur, les autres ont mis des throw
-	for (int i = 0; (size_t)i < size; ++i)
+		throw (CGI_ERR_PROCESS("Mallo failed"));
+
+	for (std::map<std::string, std::string>::iterator it = this->_env_map.begin(); it != this->_env_map.end(); it++)
 	{
-		std::string tmp = this->_envVars[i] + "=" + this->get_Var(this->_envVars[i]);
+		std::string tmp = it->first + '=' + it->second;
 		this->_myEnv[i] = strdup(tmp.c_str());
-		std::cout << this->_myEnv[i] << std::endl;
+		// std::cout << GREEN << this->_myEnv[i] << NC << std::endl;
+		i++;
 	}
 	this->_myEnv[size] = NULL;
 }
-int					CgiProcess::findPosVar(std::string var)
-{
-	size_t	size = this->_envVars.size();
-	for (int i = 0;(size_t)i < size; ++i)
-	{
-		if (var.compare(this->_envVars[i].c_str()) == 0)
-			return (i);
-	}
-	return (-1);
-}
-const std::string	CgiProcess::get_Var(std::string var)
-{
-	int	pos = this->findPosVar(var);
-	switch (pos)
-	{
-		case 0:
-			if (this->_request->getMethod() == "GET")
-				return (std::to_string(this->_request->get_queryString().size())); //query string pareil ?
-			else if (this->_request->get_contentLength() != "")
-				return (this->_request->get_contentLength()); //query string pareil ?
-			return (std::to_string(this->_request->getBody().size())); //query string pareil ?
-		case 1:
-			return (this->_request->get_contentType()); //Le type MIME du corps de la requête, ou null si le type n'est pas connu.
-		case 2: return ("CGI/1.1"); // vu une technique sympa ou ça et case9 sont notés en #define : mieux
-		case 3: return (this->_request->getBaseUrl());
-		case 4: return (this->_request->getUrl());
-		case 5: return (this->_request->get_queryString());
-		case 6: return (std::to_string(this->_request->returnStatusCode())); //pas sure que ce soit le bon si ya redirection?
-		case 7: return (this->_request->getMethod());
-		case 8: return (this->_request->getUrl());
-		case 9: return ("HTTP/1.1");
-		case 10: return (std::to_string(this->_request->getBlock()->get_port()));
-		case 11: return ("uploads/");
-		case 12: return ("/Users/marie/Desktop/Webserv-4");
-		case 13: return (this->_request->get_contentType());
-		default: return ("");
-	}
-}
+
 std::vector< char >	CgiProcess::get_cgiOutput(){ return (this->_cgi_output); }
-// std::vector< char >	CgiProcess::get_cgiHead(){ return (this->_cgi_head); }
+
 void				CgiProcess::clearEnv()
 {
 	if (this->_myEnv != NULL)
@@ -152,109 +123,151 @@ void				CgiProcess::clearEnv()
 		free(this->_myEnv);
 		this->_myEnv = NULL;
 	}
-	return ;
 }
+
+void				storeBuffer(std::vector<unsigned char> &body, const char *buf, int len)
+{
+	int i = 0;
+
+	if (len < 65536 && len != 0)
+		len++;
+
+	while(i < len)
+		body.push_back(buf[i++]);
+}
+
+void				treat_body(std::vector<char> *body)
+{
+	size_t i = 0;
+
+	while (i < body->size())
+	{
+		size_t j = i;
+		while ((*body)[j] != '\n' && (*body)[j] != '\r')
+			j++;
+		std::string line(body->begin() + i, body->begin() + j);
+		if (line.compare("X-Powered-By: PHP/8.1.2") == 0)
+			break;
+		i = j + 1;
+	}
+	body->erase(body->begin(), body->begin() + i);
+}
+
 int					CgiProcess::exeCgiProgram()
 {
-	int	fd_backUp[2];
-	fd_backUp[0] = dup(STDIN_FILENO);	//crée une copie de STDIN_FILENO, renvoie le fd de la copie
-	fd_backUp[1] = dup(STDOUT_FILENO);	//crée une copie de STDOUT_FILENO, renvoie le fd de la copie
-	if (fd_backUp[0] == -1 || fd_backUp[1] == -1)	//Si ça échoue
-		return (1);
-	FILE	*fileIn = tmpfile(); 	// The tmpfile() function opens a unique temporary file in binary
-    FILE	*fileOut = tmpfile();	//	read/write (w+b) mode.  The file will be automatically deleted when it is closed or the program terminates.
-	if (fileIn == NULL || fileOut == NULL)
-		return (1);
-	long	fd_in = fileno(fileIn);
-	long	fd_out = fileno(fileOut);
-	if (fd_in == -1 || fd_out == -1)
-		return (1);
+	/* Le script prend des données en entrée et écrit son resultat dans STDOUT.
+	Dans le cas de GET, les données d'entrées sont dans la var d'env QUERY_STRING,
+	Dans le cas de POST, les données sont lues depuis STDIN (depuis le body de la requete).
+	Comme le scrit écrit dans stdout, il faut lire stdout et l'enregistrer dans une variable,
+	variable qui sera retournée par la fonction execScript() et utilsée pour contruire le bdy de la réponse.
+	*/
 
-	write(fd_in, this->_request->getBody().c_str(),  this->_request->getBody().size());
-	lseek(fd_in, 0, SEEK_SET);
+	int srvToCgi_fd[2]; // Pipe Server --> CGI (for sending body to cgi)
+	int cgi_fd; // share file btw server and CGI (for receiving cgi output)
 
-	std::string	cgi_path = this->_server->get_conf()->get_cgi_path();
-	// std::string cgi_file = "./html/info.php";
-
-	char * argv[3] = {
-		const_cast<char*>(cgi_path.c_str()),
-		const_cast<char*>(this->_request->getBaseUrl().c_str()),
-		(char *)0
-	};
-	pid_t	pid = fork(); //je fork le processus parent cad le server
-	if (pid < 0)
+	cgi_fd = open("/tmp/cgi_file", O_RDWR | O_CREAT | O_APPEND | O_TRUNC, 0666); // if file with that name already exists, O_TRUNC will "erase" it
+	if (cgi_fd == -1)
 	{
-		// std::cout << RED << "PID < 0" << NC << std::endl;
-		return (-1);//erreur 500 je crois
+		std::cout << "open error" << std::endl;
+		return -1;
 	}
-	else if (pid == 0) // processus fils
+	if (pipe(srvToCgi_fd) == -1)
 	{
-		// std::cout << YELLOW << "FILS" << NC << std::endl;
+		std::cerr << "pipe() srvToCgi failed, errno: " << errno << std::endl;
+		return -1;
+	}
 
-		if (dup2(fd_in, 0) < 0)
-        {
-			// std::cout << YELLOW << "dup2(fd_in, 0) < 0" << NC << std::endl;
-			exit(EXIT_FAILURE);
-			return (1);
-		}
-		if (dup2(fd_out, 1) < 0)
+	int pid = fork();
+	if (pid == -1)
+	{
+		std::cerr << "fork process failed" << std::endl;
+		return -1;
+	}
+	else if (pid == 0)
+	{
+		close(srvToCgi_fd[1]);  /* Ferme l'extrémité d'ecriture inutilisée */
+		if (dup2(cgi_fd, STDOUT_FILENO) == -1)
 		{
-			// std::cout << YELLOW << "dup2(fd_out, 1) < 0" << NC << std::endl;
-			exit(EXIT_FAILURE);
-			return (1);
+			std::cout << "problem with dup: " << errno << std::endl;
+			return -1;
 		}
-		if (execve(argv[0], &argv[0], this->_myEnv) < 0)
-        {
-			// std::cout << YELLOW << "execve FAILED" << NC << std::endl;
-			// std::cout << YELLOW << "argv[0] passed to execve in son: " << argv[0] << NC << std::endl;
-			// std::cout << YELLOW << "argv[1] passed to execve in son: " << argv[1] << NC << std::endl;
-			// exit(EXIT_FAILURE);
-			return (-1);
-		}
-	}
-	else // processus père
-	{
-		// std::cout << GREEN << "PARENT" << NC << std::endl;
-
-		char	buffer[4096] = {0};
-
-		waitpid(-1, NULL, 0);
-		lseek(fd_out, 0, SEEK_SET);
-
-		std::string	newBody;
-		int ret = 1;
-		while (ret > 0)
+		if (dup2(srvToCgi_fd[0], STDIN_FILENO) == -1)
 		{
-			memset(buffer, 0, 4096);
-			ret = read(fd_out, buffer,  4096 - 1);
-			newBody += buffer;
+			std::cout << "problem with dup: " << errno << std::endl;
+			return -1;
 		}
-		// std::cout << BLUE << newBody << NC << std::endl;
-		this->set_cgiOutput(newBody);
-		// size_t i = 0;
-		// while (i < this->_cgi_output.size())
-		// {
-		// 	std::cout << GREEN << this->_cgi_output[i] << NC;
-		// 	++i;
-		// }
+		if (dup2(cgi_fd, STDERR_FILENO) == -1)
+		{
+			std::cout << "problem with dup: " << errno << std::endl;
+			return -1;
+		}
+		close(cgi_fd);
+		close(srvToCgi_fd[0]);
+
+		std::string	cgi_path = this->_server->get_conf()->get_cgi_path();
+
+		char * argv[3] = {
+			const_cast<char*>(cgi_path.c_str()),
+			const_cast<char*>(this->_request->getBaseUrl().c_str()),
+			(char *)0
+		};
+
+		if (execve(argv[0], &argv[0], this->_myEnv) < 0) /* Le script écrit dans STDOUT */
+		{
+			close(srvToCgi_fd[0]);  /* Ferme l'extrémité de lecture après utilisation par le fils */
+			_exit(1);
+		}
 	}
-	if (dup2(fd_backUp[0], 0) < 0)
-		return (1); //erreur;
-    if (dup2(fd_backUp[1], 1) < 0)
-		return (1);
+	else
+	{
+		close(srvToCgi_fd[0]);  /* Ferme l'extrémité de lecture inutilisée */
 
-	fclose(fileIn);
-	fclose(fileOut);
-	close(fd_in);
-	close(fd_out);
-	close(fd_backUp[0]);
-	close(fd_backUp[1]);
- 	// return (0);
-	for (size_t i = 0; this->_myEnv[i]; i++)
-		delete[] this->_myEnv[i];
-	delete[] this->_myEnv;
+		// 1. write to cgi
+		// std::vector<unsigned char> toto = this->_request->getBody();
+		// for (std::vector<unsigned char>::iterator it = toto.begin(); it != toto.end(); it++)
+		// 	std::cout << YELLOW << *it;
+		// std::cout << '\n' << NC;
 
-	if (!pid)
-		exit(0);
-	return (0);
+		if (!this->_request->getVecBody().empty())
+			write(srvToCgi_fd[1], &this->_request->getVecBody()[0], this->_request->getVecBody().size());
+
+		close(srvToCgi_fd[1]);
+
+		// 2. wait for cgi to finish
+		// do waitpid before read, so parent process will access shared file only when child is done with it
+		int status;
+		if (waitpid(pid, &status, 0) == -1)
+			return -1;
+		if (WIFEXITED(status))
+		{
+			if (WEXITSTATUS(status) == 1)
+				return -1;
+		}
+
+		// 3. Read from cgi and fill outputs
+		lseek(cgi_fd, 0, SEEK_SET); // reposition file offset at begining
+		int ret = 65536;
+		char	buf[65536];
+		std::vector<unsigned char> body;
+		while (ret == 65536)
+		{
+			memset(buf, 0, 65536);
+			if ((ret = read(cgi_fd, buf, 65536)) < 0)
+				return -1;
+			storeBuffer(body, buf, ret);
+		}
+
+		close(cgi_fd);
+
+		if (WIFEXITED(status))
+		{
+			if (WEXITSTATUS(status) == 1)
+				return -1;
+		}
+		std::string bdy(body.begin(), body.end());
+
+		this->set_cgiOutput(bdy);
+		treat_body(&this->_cgi_output);
+	}
+	return 0;
 }
