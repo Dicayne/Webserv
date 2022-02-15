@@ -6,7 +6,7 @@
 /*   By: vmoreau <vmoreau@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/06 11:16:47 by mabriand          #+#    #+#             */
-/*   Updated: 2022/02/12 15:10:11 by vmoreau          ###   ########.fr       */
+/*   Updated: 2022/02/15 02:37:23 by vmoreau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,7 @@ class   Request
 		int									_socket;
 		serv_block							*_block;
 		std::string							_request;
+		std::vector< unsigned char >		_vec_request;
 		std::map<std::string, std::string>	_stock;
 		/*	Attributes corresponding to the fields of the HTTP request:
 		*/
@@ -43,6 +44,7 @@ class   Request
 		std::string	_accept_encoding;
 		std::string	_connection;
 		std::string	_body;
+		std::vector< unsigned char > _vec_body;
 		std::string	_queryString;
 		std::string _referer;
 		bool		_err_referer;
@@ -71,7 +73,7 @@ class   Request
 		std::string	extractInfo(std::string& line) const;// const std::string& --> pour le retour ?
 		std::string	extractMapped(std::string& line) const;// const std::string& --> pour le retour ?
 		void		buildMap(std::string& buf);
-		void		parseBuf(std::string& buf);
+		void		parseBuf();
 		int			parse();
 
 		/*
@@ -98,6 +100,7 @@ class   Request
 		bool		is_referer_error(std::string *ref_code, bool *ref_autoindex);
 		bool		is_referer_autoindex(std::string url);
 		bool		is_method_available(std::string url);
+		size_t		find_pos(std::string line_to_find);
 
 		// Processing
 		void		treatUrl();
@@ -139,6 +142,7 @@ class   Request
 		const std::string&	getConnection() const;
 		const std::string&	getReferer() const;
 		const std::string&	getBody() const;
+		const std::vector< unsigned char > getVecBody() const;
 		serv_block*	getBlock();
 		const bool&	is_request_ready() const;
 		const bool&	is_connection_end() const { return this->_connexion_end; }

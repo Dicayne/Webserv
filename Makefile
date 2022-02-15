@@ -6,7 +6,7 @@
 #    By: vmoreau <vmoreau@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/11/29 16:52:41 by vmoreau           #+#    #+#              #
-#    Updated: 2022/02/07 12:48:53 by vmoreau          ###   ########.fr        #
+#    Updated: 2022/02/15 02:57:44 by vmoreau          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -33,7 +33,7 @@ SRCS += srcs/main.cpp
 # Conf
 SRCS += srcs/conf/confpars.cpp		srcs/conf/serv_block.cpp				srcs/conf/loc_block.cpp
 # Request
-SRCS += srcs/request/Request.cpp	srcs/request/Request_url.cpp			srcs/request/Request_referer.cpp
+SRCS += srcs/request/Request.cpp	srcs/request/Request_url.cpp			srcs/request/Request_referer.cpp		srcs/request/Request_setter.cpp
 # Response
 SRCS += srcs/response/Response.cpp	srcs/response/Response_autoindex.cpp	srcs/response/Response_prepare.cpp
 # Server
