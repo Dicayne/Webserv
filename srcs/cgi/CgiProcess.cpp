@@ -6,7 +6,7 @@
 /*   By: vmoreau <vmoreau@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/11 16:40:07 by mabriand          #+#    #+#             */
-/*   Updated: 2022/02/15 03:31:41 by vmoreau          ###   ########.fr       */
+/*   Updated: 2022/02/15 03:54:27 by vmoreau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -164,9 +164,6 @@ int					CgiProcess::exeCgiProgram()
 
 	int srvToCgi_fd[2]; // Pipe Server --> CGI (for sending body to cgi)
 	int cgi_fd; // share file btw server and CGI (for receiving cgi output)
-	// Rq: using two set of pipes to communicate both ways between CGI and server is likely to cause a "deadlock"
-
-	// this->fillEnvp();
 
 	cgi_fd = open("/tmp/cgi_file", O_RDWR | O_CREAT | O_APPEND | O_TRUNC, 0666); // if file with that name already exists, O_TRUNC will "erase" it
 	if (cgi_fd == -1)
