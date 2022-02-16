@@ -6,14 +6,14 @@
 /*   By: vmoreau <vmoreau@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/16 15:24:59 by mabriand          #+#    #+#             */
-/*   Updated: 2022/02/15 03:52:13 by vmoreau          ###   ########.fr       */
+/*   Updated: 2022/02/16 15:43:03 by vmoreau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "./Response.hpp"
 #include "../request/Request.hpp"
 
-Response::Response(const Request &req, serv_block *block, bool cgi, std::vector<char> cgiOutput) : _req(req), _block(block)
+Response::Response(const Request &req, serv_block *block, bool cgi, std::vector<unsigned char> cgiOutput) : _req(req), _block(block)
 {
 	this->_target_dir = this->_req.get_url_dir();
 
@@ -190,17 +190,22 @@ void				Response::setBody(const std::string& url)
 			this->_body.resize(fileSize);
 
 			ms.seekg(0, std::ios_base::beg);
-			ms.read(&this->_body[0], fileSize);
+			ms.read((char*)&this->_body[0], fileSize);
 		}
+		else
+		{
+			// setError(500) et relancer setBody();
+		}
+
 		ms.close();
 	}
-	std::vector<char>::iterator	it = this->_body.begin();
-	std::vector<char>::iterator	ite = this->_body.end();
+	std::vector<unsigned char>::iterator	it = this->_body.begin();
+	std::vector<unsigned char>::iterator	ite = this->_body.end();
 	std::string	tmp(it, ite);
 	this->_bodyStr = tmp;
 	return ;
 }
-void				Response::set_newContentType(std::vector<char> header)
+void				Response::set_newContentType(std::vector<unsigned char> header)
 {
 	std::string str(header.begin(), header.end());
 
@@ -218,11 +223,11 @@ void				Response::set_newContentType(std::vector<char> header)
 
 	return ;
 }
-void				Response::set_cgiOutput(std::vector<char> cgi_output)
+void				Response::set_cgiOutput(std::vector<unsigned char> cgi_output)
 {
-	std::vector<char>	head;
-	std::vector<char>	type;
-	std::vector<char>	body;
+	std::vector<unsigned char>	head;
+	std::vector<unsigned char>	type;
+	std::vector<unsigned char>	body;
 
 	std::string str_output(cgi_output.begin(), cgi_output.end());
 
@@ -278,10 +283,10 @@ const std::string&	Response::get_Server() const{ return (this->_server); }
 const std::string&	Response::get_ContentType() const{ return (this->_content_type); }
 const std::string&	Response::get_ContentLenght() const{ return (this->_content_length); }
 const std::string&	Response::get_bodyStr() const{ return(this->_bodyStr); }
-const std::vector<char>&	Response::getBody() const{ return(this->_body); }
+const std::vector<unsigned char>&	Response::getBody() const{ return(this->_body); }
 const std::string&  Response::get_Mime() const{ return (this->_selected_mime); }
 //
-const std::vector< char >& Response::getVecResponse() const {return (this->_response); }
+const std::vector<unsigned char>& Response::getVecResponse() const {return (this->_response); }
 
 void				Response::buildMime(const std::string& key, const std::string& mapped)
 {

@@ -6,7 +6,7 @@
 /*   By: vmoreau <vmoreau@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/07 16:02:13 by vmoreau           #+#    #+#             */
-/*   Updated: 2022/02/08 15:58:08 by vmoreau          ###   ########.fr       */
+/*   Updated: 2022/02/16 00:39:49 by vmoreau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -204,7 +204,7 @@ void confpars::pars_http()
 	if (this->_error_page.empty() == true)
 	{
 		std::cout << YELLOW << "Warning: " << NC << " Error pages is missing in ";
-		std::cout << this->_path << " Error pages are set by default at :\n\t" << PURPLE << DEFAULT_ERR_400 << "\n\t" << DEFAULT_ERR_400 << "\n\t" << DEFAULT_ERR_404 << "\n\t" << DEFAULT_ERR_4xx << "\n\t" << DEFAULT_ERR_500 << "\n\t" << DEFAULT_ERR_5xx << '\n' << NC;
+		std::cout << this->_path << " Error pages are set by default at :\n\t" << PURPLE << DEFAULT_ERR_400 << "\n\t" << DEFAULT_ERR_404 << "\n\t" << DEFAULT_ERR_4xx << "\n\t" << DEFAULT_ERR_500 << "\n\t" << DEFAULT_ERR_5xx << '\n' << NC;
 		this->_error_page.insert(std::make_pair("400", DEFAULT_ERR_400));
 		this->_error_page.insert(std::make_pair("404", DEFAULT_ERR_404));
 		this->_error_page.insert(std::make_pair("4xx", DEFAULT_ERR_4xx));
@@ -281,7 +281,7 @@ bool confpars::server_port_unique()
 	{
 		for (std::vector<serv_block>::iterator it2 = it + 1; it2 != this->_server.end(); it2++)
 		{
-			if (it->get_port() == it2->get_port())
+			if (it->get_port() == it2->get_port() && it->get_host() == it2->get_host())
 				return (false);
 		}
 	}

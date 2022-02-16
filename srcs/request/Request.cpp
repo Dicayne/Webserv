@@ -6,7 +6,7 @@
 /*   By: vmoreau <vmoreau@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/06 20:57:30 by mabriand          #+#    #+#             */
-/*   Updated: 2022/02/15 02:58:38 by vmoreau          ###   ########.fr       */
+/*   Updated: 2022/02/16 15:33:55 by vmoreau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,7 +70,8 @@ int					Request::parse()
 	std::string	buf;
 	std::vector<unsigned char> buffer(BUF_SIZE + 1);
 	ret = recv(this->_socket, &buffer[0], BUF_SIZE, MSG_DONTWAIT);
-	if (ret > 0)
+
+	if (ret >= 0)
 	{
 		buffer.resize(ret);
 		if (ret == 5 && buffer == vec)
@@ -79,9 +80,9 @@ int					Request::parse()
 		this->_request += buf;
 		this->_vec_request.insert(this->_vec_request.end(), buffer.begin(), buffer.end());
 		// std::cout << GREEN << this->_request << NC << std::endl;
+		if (ret < BUF_SIZE)
+			this->_request_ready = true;
 	}
-	else
-		this->_request_ready = true;
 	return (ret);
 }
 
@@ -257,7 +258,7 @@ const std::string&	Request::getAcceptEncoding() const{ return (this->_accept_enc
 const std::string&	Request::getConnection() const{ return(this->_connection); }
 const std::string&	Request::getReferer() const{ return(this->_referer); }
 const std::string&	Request::getBody() const{ return(this->_body); }
-const std::vector< unsigned char > Request::getVecBody() const { return (this->_vec_body); }
+const std::vector<unsigned char> Request::getVecBody() const { return (this->_vec_body); }
 
 serv_block*	Request::getBlock() { return(this->_block); }
 const bool&	Request::is_request_ready() const { return (this->_request_ready); }

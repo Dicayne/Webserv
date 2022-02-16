@@ -6,7 +6,7 @@
 /*   By: vmoreau <vmoreau@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/08 14:44:06 by vmoreau           #+#    #+#             */
-/*   Updated: 2022/02/08 14:56:22 by vmoreau          ###   ########.fr       */
+/*   Updated: 2022/02/15 23:52:33 by vmoreau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,7 +72,7 @@ void serv_block::pars_serv(std::vector<std::string> block, std::string path, std
 	if (this->_port == -1 && this->_host.empty() == true)
 		throw NoListenFound(this->_path);
 	if (this->_server_name.empty() == true)
-		throw NoS_NameFound(this->_path);
+		this->_server_name = DEFAULR_SERV_NAME;
 	if (this->_client_max_body_size == -1)
 	{
 		this->_client_max_body_size = BODY_DEFAULT_SIZE;

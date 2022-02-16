@@ -6,7 +6,7 @@
 /*   By: vmoreau <vmoreau@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/29 16:53:05 by vmoreau           #+#    #+#             */
-/*   Updated: 2022/02/08 16:34:09 by vmoreau          ###   ########.fr       */
+/*   Updated: 2022/02/15 23:56:51 by vmoreau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,4 +55,5 @@
 #define DEFAULT_ERR_5xx "./html/error/5xx.html"
 #define DEFAULT_ROOT "html"
 #define DEFAULT_PATH "index.html"
+#define	DEFAULR_SERV_NAME "default_serv"
 #endif

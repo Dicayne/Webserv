@@ -6,7 +6,7 @@
 /*   By: vmoreau <vmoreau@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/13 19:18:35 by vmoreau           #+#    #+#             */
-/*   Updated: 2022/02/15 03:29:16 by vmoreau          ###   ########.fr       */
+/*   Updated: 2022/02/16 15:39:00 by vmoreau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -124,7 +124,7 @@ void Server::Server_setSocket()
 			throw ServerError(std::strerror(errno));
 		}
 
-		int	backlog = 1;
+		int	backlog = 100;						// Backlog is the maximum number of pending connections
 
 		if (listen(mysock, backlog) < 0)		// Marks the socket referenced by sockfd as a passive socket, that mean as a socket that will be used to accept incoming connection requests using accept().
 		{
@@ -182,7 +182,7 @@ void Server::Server_loopServ()
 			if (this->_socket.find(i) != this->_socket.end())
 			{
 				std::map<int, sockaddr_in>::iterator it = this->_socket.find(i);
-				int client_socket = accept(it->first, NULL, NULL);
+				int client_socket = accept(it->first, (struct sockaddr*)NULL, NULL);
 				if (client_socket < 0 && errno != EAGAIN)
 				{
 					std::cerr << client_socket << "  " << EAGAIN << '\n';
@@ -226,9 +226,13 @@ void Server::Server_loopClient()
 		int ret = 0;
 		if (FD_ISSET(it->first, &this->_readfds))
 		{
-			while (it->second->is_request_ready() == false)
+			while (it->second->is_request_ready() == false && ret >= 0)
 				ret = it->second->parse();
 
+			if (ret < 0)
+			{
+				// gerer se cas!
+			}
 			if (it->second->is_request_ready() == true && it->second->is_connection_end() == false)
 			{
 				it->second->parseBuf();
@@ -345,9 +349,9 @@ void Server::print_response(int n)
 	if (size == -1)
 		size = this->_response.size();
 
-	std::vector<char> tmp_resp(this->_response.begin(), this->_response.begin() + size);
+	std::vector<unsigned char> tmp_resp(this->_response.begin(), this->_response.begin() + size);
 
-	for (std::vector<char>::iterator it = tmp_resp.begin(); it != tmp_resp.end(); it++)
+	for (std::vector<unsigned char>::iterator it = tmp_resp.begin(); it != tmp_resp.end(); it++)
 		std::cout << BLUE << *it;
 	std::cout << NC << '\n';
 }

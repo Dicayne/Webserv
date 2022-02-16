@@ -6,7 +6,7 @@
 /*   By: vmoreau <vmoreau@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/11 16:40:07 by mabriand          #+#    #+#             */
-/*   Updated: 2022/02/15 03:54:27 by vmoreau          ###   ########.fr       */
+/*   Updated: 2022/02/16 15:25:35 by vmoreau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,6 +72,7 @@ void				CgiProcess::set_envVars()
 	this->_env_map["SERVER_SOFTWARE"]	=	"Serv";
 	this->_env_map["UPLOAD_DIR"]		=	"uploads/";
 	this->_env_map["DOCUMENT_ROOT"]		=	this->get_cwd();  //for php-cgi
+	this->_env_map["SERV_NAME"]			=	this->_request->getBlock()->get_server_name();
 }
 
 void				CgiProcess::set_cgiOutput(std::string body)
@@ -106,13 +107,13 @@ void				CgiProcess::set_myEnv()
 	{
 		std::string tmp = it->first + '=' + it->second;
 		this->_myEnv[i] = strdup(tmp.c_str());
-		// std::cout << GREEN << this->_myEnv[i] << NC << std::endl;
+		std::cout << GREEN << this->_myEnv[i] << NC << std::endl;
 		i++;
 	}
 	this->_myEnv[size] = NULL;
 }
 
-std::vector< char >	CgiProcess::get_cgiOutput(){ return (this->_cgi_output); }
+std::vector<unsigned char>	CgiProcess::get_cgiOutput(){ return (this->_cgi_output); }
 
 void				CgiProcess::clearEnv()
 {
@@ -136,7 +137,7 @@ void				storeBuffer(std::vector<unsigned char> &body, const char *buf, int len)
 		body.push_back(buf[i++]);
 }
 
-void				treat_body(std::vector<char> *body)
+void				treat_body(std::vector<unsigned char> *body)
 {
 	size_t i = 0;
 
@@ -229,8 +230,13 @@ int					CgiProcess::exeCgiProgram()
 		// std::cout << '\n' << NC;
 
 		if (!this->_request->getVecBody().empty())
-			write(srvToCgi_fd[1], &this->_request->getVecBody()[0], this->_request->getVecBody().size());
-
+		{
+			size_t ret_write =  write(srvToCgi_fd[1], &this->_request->getVecBody()[0], this->_request->getVecBody().size());
+			if (ret_write < 0)
+				return (-1);
+			else if (ret_write != this->_request->getVecBody().size())
+				return (-1);
+		}
 		close(srvToCgi_fd[1]);
 
 		// 2. wait for cgi to finish

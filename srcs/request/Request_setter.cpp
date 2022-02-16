@@ -6,7 +6,7 @@
 /*   By: vmoreau <vmoreau@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/02/15 02:56:31 by vmoreau           #+#    #+#             */
-/*   Updated: 2022/02/15 02:59:03 by vmoreau          ###   ########.fr       */
+/*   Updated: 2022/02/16 00:03:28 by vmoreau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -200,7 +200,7 @@ void				Request::setBody(std::string& full_resp)
 		this->_body = tmp;
 	}
 
-	if (this->_request.size() > (unsigned long)this->_block->get_client_max_body_size() && this->_referer.size() == 0)
+	if (this->_request.size() > (unsigned long)this->_block->get_client_max_body_size() && (this->_referer.size() == 0 || this->_method == "POST"))
 		this->_response_status_code = 413; // Pour le moment car je ne trouve pas s'il y a un code erreur précis
 
 }

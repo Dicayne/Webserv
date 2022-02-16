@@ -6,7 +6,7 @@
 /*   By: vmoreau <vmoreau@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/06 11:16:47 by mabriand          #+#    #+#             */
-/*   Updated: 2022/02/15 02:37:23 by vmoreau          ###   ########.fr       */
+/*   Updated: 2022/02/15 18:44:13 by vmoreau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,7 @@ class   Request
 		int									_socket;
 		serv_block							*_block;
 		std::string							_request;
-		std::vector< unsigned char >		_vec_request;
+		std::vector<unsigned char>		_vec_request;
 		std::map<std::string, std::string>	_stock;
 		/*	Attributes corresponding to the fields of the HTTP request:
 		*/
@@ -44,7 +44,7 @@ class   Request
 		std::string	_accept_encoding;
 		std::string	_connection;
 		std::string	_body;
-		std::vector< unsigned char > _vec_body;
+		std::vector<unsigned char> _vec_body;
 		std::string	_queryString;
 		std::string _referer;
 		bool		_err_referer;
@@ -142,7 +142,7 @@ class   Request
 		const std::string&	getConnection() const;
 		const std::string&	getReferer() const;
 		const std::string&	getBody() const;
-		const std::vector< unsigned char > getVecBody() const;
+		const std::vector<unsigned char> getVecBody() const;
 		serv_block*	getBlock();
 		const bool&	is_request_ready() const;
 		const bool&	is_connection_end() const { return this->_connexion_end; }
