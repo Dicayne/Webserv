@@ -6,7 +6,7 @@
 /*   By: vmoreau <vmoreau@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/11 16:34:41 by mabriand          #+#    #+#             */
-/*   Updated: 2022/02/15 03:06:50 by vmoreau          ###   ########.fr       */
+/*   Updated: 2022/02/15 18:42:58 by vmoreau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,8 +31,8 @@ class   CgiProcess
 		std::vector<std::string>			_envVars;
 		std::map<std::string, std::string> 	_env_map;
 		char								**_myEnv;
-		std::vector< char >					_cgi_output;
-		std::vector< char >					_cgi_head;
+		std::vector<unsigned char>					_cgi_output;
+		std::vector<unsigned char>					_cgi_head;
 
 	public:
 		CgiProcess(Request *current_request, Server *current_server);
@@ -48,13 +48,10 @@ class   CgiProcess
 		void		set_cgiOutput(std::string	body);
 
 		const std::string	get_Var(std::string var);
-		std::vector< char >	get_cgiOutput();
-		// std::vector< char >	get_cgiHead();
+		std::vector<unsigned char>	get_cgiOutput();
+
 		void				clearEnv();
 
-
-		// int		createCommunication();
-		// void		launchCgiProcess();
 		int					exeCgiProgram();
 
 		class CGI_ERR_PROCESS : public std::exception

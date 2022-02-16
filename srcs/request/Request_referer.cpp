@@ -6,7 +6,7 @@
 /*   By: vmoreau <vmoreau@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/02/03 16:50:40 by vmoreau           #+#    #+#             */
-/*   Updated: 2022/02/15 03:43:08 by vmoreau          ###   ########.fr       */
+/*   Updated: 2022/02/15 18:59:21 by vmoreau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -121,8 +121,16 @@ void		Request::treatUrl_with_referer()
 void		Request::treatUrl_with_void_referer()
 {
 	std::vector<loc_block> loc = this->_block->get_location();
+	std::vector<loc_block>::iterator it = location_found(this->_base_url, &loc);
 	std::string ret;
 
+	std::cout << "PASS VOID REFERER\n";
+	if (it != loc.end() && it->get_path() != "/")
+	{
+		std::string test_url = this->treat_full_url(this->_base_url);
+		this->_url += test_url;
+		return ;
+	}
 	for (std::vector<loc_block>::iterator it = loc.begin(); it != loc.end(); it++)
 	{
 		if (it->get_path() == "/")
