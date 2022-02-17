@@ -15,6 +15,5 @@
 		echo "<p><strong>$key =></strong> \"$value\"</p>\n";
 	}
 ?>
-<p><strong>© BB & JN :-)</strong></p>
 </body>
 </html>

@@ -6,7 +6,7 @@
 /*   By: vmoreau <vmoreau@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/06 20:57:30 by mabriand          #+#    #+#             */
-/*   Updated: 2022/02/17 15:28:17 by vmoreau          ###   ########.fr       */
+/*   Updated: 2022/02/17 18:18:44 by vmoreau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,6 +79,7 @@ int					Request::parse()
 	// 	return (-1);
 	// }
 
+	// std::cout << "AFTER RECV: " << ret << '\n';
 	if (ret >= 0)
 	{
 		buffer.resize(ret);
@@ -121,6 +122,7 @@ void				Request::buildMap(std::string& line)
 void				Request::parseBuf()
 {
 	std::string& buf = this->_request;
+
 	this->_response_status_code = 0;
 	this->_err_referer = false;
 	this->_url_dir = false;
@@ -171,6 +173,9 @@ void				Request::defineProtocolVersion()
 
 void				Request::defineStatusCode()
 {
+	if (this->_response_status_code != 0)
+		return ;
+
 	if (this->_method == "DELETE")
 	{
 		struct stat buffer;
@@ -180,13 +185,16 @@ void				Request::defineStatusCode()
 			return ;
 		}
 		if (remove (this->_url.c_str()) == 0)
+		{
 			this->_response_status_code = 200;
+			return ;
+		}
 		else
+		{
 			this->_response_status_code = 500;
-
+			return ;
+		}
 	}
-	if (this->_response_status_code != 0)
-		return ;
 
 	std::ifstream ms;
 
