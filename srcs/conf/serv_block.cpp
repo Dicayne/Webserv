@@ -6,7 +6,7 @@
 /*   By: vmoreau <vmoreau@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/08 14:44:06 by vmoreau           #+#    #+#             */
-/*   Updated: 2022/02/16 18:29:13 by vmoreau          ###   ########.fr       */
+/*   Updated: 2022/02/17 18:36:14 by vmoreau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -273,6 +273,8 @@ void serv_block::check_host(std::string value)
 	for (size_t i = 0; i < host.size(); i++)
 	{
 		int val = atoi(host[i].c_str());
+		if (host[i].empty() == true)
+			throw ConfFile( " Host \"" + value + "\" is wrongly formmated (exemple: 127.0.0.1)");
 		if (i == 0)
 		{
 			if (val != 127)

@@ -6,7 +6,7 @@
 /*   By: vmoreau <vmoreau@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/13 19:18:35 by vmoreau           #+#    #+#             */
-/*   Updated: 2022/02/17 17:35:14 by vmoreau          ###   ########.fr       */
+/*   Updated: 2022/02/17 18:43:48 by vmoreau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -226,8 +226,7 @@ void Server::Server_loopClient()
 		int ret = 0;
 		if (FD_ISSET(it->first, &this->_readfds))
 		{
-			// while (it->second->is_request_ready() == false && ret >= 0)
-				ret = it->second->parse();
+			ret = it->second->parse();
 
 			if (it->second->is_request_ready() == true && it->second->is_connection_end() == false)
 			{
@@ -268,7 +267,7 @@ void Server::Server_loopClient()
 		}
 		if (FD_ISSET(it->first, &this->_writefds) && this->_response.size())
 		{
-			// print_response(-1);
+			print_response(-1);
 
 			ret = send(it->first, &this->_response[0], this->_response.size() , MSG_DONTWAIT);
 
