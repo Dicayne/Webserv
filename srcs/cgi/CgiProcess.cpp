@@ -6,7 +6,7 @@
 /*   By: vmoreau <vmoreau@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/11 16:40:07 by mabriand          #+#    #+#             */
-/*   Updated: 2022/02/16 15:25:35 by vmoreau          ###   ########.fr       */
+/*   Updated: 2022/02/16 23:59:35 by vmoreau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,7 +75,7 @@ void				CgiProcess::set_envVars()
 	this->_env_map["SERV_NAME"]			=	this->_request->getBlock()->get_server_name();
 }
 
-void				CgiProcess::set_cgiOutput(std::string body)
+void				CgiProcess::set_cgiOutput(std::vector<unsigned char> body)
 {
 	size_t i = 0;
 	while (i < body.size())
@@ -83,6 +83,12 @@ void				CgiProcess::set_cgiOutput(std::string body)
 		this->_cgi_output.push_back(body[i]);
 		++i;
 	}
+	// std::vector<unsigned char> toto = this->_cgi_output;
+	// for (std::vector<unsigned char>::iterator it = toto.begin(); it != toto.end(); it++)
+	// 	std::cout << YELLOW << *it;
+	// std::cout << '\n' << NC;
+
+	// std::cout << this->_cgi_output.size() << '\n';
 }
 
 std::string			CgiProcess::get_cwd(void)
@@ -107,7 +113,7 @@ void				CgiProcess::set_myEnv()
 	{
 		std::string tmp = it->first + '=' + it->second;
 		this->_myEnv[i] = strdup(tmp.c_str());
-		std::cout << GREEN << this->_myEnv[i] << NC << std::endl;
+		// std::cout << GREEN << this->_myEnv[i] << NC << std::endl;
 		i++;
 	}
 	this->_myEnv[size] = NULL;
@@ -232,6 +238,8 @@ int					CgiProcess::exeCgiProgram()
 		if (!this->_request->getVecBody().empty())
 		{
 			size_t ret_write =  write(srvToCgi_fd[1], &this->_request->getVecBody()[0], this->_request->getVecBody().size());
+
+			// std::cout << ret_write << "    " << this->_request->getVecBody().size() << '\n';
 			if (ret_write < 0)
 				return (-1);
 			else if (ret_write != this->_request->getVecBody().size())
@@ -270,9 +278,8 @@ int					CgiProcess::exeCgiProgram()
 			if (WEXITSTATUS(status) == 1)
 				return -1;
 		}
-		std::string bdy(body.begin(), body.end());
 
-		this->set_cgiOutput(bdy);
+		this->set_cgiOutput(body);
 		treat_body(&this->_cgi_output);
 	}
 	return 0;

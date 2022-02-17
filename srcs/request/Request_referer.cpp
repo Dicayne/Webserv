@@ -6,7 +6,7 @@
 /*   By: vmoreau <vmoreau@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/02/03 16:50:40 by vmoreau           #+#    #+#             */
-/*   Updated: 2022/02/15 18:59:21 by vmoreau          ###   ########.fr       */
+/*   Updated: 2022/02/17 16:02:37 by vmoreau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -104,9 +104,21 @@ void		Request::treatUrl_with_referer()
 	bool ref_autoindex = false;
 	bool err_ref = is_referer_error(&ref_code, &ref_autoindex);
 
-	if (ref_autoindex == true)
+	if (ref_autoindex == true || this->_method != "GET")
+	{
 		if (this->is_method_available(this->_base_url) == false)
-				this->_response_status_code = 405;
+		{
+			err_ref = true;
+			ref_code = "405";
+			this->_response_status_code = 405;
+		}
+		else if (this->_method != "GET" && this->_method != "POST" && this->_method != "DELETE")
+		{
+			err_ref = true;
+			ref_code = "418";
+			this->_response_status_code = 418;
+		}
+	}
 
 	if (err_ref)
 		this->treatUrl_with_err_referer(ref_code);
@@ -124,11 +136,12 @@ void		Request::treatUrl_with_void_referer()
 	std::vector<loc_block>::iterator it = location_found(this->_base_url, &loc);
 	std::string ret;
 
-	std::cout << "PASS VOID REFERER\n";
 	if (it != loc.end() && it->get_path() != "/")
 	{
 		std::string test_url = this->treat_full_url(this->_base_url);
 		this->_url += test_url;
+		if (this->is_url_dir(this->_base_url) == true)
+			this->_url += "/" +  it->get_index();
 		return ;
 	}
 	for (std::vector<loc_block>::iterator it = loc.begin(); it != loc.end(); it++)
@@ -242,9 +255,22 @@ bool		error_tag_found(std::string url)
 	return (false);
 }
 
+bool		is_url_php(std::string url)
+{
+	std::string tmp_url(url.begin() + url.find_last_of('/'), url.end());
+
+	if (tmp_url.find_first_of('.') != tmp_url.npos)
+	{
+		tmp_url.erase(tmp_url.begin(), tmp_url.begin() + tmp_url.find_first_of('.'));
+		if (tmp_url.compare(".php") == 0)
+			return (true);
+	}
+	return (false);
+}
+
 void		Request::treatUrl_with_err_referer(const std::string ref_code)
 {
-	std::cout << "ERR REFERER PROCESSING !\n";
+	std::cout << "ERR REFERER PROCESSING ! " << ref_code << "\n";
 
 	std::map<std::string, std::string> error_page_stocked = this->_block->get_error_page();
 	std::map<std::string, std::string>::iterator	it = error_page_stocked.find(ref_code);
@@ -261,6 +287,11 @@ void		Request::treatUrl_with_err_referer(const std::string ref_code)
 	std::string path(error_page.begin(), error_page.begin() + error_page.find_last_of('/'));
 	std::string file;
 
+	if (is_url_php(this->_base_url) == true)
+	{
+		this->_url = error_page;
+		return;
+	}
 	if (error_tag_found(this->_base_url) == true)
 		file.assign(this->_base_url.begin() + this->_base_url.find_last_of('/'), this->_base_url.end());
 	else
@@ -276,5 +307,5 @@ void		Request::treatUrl_with_err_referer(const std::string ref_code)
 		file = "/" + url_file;
 	}
 	this->_url = path + file;
-
+	this->_response_status_code = 200;
 }

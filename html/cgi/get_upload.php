@@ -6,9 +6,9 @@ if (!is_dir($uploaddir))
     mkdir($uploaddir, 0775);
 
 if (move_uploaded_file($_FILES['file']['tmp_name'], $uploadfile)) {
-    $message = "Le fichier est valide, et a été uploadé avec succès.\n";
+    $message = "The file is valid, and was uploaded successfully.\n";
 } else {
-    $message = "L'upload a échoué\n";
+    $message = "Upload failed\n";
 }
 $fileError = $_FILES["file"]["error"];
 switch($fileError) {
@@ -42,8 +42,8 @@ switch($fileError) {
 </head>
 <body>
     <p><strong><?= $message . ": " . $_FILES['file']['name'] ?></strong></p>
-    <p>Il est de type: <strong><?= $_FILES['file']['type'] ?></strong></p>
-    <p>Et a une taille de: <strong><?= $_FILES['file']['size'] ?></strong></p>
+    <p>Type: <strong><?= $_FILES['file']['type'] ?></strong></p>
+    <p>Size: <strong><?= $_FILES['file']['size'] ?></strong></p>
     <p>Error: <strong><?= $error ?></strong></p>
 </body>
 </html>

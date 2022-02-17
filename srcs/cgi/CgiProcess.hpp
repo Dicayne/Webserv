@@ -6,7 +6,7 @@
 /*   By: vmoreau <vmoreau@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/11 16:34:41 by mabriand          #+#    #+#             */
-/*   Updated: 2022/02/15 18:42:58 by vmoreau          ###   ########.fr       */
+/*   Updated: 2022/02/16 22:56:10 by vmoreau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,7 @@ class   CgiProcess
 
 		void		set_myEnv();
 		void		set_envVars();
-		void		set_cgiOutput(std::string	body);
+		void		set_cgiOutput(std::vector<unsigned char> body);
 
 		const std::string	get_Var(std::string var);
 		std::vector<unsigned char>	get_cgiOutput();

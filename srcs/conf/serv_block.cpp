@@ -6,7 +6,7 @@
 /*   By: vmoreau <vmoreau@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/08 14:44:06 by vmoreau           #+#    #+#             */
-/*   Updated: 2022/02/15 23:52:33 by vmoreau          ###   ########.fr       */
+/*   Updated: 2022/02/16 18:29:13 by vmoreau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,12 +24,11 @@ serv_block::~serv_block()
 
 // ********************* PARSING ********************* //
 
-void serv_block::pars_serv(std::vector<std::string> block, std::string path, std::map<std::string, std::string> error_page, bool sendfile)
+void serv_block::pars_serv(std::vector<std::string> block, std::string path, std::map<std::string, std::string> error_page)
 {
 	this->_block = block;
 	this->_path = path;
 	this->_error_page = error_page;
-	this->_sendfile = sendfile;
 	std::vector<std::string> tmp(this->_block);
 	size_t nb_loc = 0;
 	bool is_autoindex = false;

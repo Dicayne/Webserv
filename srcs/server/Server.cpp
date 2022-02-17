@@ -6,7 +6,7 @@
 /*   By: vmoreau <vmoreau@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/13 19:18:35 by vmoreau           #+#    #+#             */
-/*   Updated: 2022/02/16 15:39:00 by vmoreau          ###   ########.fr       */
+/*   Updated: 2022/02/17 15:52:24 by vmoreau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -229,16 +229,14 @@ void Server::Server_loopClient()
 			while (it->second->is_request_ready() == false && ret >= 0)
 				ret = it->second->parse();
 
-			if (ret < 0)
-			{
-				// gerer se cas!
-			}
 			if (it->second->is_request_ready() == true && it->second->is_connection_end() == false)
 			{
-				it->second->parseBuf();
+				if (ret >= 0)
+					it->second->parseBuf();
+				else
+					it->second->set_error_recv();
 
-				std::cout << "\nRequest after parsing:\n";
-				std::cout << CYAN << *(it->second) << NC;
+				std::cout << CYAN "\nRequest after parsing:\n" << *(it->second) << NC;
 
 				CgiProcess newProcess(it->second, this);
 				bool is_cgi_needed = false;
@@ -254,6 +252,8 @@ void Server::Server_loopClient()
 							else
 								is_cgi_needed = true;
 						}
+						else
+							is_cgi_needed = false;
 				}
 				}
 				catch(const std::exception& e)
@@ -271,7 +271,8 @@ void Server::Server_loopClient()
 			// print_response(-1);
 
 			ret = send(it->first, &this->_response[0], this->_response.size() , MSG_DONTWAIT);
-			// std::cout << "AFTER SEND: " << ret << NC << std::endl;
+
+			// std::cout << this->_response.size() << " AFTER SEND: " << ret << NC << std::endl;
 
 			if (ret == -1)
 			{

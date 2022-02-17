@@ -6,7 +6,7 @@
 /*   By: vmoreau <vmoreau@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/07 16:02:13 by vmoreau           #+#    #+#             */
-/*   Updated: 2022/02/16 00:39:49 by vmoreau          ###   ########.fr       */
+/*   Updated: 2022/02/16 22:21:51 by vmoreau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,7 +49,7 @@ bool is_emptyline_commentline(std::string line)
 
 // ******************* CONSTRUCTOR ******************* //
 
-confpars::confpars() : _sendfile(false)
+confpars::confpars()
 {
 	// std::cout << "Default constructor call\n";
 }
@@ -64,7 +64,6 @@ confpars::~confpars()
 // 	this->_fc = conf._fc;
 // 	this->_file = conf._file;
 // 	this->_path = conf._path;
-// 	this->_sendfile = conf._sendfile;
 // 	this->_server = conf._server;
 // 	this->_server_block = conf._server_block;
 // }
@@ -97,17 +96,6 @@ void confpars::close_fc()
 
 // ********************* SETTER ********************** //
 
-void confpars::set_sendfile(std::string value)
-{
-	std::string val(value.begin() + value.find_first_not_of(" "), value.end());
-
-	if (val.compare("on") == 0)
-		this->_sendfile = true;
-	else if (val.compare("off") == 0)
-		this->_sendfile = false;
-	else
-		throw ConfFile(" Sendfile option is \"on\" or \"off\"");
-}
 
 void confpars::set_error_page(std::string value)
 {
@@ -155,7 +143,7 @@ void confpars::pars_fc(std::ifstream &fc)
 	{
 		serv_block tmp;
 
-		tmp.pars_serv(this->_server_block[i], this->_path, this->_error_page, this->_sendfile);
+		tmp.pars_serv(this->_server_block[i], this->_path, this->_error_page);
 		this->_server.push_back(tmp);
 	}
 	if (this->server_port_unique() == false)
@@ -180,7 +168,6 @@ void confpars::pars_http()
 		throw ConfFile(this->_path + " HTTP block \"{\" Missing\n");
 	tmp = this->separate_server_block(tmp, nb_serv);
 
-	bool is_sendfile = false;
 	while (i < tmp.size() - 1)
 	{
 		if (tmp[i].find_first_of(' ') == tmp[i].npos)
@@ -188,19 +175,12 @@ void confpars::pars_http()
 		std::string key(tmp[i].begin(), tmp[i].begin() + tmp[i].find_first_of(' '));
 		std::string value(tmp[i].begin() + key.size(), tmp[i].end());
 
-		if (key.compare("sendfile") == 0)
-		{
-			is_sendfile = true;
-			this->set_sendfile(value);
-		}
-		else if (key.compare("error_page") == 0)
+		if (key.compare("error_page") == 0)
 			this->set_error_page(value);
 		else if (key.compare("cgi_path") == 0)
 			this->set_cgi_path(value);
 		i++;
 	}
-	if (is_sendfile == false)
-		throw NoSendfileFound(this->_path);
 	if (this->_error_page.empty() == true)
 	{
 		std::cout << YELLOW << "Warning: " << NC << " Error pages is missing in ";
@@ -211,10 +191,14 @@ void confpars::pars_http()
 		this->_error_page.insert(std::make_pair("500", DEFAULT_ERR_500));
 		this->_error_page.insert(std::make_pair("5xx", DEFAULT_ERR_5xx));
 	}
+	else
+		this->check_minimal_error_page();
 	if (this->_cgi_path.empty() == true)
 		throw ConfFile("No cgi_path found in " + this->_path);
+
+	this->is_path_error_page_ok();
+
 	// DEBUG //
-	// std::cout << std::boolalpha << this->_sendfile << '\n';
 	// for (std::map<std::string, std::string>::iterator it = this->_error_page.begin(); it != this->_error_page.end(); it++)
 	// 	std::cout << it->first << "-> \"" << it->second << "\"\n";
 	// std::cout << this->_cgi_path << '\n';
@@ -284,6 +268,49 @@ bool confpars::server_port_unique()
 			if (it->get_port() == it2->get_port() && it->get_host() == it2->get_host())
 				return (false);
 		}
+	}
+	return (true);
+}
+
+void		confpars::check_minimal_error_page()
+{
+	if (this->_error_page.find("400") == this->_error_page.end())
+	{
+		std::cout << PURPLE << "\tError page for 400 is missing, set by default to " << DEFAULT_ERR_400 << NC << '\n';
+		this->_error_page.insert(std::make_pair("400", DEFAULT_ERR_400));
+	}
+	if (this->_error_page.find("404") == this->_error_page.end())
+	{
+		std::cout << PURPLE << "\tError page for 404 is missing, set by default to " << DEFAULT_ERR_404 << NC << '\n';
+		this->_error_page.insert(std::make_pair("404", DEFAULT_ERR_404));
+	}
+	if (this->_error_page.find("4xx") == this->_error_page.end())
+	{
+		std::cout << PURPLE << "\tError page for 4xx is missing, set by default to " << DEFAULT_ERR_4xx << NC << '\n';
+		this->_error_page.insert(std::make_pair("4xx", DEFAULT_ERR_4xx));
+	}
+	if (this->_error_page.find("500") == this->_error_page.end())
+	{
+		std::cout << PURPLE << "\tError page for 500 is missing, set by default to " << DEFAULT_ERR_500 << NC << '\n';
+		this->_error_page.insert(std::make_pair("500", DEFAULT_ERR_500));
+	}
+	if (this->_error_page.find("5xx") == this->_error_page.end())
+	{
+		std::cout << PURPLE << "\tError page for 5xx is missing, set by default to " << DEFAULT_ERR_5xx << NC << '\n';
+		this->_error_page.insert(std::make_pair("5xx", DEFAULT_ERR_5xx));
+	}
+}
+
+bool		confpars::is_path_error_page_ok()
+{
+	std::string path;
+
+	for (std::map<std::string, std::string>::iterator it = this->_error_page.begin() ; it != this->_error_page.end(); it++)
+	{
+		path.assign(it->second.begin(), it->second.begin() + it->second.find_last_of('/'));
+		if (path.compare("./html/error") != 0)
+			throw ConfFile("Error path not good formated for " + it->first + " : " + it->second);
+		path.clear();
 	}
 	return (true);
 }
