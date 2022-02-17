@@ -6,7 +6,7 @@
 /*   By: vmoreau <vmoreau@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/06 20:57:30 by mabriand          #+#    #+#             */
-/*   Updated: 2022/02/16 15:33:55 by vmoreau          ###   ########.fr       */
+/*   Updated: 2022/02/17 15:28:17 by vmoreau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,6 +71,14 @@ int					Request::parse()
 	std::vector<unsigned char> buffer(BUF_SIZE + 1);
 	ret = recv(this->_socket, &buffer[0], BUF_SIZE, MSG_DONTWAIT);
 
+	// static bool test = true;			// Simulate a recv return -1;
+	// if (test == true)
+	// {
+	// 	test = false;
+	// 	this->_request_ready = true;
+	// 	return (-1);
+	// }
+
 	if (ret >= 0)
 	{
 		buffer.resize(ret);
@@ -79,10 +87,11 @@ int					Request::parse()
 		buf.insert(buf.end(), buffer.begin(), buffer.begin() + ret);
 		this->_request += buf;
 		this->_vec_request.insert(this->_vec_request.end(), buffer.begin(), buffer.end());
-		// std::cout << GREEN << this->_request << NC << std::endl;
 		if (ret < BUF_SIZE)
 			this->_request_ready = true;
 	}
+	if (ret < 0)
+		this->_request_ready = true;
 	return (ret);
 }
 
@@ -144,13 +153,13 @@ void				Request::parseBuf()
 	this->treatUrl();
 	this->_url = trim_double_slash(this->_url);
 
-	std::cout << YELLOW << "\nURL Processed-> " << this->_url << NC << '\n';
+	// std::cout << YELLOW << "\nURL Processed-> " << this->_url << NC << '\n';
 
 	this->defineProtocolVersion();
 	this->defineStatusCode();
 	this->defineUrl();
 
-	std::cout << CYAN << "URL Send-> " << this->_response_url << " " << this->_response_status_code <<  NC << '\n';
+	// std::cout << CYAN << "URL Send-> " << this->_response_url << " " << this->_response_status_code <<  NC << '\n';
 
 	this->_connexion_end = true;
 }
@@ -275,20 +284,20 @@ const std::string&			Request::getRequest() const{return(this->_request); }
 
 std::ostream&		operator<<(std::ostream& os, const Request& r)
 {
-	os << "METHOD: [" << r.getMethod() << "]" << std::endl;
-	os << "PROCESSED URL: [" << r.getUrl() << "]" << std::endl;
-	os << "REQUESTED URL: [" << r.getBaseUrl() << "]" << std::endl;
-	os << "PROTOCOLE VERSION :[" << r.getProtocolVersion() << "]" << std::endl;
-	os << "HOST :[" << r.getHost() << "]" << std::endl;
-	os << "USER AGENT :[" << r.getUserAgent() << "]" << std::endl;
-	os << "ACCEPT :[" << r.getAccept() << "]" << std::endl;
-	os << "ACCEPT LANGUAGE :[" << r.getAcceptLanguage() << "]" << std::endl;
-	os << "ACCEPT ENCODING :[" << r.getAcceptEncoding() << "]" << std::endl;
-	os << "CONNECTION :[" << r.getConnection() << "]" << std::endl;
-	os << "REFERER :[" << r.getReferer() << "]" << std::endl;
-	// os << "BODY :[" << r.getBody() << "]" << std::endl;
-	os << "QUERY STRING :[" << r.get_queryString() << "]" << std::endl;
-	os << "CONTENT LENGTH :[" << r.get_contentLength() << "]" << std::endl;
-	os << "CONTENT TYPE :[" << r.get_contentType() << "]" << std::endl;
+	os << "METHOD:" << NC << " [" << r.getMethod() << "]" << CYAN << std::endl;
+	os << "PROCESSED URL:" << NC << " [" << r.getUrl() << "]" << CYAN << std::endl;
+	os << "REQUESTED URL:" << NC << " [" << r.getBaseUrl() << "]" << CYAN << std::endl;
+	os << "PROTOCOLE VERSION:" << NC << " [" << r.getProtocolVersion() << "]" << CYAN << std::endl;
+	os << "HOST:" << NC << " [" << r.getHost() << "]" << CYAN << std::endl;
+	os << "USER AGENT:" << NC << " [" << r.getUserAgent() << "]" << CYAN << std::endl;
+	os << "ACCEPT:" << NC << " [" << r.getAccept() << "]" << CYAN << std::endl;
+	os << "ACCEPT LANGUAGE:" << NC << " [" << r.getAcceptLanguage() << "]" << CYAN << std::endl;
+	os << "ACCEPT ENCODING:" << NC << " [" << r.getAcceptEncoding() << "]" << CYAN << std::endl;
+	os << "CONNECTION:" << NC << " [" << r.getConnection() << "]" << CYAN << std::endl;
+	os << "REFERER:" << NC << " [" << r.getReferer() << "]" << CYAN << std::endl;
+	// os << "BODY:" << NC << " [" << r.getBody() << "]" << CYAN << std::endl;
+	os << "QUERY STRING:" << NC << " [" << r.get_queryString() << "]" << CYAN << std::endl;
+	os << "CONTENT LENGTH:" << NC << " [" << r.get_contentLength() << "]" << CYAN << std::endl;
+	os << "CONTENT TYPE:" << NC << " [" << r.get_contentType() << "]" << CYAN << std::endl;
 	return (os);
 }

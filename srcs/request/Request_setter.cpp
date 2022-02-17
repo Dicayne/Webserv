@@ -6,7 +6,7 @@
 /*   By: vmoreau <vmoreau@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/02/15 02:56:31 by vmoreau           #+#    #+#             */
-/*   Updated: 2022/02/16 00:03:28 by vmoreau          ###   ########.fr       */
+/*   Updated: 2022/02/17 15:52:42 by vmoreau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -201,7 +201,7 @@ void				Request::setBody(std::string& full_resp)
 	}
 
 	if (this->_request.size() > (unsigned long)this->_block->get_client_max_body_size() && (this->_referer.size() == 0 || this->_method == "POST"))
-		this->_response_status_code = 413; // Pour le moment car je ne trouve pas s'il y a un code erreur précis
+		this->_response_status_code = 413;
 
 }
 
@@ -268,4 +268,12 @@ void		Request::setError(int code)
 		this->_response_url = error_page_stocked.find("4xx")->second;
 	else if (str[0] == '5')
 		this->_response_url = error_page_stocked.find("5xx")->second;
+}
+
+void		Request::set_error_recv()
+{
+	this->setError(500);
+	this->_response_protocol_version = "HTTP/1.1";
+	this->_url = this->_response_url;
+	this->_connexion_end = true;
 }

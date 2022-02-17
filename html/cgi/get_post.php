@@ -1,9 +1,4 @@
 <?php
-    echo("------------------------------------------------<br>");
-    print_r($_FILES);
-    echo "<br>";
-    print_r($_POST);
-    echo("<br>------------------------------------------------");
     if (!empty($_POST))
     {
         $name = $_POST['name'];
@@ -28,7 +23,7 @@
 	<title>POST Result</title>
 </head>
 <body>
-    <h2>Vous avez rentré:</h2>
+    <h2>You entered:</h2>
 	<p><strong>METHOD: <?= getenv('REQUEST_METHOD') ?></strong></p>
     <p><strong>Name: <?= $name ?></strong></p>
     <p><strong>Surname: <?= $surname ?></strong></p>

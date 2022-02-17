@@ -6,7 +6,7 @@
 /*   By: vmoreau <vmoreau@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/29 16:53:05 by vmoreau           #+#    #+#             */
-/*   Updated: 2022/02/15 23:56:51 by vmoreau          ###   ########.fr       */
+/*   Updated: 2022/02/16 18:25:40 by vmoreau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,7 +47,7 @@
 
 #include "color.hpp"
 
-#define CONF_DEFAULT_PATH "./conf.d/used/default.conf"
+#define CONF_DEFAULT_PATH "./conf.d/default/default.conf"
 #define DEFAULT_ERR_400 "./html/error/400.html"
 #define DEFAULT_ERR_404 "./html/error/404.html"
 #define DEFAULT_ERR_4xx "./html/error/4xx.html"

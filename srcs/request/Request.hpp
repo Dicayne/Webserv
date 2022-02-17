@@ -6,7 +6,7 @@
 /*   By: vmoreau <vmoreau@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/06 11:16:47 by mabriand          #+#    #+#             */
-/*   Updated: 2022/02/15 18:44:13 by vmoreau          ###   ########.fr       */
+/*   Updated: 2022/02/17 14:27:25 by vmoreau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,6 +91,8 @@ class   Request
 		void		setReferer();
 		void		setBody(std::string& full_resp);
 		void		setError(int code);
+		void		set_error_recv();
+
 		/*
 			Processing URL
 		*/
@@ -100,6 +102,7 @@ class   Request
 		bool		is_referer_error(std::string *ref_code, bool *ref_autoindex);
 		bool		is_referer_autoindex(std::string url);
 		bool		is_method_available(std::string url);
+		bool		is_method_implemented(std::string url);
 		size_t		find_pos(std::string line_to_find);
 
 		// Processing

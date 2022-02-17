@@ -1,115 +1,55 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<!DOCTYPE html>
 <html>
-  <head>
-    <title>HTML</title>
-    <meta charset="UTF-8">
-  </head>
+	<head>
+	<meta charset="utf-8">
 
-  <body bgcolor="#FFFFE8" topmargin="5">
+	<title>Webserv</title>
+	<link href="https://fonts.googleapis.com/css?family=Open+Sans+Condensed:400|Sonsie+One" rel="stylesheet" type="text/css">
+	<link rel="stylesheet" href="css/style_default.css">
 
-    <!--
-    Ceci est un commentaires ;-)
-    Visible que via la source !
-    -->
+	</head>
 
+	<body>
+	<header>
+		<h1>42 WebServ</h1>
+	</header>
 
-    <!-- Début Top Menu -->
-    <!-- <a name="top"></a>
-    <table border="0" cellpadding="0" cellspacing="0" width="771" align="center">
-      <tr>
-        <td width="200" align="left">
-          <a href="http://www.softastuces.com" title="Accueil de SoftAstuces"><img src="img/giphy.gif" width="200" height="60" border="0" alt="SoftAstuces.com"></a>
-        </td>
-        <td width=571 valign="middle">
-          <a href="/astu/index.php"><font color="#400040" size="+1">Les Astuces</font></a> |
-          <a href="/tuto/index.php"><font color="#860411" size="+1">Les Tutoriaux</font></a> |
-          <a href="javascript:;"><font color="#0000A0" size="+1">Le Forum</font></a> |
-          <a href="/download/index.php"><font color="#808080" size="+1">Zone Download</font></a>
+	<main>
+		<article>
+		<h2>Webserv Default Page</h2>
 
-        </td>
-      </tr>
-    </table> -->
-    <!-- Fin Top Menu -->
+		<img src="img/42_Logo.svg.png" id="42_img">
+		<h4>This test page only work with default.conf on port 8778</h4>
+		<h3>Redirect on same folder</h3>
+		<p><a href="/index2.html">Redirect on html/index2.html</a></p>
+		<p><a href="/img/giphy.gif">Redirect on html/img/giphy.gif</a></p>
+		<p><a href="/random_page.html">Redirect on html/random_page.html</a></p>
+		<br>
+		<h3>Redirect on different folder</h3>
+		<p><a href="/banana/">Redirect on html2/</a></p>
+		<p><a href="/banana/toto/index.html">Redirect on html2/toto/index.html</a></p>
+		<p><a href="/banana/toto/titi/">Redirect on html2/toto/titi/</a></p>
+		<br>
+		</article>
 
-    <!--
-    Break...
-    -->
+		<aside>
+		<h2>CGI</h2>
+		<ul>
+			<li><a href="/cgi/">CGI Folder</a></li>
+			<li><a href="/cgi/post.html">POST with php-cgi</a></li>
+			<li><a href="/cgi/upload.html">Upload with php-cgi</a></li>
+			<li><a href="/cgi/displayenv.php">Show environment variables with php-cgi</a></li>
+			<li><a href="/cgi/info.php">Show PHP settings via php-cgi</a></li>
+		</ul>
+		</aside>
 
-    <!-- Début Main Table -->
-    <table border="0" cellpadding="0" cellspacing="0" width="771" align="center">
+	</main>
 
-      <!-- Début Ligne du Haut -->
-      <tr>
-        <td colspan="3"><img src="img/giphy.gif" width="100%" height="50" alt=""></td>
-      </tr>
-      <!-- Fin Ligne du Haut -->
+	<footer>
+		<p>
+			Model of the page found on <a href="https://github.com/mdn/learning-area/tree/master/html/introduction-to-html/document_and_website_structure">Firefox's Github</a>
+		</p>
+	</footer>
 
-      <tr>
-        <!-- Début Menu de Gauche -->
-        <td width="161" align="right">
-          <p>
-            <font color="#000000"><span class="important">Les Astuces</span></font><br />
-            <a href="index2.html" style="color:#008000; text-decoration:none">Index2</a><br />
-            <a href="/banana/toto/toto.html" style="color:#008000; text-decoration:none">Messagerie</a><br />
-            <a href="/astu/office/index.php" style="color:#008000; text-decoration:none">Office</a><br />
-            <a href="/astu/secu/index.php" style="color:#008000; text-decoration:none">Sécurité</a><br />
-            <a href="/astu/win/index.php" style="color:#008000; text-decoration:none">Windows</a>
-          </p>
-
-          <p>
-            <font color="#000000"><span class="important">Les Tutoriaux</span></font><br />
-            <a href="/tuto/compression/index.php" style="color:#008000; text-decoration:none">Compression</a><br />
-            <a href="/tuto/site/index.php" style="color:#008000; text-decoration:none">Créer un Site</a><br />
-            <a href="/tuto/maint/index.php" style="color:#008000; text-decoration:none">Maintenance</a><br />
-            <a href="/tuto/messa/index.php" style="color:#008000; text-decoration:none">Messagerie</a><br />
-            <a href="/tuto/mp3/index.php" style="color:#008000; text-decoration:none">MP3</a><br />
-            <a href="/tuto/secu/index.php" style="color:#008000; text-decoration:none">Sécurité</a><br />
-            <a href="/tuto/tweak/index.php" style="color:#008000; text-decoration:none">Tweakage</a>
-          </p>
-        </td>
-        <!-- Fin Menu de Gauche -->
-
-        <!-- Début Séparatiion Menu/Body -->
-        <td width="100" align="center"><img src="img/giphy.gif" width="100%" height="100%" alt=""></td>
-        <!-- Fin Séparatiion Menu/Body -->
-
-        <!-- Début Main Body -->
-        <td width="600" valign="top">
-          <h1 align="center">HTML !</h1>
-
-          <!-- Début Mini Tableau ;-) -->
-          <table border="0" cellpadding="3" cellspacing="1" bgcolor="#CCCC00">
-            <tr>
-              <td bgcolor="#FFFFF9">
-                <font color="arial" face="#400040">
-                  <h2>(Balise Hx...)</h2>
-                  Voila une page HTML si vous voulez l'analyser...
-                  <br /><br />
-                  Amusez-vous bien ;-)
-                </font>
-              </td>
-            </tr>
-          </table>
-          <!-- Fin Mini Tableau -->
-
-
-          <br /><br /><br />
-          <div align="right">
-            <a href="#top" onclick="alert('Recherchez <a name=\'top\'></a>');" title="Retourner en Haut"><i>Top...</i></a>
-          </div>
-
-        </td>
-        <!-- Fin Main Body -->
-      </tr>
-
-      <!-- Début Ligne du Bas -->
-      <tr>
-        <td colspan="3"><img src="img/giphy.gif" width="50%" height="50%" alt=""></td>
-      </tr>
-      <!-- Fin Ligne du Bas -->
-
-    </table>
-    <!-- Fin Main Table -->
-
-  </body>
+	</body>
 </html>

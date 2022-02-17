@@ -6,7 +6,7 @@
 /*   By: vmoreau <vmoreau@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/07 15:55:46 by vmoreau           #+#    #+#             */
-/*   Updated: 2022/02/08 15:51:36 by vmoreau          ###   ########.fr       */
+/*   Updated: 2022/02/16 22:10:10 by vmoreau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,6 @@ private:
 	std::vector<std::string>	_file;
 	std::vector< std::vector<std::string> >	_server_block;
 
-	bool						_sendfile;
 	std::vector<serv_block>		_server;
 	std::map<std::string, std::string>		_error_page;
 	std::string					_cgi_path;
@@ -45,13 +44,11 @@ public:
 
 	// GETTER
 	std::ifstream &get_fd()						{ return (this->_fc); }
-	bool get_sendfile() const 					{ return (this->_sendfile); }
 	std::vector<serv_block> get_server() const	{ return (this->_server); }
 	std::map<std::string, std::string> get_error_page() const { return (this->_error_page); }
 	std::string get_cgi_path() const			{ return (this->_cgi_path); }
 
 	// SETTER
-	void set_sendfile(std::string value);
 	void set_error_page(std::string value);
 	void set_cgi_path(std::string value);
 
@@ -87,15 +84,6 @@ public:
 			virtual ~NoServerFound() throw() {}
 			virtual const char *what() const throw() {return (this->_msg.c_str());}
 	};
-	class NoSendfileFound : public std::exception
-	{
-		private:
-			std::string _msg;
-		public:
-			NoSendfileFound(std::string path) : _msg(" Sendfile is missing in " + path){}
-			virtual ~NoSendfileFound() throw() {}
-			virtual const char *what() const throw() {return (this->_msg.c_str());}
-	};
 	class NoErr_PageFound : public std::exception
 	{
 		private:
@@ -108,9 +96,11 @@ public:
 
 	// Private Function
 	private:
-		std::vector<std::string> separate_server_block(std::vector<std::string> tmp, size_t nb_serv);
-		std::vector<std::string> save_server_block(std::vector<std::string> tmp, size_t *pos);
-		bool server_port_unique();
+		std::vector<std::string>	separate_server_block(std::vector<std::string> tmp, size_t nb_serv);
+		std::vector<std::string>	save_server_block(std::vector<std::string> tmp, size_t *pos);
+		bool						server_port_unique();
+		void						check_minimal_error_page();
+		bool						is_path_error_page_ok();
 };
 
 #endif
