@@ -6,7 +6,7 @@
 /*   By: vmoreau <vmoreau@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/11 16:40:07 by mabriand          #+#    #+#             */
-/*   Updated: 2022/02/16 23:59:35 by vmoreau          ###   ########.fr       */
+/*   Updated: 2022/02/17 16:30:17 by vmoreau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -239,7 +239,6 @@ int					CgiProcess::exeCgiProgram()
 		{
 			size_t ret_write =  write(srvToCgi_fd[1], &this->_request->getVecBody()[0], this->_request->getVecBody().size());
 
-			// std::cout << ret_write << "    " << this->_request->getVecBody().size() << '\n';
 			if (ret_write < 0)
 				return (-1);
 			else if (ret_write != this->_request->getVecBody().size())
