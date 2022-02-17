@@ -6,7 +6,7 @@
 /*   By: vmoreau <vmoreau@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/06 20:57:30 by mabriand          #+#    #+#             */
-/*   Updated: 2022/02/17 18:18:44 by vmoreau          ###   ########.fr       */
+/*   Updated: 2022/02/17 20:19:09 by vmoreau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -171,26 +171,40 @@ void				Request::defineProtocolVersion()
 	this->_response_protocol_version = this->_protocol_version;
 }
 
+std::string			test_url_toDelete(std::string url)
+{
+	struct stat buffer;
+	std::string tmp_url = url;
+	if (stat(tmp_url.c_str(), &buffer) == -1)
+	{
+		tmp_url.clear();
+		tmp_url.assign(url.begin(), url.begin() + url.find_last_of('/'));
+		if (stat(tmp_url.c_str(), &buffer) == -1)
+			return ("");
+	}
+	return (tmp_url);
+}
+
 void				Request::defineStatusCode()
 {
 	if (this->_response_status_code != 0)
 		return ;
-
 	if (this->_method == "DELETE")
 	{
-		struct stat buffer;
-		if (stat(this->_url.c_str(), &buffer) == -1)
+		std::string url_toDelete = test_url_toDelete(this->_url);
+		if (url_toDelete.empty() == true)
 		{
 			this->_response_status_code = 404;
 			return ;
 		}
-		if (remove (this->_url.c_str()) == 0)
+		if (remove (url_toDelete.c_str()) == 0)
 		{
 			this->_response_status_code = 200;
 			return ;
 		}
 		else
 		{
+			std::cerr << RED << "ERROR DELETE: " << NC << std::strerror(errno) << '\n';
 			this->_response_status_code = 500;
 			return ;
 		}
