@@ -6,7 +6,7 @@
 /*   By: vmoreau <vmoreau@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/16 15:24:59 by mabriand          #+#    #+#             */
-/*   Updated: 2022/02/18 23:10:45 by vmoreau          ###   ########.fr       */
+/*   Updated: 2022/02/18 23:54:05 by vmoreau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,7 @@ Response::Response(const Request &req, serv_block *block, bool cgi, std::vector<
 	this->setConnection();
 	this->setKeepAlive();
 
-	if (cgi == false && (this->_req.getMethod() != "POST" || this->_req.returnStatusCode() == 400))
+	if (cgi == false && (this->_req.getMethod() != "POST" || this->_req.returnStatusCode() >= 400))
 	{
 		this->setBody(this->_req.returnUrl());
 		this->setContentType(this->_req.returnUrl());
