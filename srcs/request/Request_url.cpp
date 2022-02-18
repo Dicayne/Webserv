@@ -6,7 +6,7 @@
 /*   By: vmoreau <vmoreau@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/02/02 15:59:47 by vmoreau           #+#    #+#             */
-/*   Updated: 2022/02/17 14:22:49 by vmoreau          ###   ########.fr       */
+/*   Updated: 2022/02/18 04:08:47 by vmoreau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,10 +72,13 @@ void		Request::treatUrl()
 
 	if (this->_referer.empty() == true)
 	{
-		if (this->is_method_available(this->_base_url) == false)
-			this->_response_status_code = 405;
-		else if (this->_method != "GET" && this->_method != "POST" && this->_method != "DELETE")
-			this->_response_status_code = 418;
+		if (this->_response_status_code == 0)
+		{
+			if (this->is_method_available(this->_base_url) == false)
+				this->_response_status_code = 405;
+			else if (this->_method != "GET" && this->_method != "POST" && this->_method != "DELETE")
+				this->_response_status_code = 418;
+		}
 		if (this->_base_url == "/")
 			this->_url += this->treat_void_url();
 		else if (this->_url_dir == true)

@@ -6,7 +6,7 @@
 /*   By: vmoreau <vmoreau@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/02/15 02:56:31 by vmoreau           #+#    #+#             */
-/*   Updated: 2022/02/17 15:52:42 by vmoreau          ###   ########.fr       */
+/*   Updated: 2022/02/18 11:25:03 by vmoreau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,16 @@
 void				Request::setMethod(std::string& line)
 {
 	this->_method = this->extractInfo(line);
+
+	std::string valid[] = {"GET", "POST", "DELETE", "HEAD", "PUT", "CONNECT", "OPTIONS", "TRACE", "PATCH"};
+	bool is_valid = false;
+	for (size_t i = 0; i < 9; i++)
+	{
+		if (this->_method.compare(valid[i]) == 0)
+			is_valid = true;
+	}
+	if (is_valid == false)
+		this->_response_status_code = 400;
 }
 
 void				Request::setUrl(std::string& line)
@@ -32,6 +42,8 @@ void				Request::setUrl(std::string& line)
 void				Request::setProtocolVersion(std::string& line)
 {
 	this->_protocol_version = this->extractInfo(line);
+	if (this->_protocol_version != "HTTP/1.1")
+		this->_response_status_code = 505;
 	if (this->_protocol_version.find_first_of('\r') == this->_protocol_version.npos)
 		return ;
 }
@@ -48,6 +60,8 @@ void				Request::setHost()
 			this->_host.assign(it->second.begin(), it->second.begin() + it->second.find_first_of('\r'));
 		}
 	}
+	else
+		this->_response_status_code = 400;
 }
 
 void				Request::setUserAgent()
@@ -167,7 +181,7 @@ size_t				Request::find_pos(std::string line_to_find)
 				return (i);
 		}
 	}
-	std::cout << '\n';
+	// std::cout << '\n';
 	return (-1);
 }
 
@@ -200,7 +214,8 @@ void				Request::setBody(std::string& full_resp)
 		this->_body = tmp;
 	}
 
-	if (this->_request.size() > (unsigned long)this->_block->get_client_max_body_size() && (this->_referer.size() == 0 || this->_method == "POST"))
+	// std::cout << this->_body.size() << '\n';
+	if (this->_body.size() > (unsigned long)this->_block->get_client_max_body_size() && (this->_referer.size() == 0 || this->_method == "POST"))
 		this->_response_status_code = 413;
 
 }

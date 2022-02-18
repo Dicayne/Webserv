@@ -6,11 +6,26 @@
 /*   By: vmoreau <vmoreau@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/02/02 15:38:19 by vmoreau           #+#    #+#             */
-/*   Updated: 2022/02/02 15:39:15 by vmoreau          ###   ########.fr       */
+/*   Updated: 2022/02/18 03:47:31 by vmoreau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Response.hpp"
+
+void				Response::buildMime(const std::string& key, const std::string& mapped)
+{
+	std::pair<std::string, std::string>	elem(key, mapped);
+	this->_mime.insert(elem);
+	return ;
+}
+
+
+void				Response::buildMessages(int key, const std::string& mapped)
+{
+	std::pair<int, std::string>	elem(key, mapped);
+	this->_messages.insert(elem);
+	return ;
+}
 
 void				Response::setMimeMap()
 {

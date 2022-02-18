@@ -6,7 +6,7 @@
 /*   By: vmoreau <vmoreau@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/16 15:24:45 by mabriand          #+#    #+#             */
-/*   Updated: 2022/02/15 17:49:53 by vmoreau          ###   ########.fr       */
+/*   Updated: 2022/02/18 03:39:24 by vmoreau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,7 +72,7 @@ class   Response
 		void		setBody(const std::string& body);
 		std::string	build_autoindex_body(const char *path);
 		void		set_newContentType(std::vector<unsigned char> header);
-		void		set_cgiOutput(std::vector<unsigned char> body);
+		void		set_cgiOutput(std::vector<unsigned char> body, bool cgi);
 		void		buildMime(const std::string& key, const std::string& mapped);
 		void		setMimeMap();
 		void		buildMessages(int key, const std::string& mapped);

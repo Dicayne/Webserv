@@ -6,7 +6,7 @@
 /*   By: vmoreau <vmoreau@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/13 19:18:35 by vmoreau           #+#    #+#             */
-/*   Updated: 2022/02/17 18:43:48 by vmoreau          ###   ########.fr       */
+/*   Updated: 2022/02/18 23:15:14 by vmoreau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -241,7 +241,7 @@ void Server::Server_loopClient()
 				bool is_cgi_needed = false;
 				try
 				{
-					if (newProcess.isCgiNeeded() == true || it->second->getMethod() == "POST")
+					if (newProcess.isCgiNeeded() == true)
 					{
 						newProcess.init();
 						if (it->second->returnStatusCode() < 400)
@@ -267,7 +267,7 @@ void Server::Server_loopClient()
 		}
 		if (FD_ISSET(it->first, &this->_writefds) && this->_response.size())
 		{
-			print_response(-1);
+			// print_response(-1);
 
 			ret = send(it->first, &this->_response[0], this->_response.size() , MSG_DONTWAIT);
 
