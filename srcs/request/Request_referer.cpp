@@ -6,7 +6,7 @@
 /*   By: vmoreau <vmoreau@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/02/03 16:50:40 by vmoreau           #+#    #+#             */
-/*   Updated: 2022/02/17 16:02:37 by vmoreau          ###   ########.fr       */
+/*   Updated: 2022/02/18 23:59:51 by vmoreau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -98,7 +98,7 @@ bool		Request::is_referer_error(std::string *ref_code, bool *ref_autoindex)
 
 void		Request::treatUrl_with_referer()
 {
-	std::cout << RED << "Referer-> " << this->_referer << NC << "\n\n";
+	// std::cout << RED << "Referer-> " << this->_referer << NC << "\n\n";
 
 	std::string ref_code;
 	bool ref_autoindex = false;
@@ -270,7 +270,7 @@ bool		is_url_php(std::string url)
 
 void		Request::treatUrl_with_err_referer(const std::string ref_code)
 {
-	std::cout << "ERR REFERER PROCESSING ! " << ref_code << "\n";
+	// std::cout << "ERR REFERER PROCESSING ! " << ref_code << "\n";
 
 	std::map<std::string, std::string> error_page_stocked = this->_block->get_error_page();
 	std::map<std::string, std::string>::iterator	it = error_page_stocked.find(ref_code);
