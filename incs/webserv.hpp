@@ -6,7 +6,7 @@
 /*   By: vmoreau <vmoreau@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/29 16:53:05 by vmoreau           #+#    #+#             */
-/*   Updated: 2022/02/16 18:25:40 by vmoreau          ###   ########.fr       */
+/*   Updated: 2022/02/21 10:26:17 by vmoreau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,6 @@
 #include <arpa/inet.h>		// htons / htonl / ntohs / ntohl / inet_adrr
 #include <sys/select.h> 	// select /
 #include <poll.h>			// poll /
-#include <sys/event.h>		// kqueu / kevent /
 #include <fcntl.h>			// fcntl, SEUL UTILISATION POSSIBLE = fcntl(fd, F_SETFL, O_NONBLOCK);
 
 // #include <string_view>

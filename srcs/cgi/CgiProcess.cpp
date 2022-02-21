@@ -6,7 +6,7 @@
 /*   By: vmoreau <vmoreau@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/11 16:40:07 by mabriand          #+#    #+#             */
-/*   Updated: 2022/02/17 16:30:17 by vmoreau          ###   ########.fr       */
+/*   Updated: 2022/02/21 10:19:53 by vmoreau          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -150,7 +150,7 @@ void				treat_body(std::vector<unsigned char> *body)
 	while (i < body->size())
 	{
 		size_t j = i;
-		while ((*body)[j] != '\n' && (*body)[j] != '\r')
+		while (j < body->size() && (*body)[j] != '\n' && (*body)[j] != '\r')
 			j++;
 		std::string line(body->begin() + i, body->begin() + j);
 		if (line.compare("X-Powered-By: PHP/8.1.2") == 0)
@@ -279,7 +279,7 @@ int					CgiProcess::exeCgiProgram()
 		}
 
 		this->set_cgiOutput(body);
-		treat_body(&this->_cgi_output);
+		// treat_body(&this->_cgi_output);
 	}
 	return 0;
 }
